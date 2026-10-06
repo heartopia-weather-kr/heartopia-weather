@@ -299,11 +299,14 @@ def save_weather_json(data):
         )
 
     print(f"✅ {OUTPUT_FILE} 저장 완료")
-    print(f"📅 {data['dateLabel']}")
-    print(
-        f"🔄 전체 변경 {data['changes']}회 · "
-        f"변동률 {data['changeRate']}% {data['status']}"
-    )
+    print(f"📅 총 {len(data['days'])}일치 날씨 저장")
+
+    for index, day in enumerate(data["days"], start=1):
+        print(
+            f"{index}일차 · {day['dateLabel']} · "
+            f"전체 변경 {day['changes']}회 · "
+            f"변동률 {day['changeRate']}% {day['status']}"
+        )
 
 
 # ============================================================
@@ -315,18 +318,23 @@ async def main():
 
     # 게임 날짜는 오전 06:00 기준으로 변경
     if now.hour < 6:
-        today = now - timedelta(days=1)
+        base_date = now - timedelta(days=1)
     else:
-        today = now
+        base_date = now
 
-    tomorrow = today + timedelta(days=1)
+    # 7일치 게임 날짜를 만들기 위해
+    # 오늘부터 7일 뒤까지 총 8개의 실제 날짜가 필요함
+    dates = [
+        base_date + timedelta(days=i)
+        for i in range(8)
+    ]
 
     print()
     print("=" * 50)
-    print("Heartopia 웹사이트용 날씨 수집")
+    print("Heartopia 7일 날씨 수집")
     print("=" * 50)
-    print("오늘:", today.strftime("%Y-%m-%d"))
-    print("내일:", tomorrow.strftime("%Y-%m-%d"))
+    print("시작 날짜:", dates[0].strftime("%Y-%m-%d"))
+    print("마지막 날짜:", dates[6].strftime("%Y-%m-%d"))
     print()
 
     async with async_playwright() as p:
@@ -346,34 +354,65 @@ async def main():
                 timeout=60000,
             )
 
-            await select_date(page, today)
-            today_weather = await read_hourly_forecast(page)
+            # 실제 달력 날짜 8일치의 24시간 예보를 먼저 수집
+            weather_by_date = {}
 
-            if len(today_weather) != 24:
-                raise RuntimeError(
-                    f"오늘 날씨를 24시간 모두 읽지 못했습니다. "
-                    f"현재 {len(today_weather)}개"
+            for target_date in dates:
+                print(
+                    f"날씨 읽는 중: "
+                    f"{target_date.strftime('%Y-%m-%d')}"
                 )
 
-            print("✅ 오늘 날씨 읽기 완료")
+                await select_date(page, target_date)
+                hourly_weather = await read_hourly_forecast(page)
 
-            await select_date(page, tomorrow)
-            tomorrow_weather = await read_hourly_forecast(page)
+                if len(hourly_weather) != 24:
+                    raise RuntimeError(
+                        f"{target_date.strftime('%Y-%m-%d')} "
+                        f"날씨를 24시간 모두 읽지 못했습니다. "
+                        f"현재 {len(hourly_weather)}개"
+                    )
 
-            if len(tomorrow_weather) != 24:
-                raise RuntimeError(
-                    f"내일 날씨를 24시간 모두 읽지 못했습니다. "
-                    f"현재 {len(tomorrow_weather)}개"
+                weather_by_date[
+                    target_date.strftime("%Y-%m-%d")
+                ] = hourly_weather
+
+                print(
+                    f"✅ {target_date.strftime('%Y-%m-%d')} "
+                    f"날씨 읽기 완료"
                 )
 
-            print("✅ 내일 날씨 읽기 완료")
+            # 수집한 8일 데이터를 이용해
+            # 06:00 ~ 다음날 05:00 기준의 7일치 데이터를 만듦
+            days = []
 
-            data = build_weather_data(
-                today,
-                tomorrow,
-                today_weather,
-                tomorrow_weather,
-            )
+            for i in range(7):
+                today = dates[i]
+                tomorrow = dates[i + 1]
+
+                today_weather = weather_by_date[
+                    today.strftime("%Y-%m-%d")
+                ]
+                tomorrow_weather = weather_by_date[
+                    tomorrow.strftime("%Y-%m-%d")
+                ]
+
+                day_data = build_weather_data(
+                    today,
+                    tomorrow,
+                    today_weather,
+                    tomorrow_weather,
+                )
+
+                days.append(day_data)
+
+            data = {
+                "updated": datetime.now(KST).strftime(
+                    "%Y-%m-%d %H:%M"
+                ),
+                "updatedTime": datetime.now(KST).strftime("%H:%M"),
+                "days": days,
+            }
 
             save_weather_json(data)
 
