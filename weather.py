@@ -313,13 +313,14 @@ def save_weather_json(data):
 async def main():
     now = datetime.now(KST)
 
-# 게임 날짜는 오전 06:00 기준으로 변경
-if now.hour < 6:
-    today = now - timedelta(days=1)
-else:
-    today = now
+    # 게임 날짜는 오전 06:00 기준으로 변경
+    if now.hour < 6:
+        today = now - timedelta(days=1)
+    else:
+        today = now
 
-tomorrow = today + timedelta(days=1)
+    tomorrow = today + timedelta(days=1)
+
     print()
     print("=" * 50)
     print("Heartopia 웹사이트용 날씨 수집")
