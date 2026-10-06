@@ -253,11 +253,11 @@ def build_weather_data(today, tomorrow, today_weather, tomorrow_weather):
             "icon": weather_icon(weather),
             "changed": changed,
             "mark": "⭕" if changed else "❌",
-            "special": normalize_weather(weather) in [
-                "meteor shower",
-                "rainbow",
-                "aurora",
-            ],
+            "special": (
+                weather.lower().startswith("meteor shower")
+                or weather.lower().startswith("aurora")
+                or normalize_weather(weather) == "rainbow"
+            ),
         })
 
     change_rate = round((changed_count / 24) * 100, 1)
