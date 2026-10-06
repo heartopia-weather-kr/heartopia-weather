@@ -87,7 +87,49 @@ body {
   font-weight: 800;
   margin-bottom: 14px;
 }
+.date-navigation {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
 
+.date-center {
+  flex: 1;
+  min-width: 0;
+  text-align: center;
+}
+
+.date-center .date-title {
+  margin-bottom: 4px;
+}
+
+.date-position {
+  font-size: 12px;
+  font-weight: 600;
+  color: #697386;
+}
+
+.date-arrow {
+  width: 42px;
+  height: 42px;
+  flex: 0 0 42px;
+  border: none;
+  border-radius: 50%;
+  background: #f3f6fa;
+  color: #253046;
+  font-size: 28px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.date-arrow:disabled {
+  opacity: 0.25;
+  cursor: default;
+}
 .summary-main {
   font-size: 20px;
   font-weight: 800;
@@ -357,11 +399,31 @@ footer {
 
 <section class="summary">
 
-  <div class="date-title">
-  📅 10월 6일 ~ 10월 7일
-  <span style="font-size:13px; font-weight:500; color:#697386;">
-    · 🕕 06:00 ~ 다음날 05:00
-  </span>
+  <div class="date-navigation">
+  <button
+    type="button"
+    class="date-arrow"
+    id="prevDateButton"
+    aria-label="이전 날짜">
+    ‹
+  </button>
+
+  <div class="date-center">
+    <div class="date-title">
+      📅 10월 6일 ~ 10월 7일
+    </div>
+    <div class="date-position" id="datePosition">
+      오늘 · 1 / 7
+    </div>
+  </div>
+
+  <button
+    type="button"
+    class="date-arrow"
+    id="nextDateButton"
+    aria-label="다음 날짜">
+    ›
+  </button>
 </div>
 
 <div class="summary-main">
@@ -931,119 +993,261 @@ async function loadWeatherData() {
 
     const data = await response.json();
 
-    /* 날짜 */
-    const dateTitle =
-      document.querySelector(".date-title");
-
-    if (dateTitle) {
-      dateTitle.innerHTML =
-        `📅 ${data.dateLabel}`;
+    if (!Array.isArray(data.days) || data.days.length === 0) {
+      throw new Error("7일 날씨 데이터가 없습니다.");
     }
 
+    let currentDayIndex = 0;
 
-    /* 전체 변경 횟수 / 변동률 / 상태 */
-    const summaryMain =
-      document.querySelector(".summary-main");
+    const prevDateButton =
+      document.querySelector("#prevDateButton");
 
-    if (summaryMain) {
-      summaryMain.innerHTML =
-        `🔄 전체 변경 ${data.changes}회 ·
-         변동률 ${data.changeRate}%
-         <span class="rate-status">${data.status}</span>`;
+    const nextDateButton =
+      document.querySelector("#nextDateButton");
+
+    const datePosition =
+      document.querySelector("#datePosition");
+
+    const dateNavigation =
+      document.querySelector(".date-navigation");
+
+    function getSpecialWeather(day) {
+      const specials = [];
+
+      day.weather.forEach((weather) => {
+        if (!weather.special) return;
+
+        const name = weather.name;
+
+        if (
+          name.includes("유성우") &&
+          !specials.includes("🌠")
+        ) {
+          specials.push("🌠");
+        }
+
+        if (
+          name.includes("무지개") &&
+          !specials.includes("🌈")
+        ) {
+          specials.push("🌈");
+        }
+
+        if (
+          name.includes("오로라") &&
+          !specials.includes("🌌")
+        ) {
+          specials.push("🌌");
+        }
+      });
+
+      return specials.join(" ");
     }
 
+    function renderDay(index) {
+      if (index < 0 || index >= data.days.length) {
+        return;
+      }
 
-    /* 마지막 업데이트 시간 */
-    const statusText =
-      document.querySelector(".status-text");
+      currentDayIndex = index;
 
-    if (statusText) {
-      statusText.textContent =
-        `정상 작동 중 · 마지막 업데이트 ${data.updatedTime}`;
+      const day = data.days[index];
+
+      /* 날짜 */
+      const dateTitle =
+        document.querySelector(".date-title");
+
+      if (dateTitle) {
+        const specialWeather = getSpecialWeather(day);
+
+        dateTitle.textContent =
+          `📅 ${day.dateLabel}` +
+          (specialWeather ? ` ${specialWeather}` : "");
+      }
+
+      /* 현재 날짜 위치 */
+      if (datePosition) {
+        let positionLabel = `${index + 1} / ${data.days.length}`;
+
+        if (index === 0) {
+          positionLabel =
+            `오늘 · ${index + 1} / ${data.days.length}`;
+        } else if (index === 1) {
+          positionLabel =
+            `내일 · ${index + 1} / ${data.days.length}`;
+        }
+
+        datePosition.textContent = positionLabel;
+      }
+
+      /* 첫날 / 마지막 날 화살표 비활성화 */
+      if (prevDateButton) {
+        prevDateButton.disabled = index === 0;
+      }
+
+      if (nextDateButton) {
+        nextDateButton.disabled =
+          index === data.days.length - 1;
+      }
+
+      /* 전체 변경 횟수 / 변동률 / 상태 */
+      const summaryMain =
+        document.querySelector(".summary-main");
+
+      if (summaryMain) {
+        summaryMain.innerHTML =
+          `🔄 전체 변경 ${day.changes}회 ·
+           변동률 ${day.changeRate}%
+           <span class="rate-status">${day.status}</span>`;
+      }
+
+      /* 마지막 업데이트 시간 */
+      const statusText =
+        document.querySelector(".status-text");
+
+      if (statusText) {
+        statusText.textContent =
+          `정상 작동 중 · 마지막 업데이트 ${data.updatedTime}`;
+      }
+
+      /* 24시간 날씨 */
+      const rows =
+        document.querySelectorAll(
+          "#verticalView .weather-row"
+        );
+
+      day.weather.forEach((weather, weatherIndex) => {
+        const row = rows[weatherIndex];
+
+        if (!row) return;
+
+        const change =
+          row.querySelector(".change");
+
+        const time =
+          row.querySelector(".time");
+
+        const icon =
+          row.querySelector(".weather-icon");
+
+        const name =
+          row.querySelector(".weather-name");
+
+        if (change) {
+          change.textContent = weather.mark;
+        }
+
+        if (time) {
+          time.textContent = weather.time;
+        }
+
+        if (icon) {
+          icon.textContent = weather.icon;
+        }
+
+        if (name) {
+          name.textContent = weather.name;
+        }
+
+        if (weather.special) {
+          row.classList.add("special");
+        } else {
+          row.classList.remove("special");
+        }
+      });
+
+      /* 시간대별 변경 횟수 */
+      const periods =
+        document.querySelectorAll(
+          "#verticalView .period"
+        );
+
+      day.periods.forEach((periodData, periodIndex) => {
+        const period = periods[periodIndex];
+
+        if (!period) return;
+
+        const changeText =
+          period.querySelector(".period-change");
+
+        if (changeText) {
+          changeText.textContent =
+            `변경 ${periodData.changes}회`;
+        }
+      });
+
+      /*
+        세로 카드 내용을 실제 데이터로 바꾼 뒤
+        슬라이드 카드를 다시 생성
+      */
+      buildSlides();
+
+      setView(savedView);
+
+      goSlide(0);
     }
 
+    /* 이전 날짜 */
+    if (prevDateButton) {
+      prevDateButton.addEventListener("click", () => {
+        renderDay(currentDayIndex - 1);
+      });
+    }
 
-    /* 24시간 날씨 */
-    const rows =
-      document.querySelectorAll(
-        "#verticalView .weather-row"
-      );
-
-    data.weather.forEach((weather, index) => {
-      const row = rows[index];
-
-      if (!row) return;
-
-      const change =
-        row.querySelector(".change");
-
-      const time =
-        row.querySelector(".time");
-
-      const icon =
-        row.querySelector(".weather-icon");
-
-      const name =
-        row.querySelector(".weather-name");
-
-      if (change) {
-        change.textContent = weather.mark;
-      }
-
-      if (time) {
-        time.textContent = weather.time;
-      }
-
-      if (icon) {
-        icon.textContent = weather.icon;
-      }
-
-      if (name) {
-        name.textContent = weather.name;
-      }
-
-      /* 특수 날씨 강조 */
-      if (weather.special) {
-        row.classList.add("special");
-      } else {
-        row.classList.remove("special");
-      }
-    });
-
-
-    /* 각 시간대 변경 횟수 */
-    const periods =
-      document.querySelectorAll(
-        "#verticalView .period"
-      );
-
-    data.periods.forEach((periodData, index) => {
-      const period = periods[index];
-
-      if (!period) return;
-
-      const changeText =
-        period.querySelector(".period-change");
-
-      if (changeText) {
-        changeText.textContent =
-          `변경 ${periodData.changes}회`;
-      }
-    });
-
+    /* 다음 날짜 */
+    if (nextDateButton) {
+      nextDateButton.addEventListener("click", () => {
+        renderDay(currentDayIndex + 1);
+      });
+    }
 
     /*
-      세로 카드 내용을 실제 데이터로 바꾼 뒤
-      슬라이드 카드를 다시 생성
+      모바일 날짜 좌우 스와이프
+
+      왼쪽으로 밀기  → 다음 날짜
+      오른쪽으로 밀기 → 이전 날짜
     */
-    buildSlides();
+    if (dateNavigation) {
+      let touchStartX = 0;
+      let touchEndX = 0;
 
-    setView(savedView);
+      dateNavigation.addEventListener(
+        "touchstart",
+        (event) => {
+          touchStartX =
+            event.changedTouches[0].screenX;
+        },
+        { passive: true }
+      );
 
-    goSlide(0);
+      dateNavigation.addEventListener(
+        "touchend",
+        (event) => {
+          touchEndX =
+            event.changedTouches[0].screenX;
+
+          const distance =
+            touchEndX - touchStartX;
+
+          const swipeDistance = 40;
+
+          if (distance < -swipeDistance) {
+            renderDay(currentDayIndex + 1);
+          }
+
+          if (distance > swipeDistance) {
+            renderDay(currentDayIndex - 1);
+          }
+        },
+        { passive: true }
+      );
+    }
+
+    /* 처음에는 현재 게임 날짜 표시 */
+    renderDay(0);
 
     console.log(
-      "Heartopia 날씨 업데이트 완료:",
+      "Heartopia 7일 날씨 업데이트 완료:",
       data.updated
     );
 
