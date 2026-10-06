@@ -104,11 +104,7 @@ body {
   margin-bottom: 4px;
 }
 
-.date-position {
-  font-size: 12px;
-  font-weight: 600;
-  color: #697386;
-}
+
 
 .date-arrow {
   width: 42px;
@@ -411,10 +407,7 @@ footer {
   <div class="date-center">
     <div class="date-title">
       📅 10월 6일 ~ 10월 7일
-    </div>
-    <div class="date-position" id="datePosition">
-      오늘 · 1 / 7
-    </div>
+
   </div>
 
   <button
@@ -1005,8 +998,7 @@ async function loadWeatherData() {
     const nextDateButton =
       document.querySelector("#nextDateButton");
 
-    const datePosition =
-      document.querySelector("#datePosition");
+
 
     const dateNavigation =
       document.querySelector(".date-navigation");
@@ -1065,20 +1057,7 @@ async function loadWeatherData() {
           (specialWeather ? ` ${specialWeather}` : "");
       }
 
-      /* 현재 날짜 위치 */
-      if (datePosition) {
-        let positionLabel = `${index + 1} / ${data.days.length}`;
 
-        if (index === 0) {
-          positionLabel =
-            `오늘 · ${index + 1} / ${data.days.length}`;
-        } else if (index === 1) {
-          positionLabel =
-            `내일 · ${index + 1} / ${data.days.length}`;
-        }
-
-        datePosition.textContent = positionLabel;
-      }
 
       /* 첫날 / 마지막 날 화살표 비활성화 */
       if (prevDateButton) {
