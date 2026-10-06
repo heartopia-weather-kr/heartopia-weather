@@ -1,242 +1,332 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>두근두근타운 날씨</title>
+<title>두근두근타운 날씨</title>
 
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+<style>
+* {
+  box-sizing: border-box;
+}
 
-    body {
-      margin: 0;
-      font-family:
-        -apple-system,
-        BlinkMacSystemFont,
-        "Segoe UI",
-        "Noto Sans KR",
-        sans-serif;
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont,
+               "Segoe UI", "Noto Sans KR", sans-serif;
+  background: #f5f7fb;
+  color: #253047;
+}
 
-      background: #f5f7fb;
-      color: #253047;
-    }
+.container {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 28px 16px 60px;
+}
 
-    .container {
-      max-width: 760px;
-      margin: 0 auto;
-      padding: 28px 16px 60px;
-    }
 
-    /* 상단 제목 */
+/* =========================
+   제목
+========================= */
 
-    .header {
-      text-align: center;
-      margin-bottom: 22px;
-    }
+.header {
+  text-align: center;
+  margin-bottom: 18px;
+}
 
-    .header h1 {
-      margin: 0;
-      font-size: 30px;
-      font-weight: 800;
-    }
+.header h1 {
+  margin: 0;
+  font-size: 30px;
+  font-weight: 800;
+}
 
-    .header p {
-      margin: 8px 0 0;
-      color: #7b8497;
-      font-size: 14px;
-    }
+.header p {
+  margin: 8px 0 0;
+  color: #7b8497;
+  font-size: 14px;
+}
 
-    /* 업데이트 상태 */
 
-    .update-status {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 7px;
+/* =========================
+   작동 상태
+========================= */
 
-      margin: 18px auto 22px;
-      font-size: 13px;
-      color: #667085;
-    }
+.update-status {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 7px;
+  margin: 18px auto 22px;
+  font-size: 13px;
+  color: #667085;
+}
 
-    .status-dot {
-      width: 9px;
-      height: 9px;
-      border-radius: 50%;
-      background: #22c55e;
-    }
+.status-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #22c55e;
+}
 
-    /* 요약 카드 */
 
-    .summary {
-      background: white;
-      border-radius: 18px;
-      padding: 20px;
+/* =========================
+   요약 카드
+========================= */
 
-      box-shadow:
-        0 5px 20px rgba(35, 45, 70, 0.07);
+.summary {
+  background: white;
+  border-radius: 18px;
+  padding: 20px;
+  box-shadow: 0 5px 20px rgba(35,45,70,.07);
+  margin-bottom: 16px;
+}
 
-      margin-bottom: 18px;
-    }
+.date-title {
+  font-size: 18px;
+  font-weight: 800;
+  margin-bottom: 14px;
+}
 
-    .summary-title {
-      font-size: 13px;
-      color: #8a94a6;
-      margin-bottom: 8px;
-    }
+.summary-main {
+  font-size: 20px;
+  font-weight: 800;
+  line-height: 1.6;
+}
 
-    .summary-main {
-      font-size: 21px;
-      font-weight: 800;
-    }
+.rate-status {
+  white-space: nowrap;
+}
 
-    .summary-sub {
-      margin-top: 8px;
-      color: #697386;
-      font-size: 14px;
-    }
+.summary-sub {
+  margin-top: 6px;
+  color: #697386;
+  font-size: 13px;
+}
 
-    /* 범례 */
 
-    .legend {
-      display: flex;
-      gap: 16px;
-      flex-wrap: wrap;
+/* =========================
+   범례
+========================= */
 
-      font-size: 13px;
-      color: #6b7280;
+.legend {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  font-size: 13px;
+  color: #6b7280;
+  margin: 0 4px 14px;
+}
 
-      margin: 0 4px 20px;
-    }
 
-    /* 시간대 카드 */
+/* =========================
+   보기 방식 선택
+========================= */
 
-    .period {
-      background: white;
-      border-radius: 18px;
-      overflow: hidden;
+.view-controls {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
 
-      box-shadow:
-        0 5px 20px rgba(35, 45, 70, 0.06);
+.view-button {
+  flex: 1;
+  border: 1px solid #e1e5eb;
+  background: white;
+  color: #697386;
+  border-radius: 12px;
+  padding: 10px 8px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
 
-      margin-bottom: 16px;
-    }
+.view-button.active {
+  background: #253047;
+  color: white;
+  border-color: #253047;
+}
 
-    .period-header {
-      padding: 16px 18px;
 
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+/* =========================
+   시간대 카드
+========================= */
 
-      border-bottom: 1px solid #eef1f5;
-    }
+.period {
+  background: white;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 5px 20px rgba(35,45,70,.06);
+  margin-bottom: 16px;
+}
 
-    .period-title {
-      font-size: 16px;
-      font-weight: 800;
-    }
+.period-header {
+  padding: 16px 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #eef1f5;
+}
 
-    .period-change {
-      font-size: 12px;
-      color: #7b8497;
+.period-title {
+  font-size: 16px;
+  font-weight: 800;
+}
 
-      background: #f4f6f9;
-      padding: 5px 9px;
-      border-radius: 20px;
-    }
+.period-change {
+  font-size: 14px;
+  font-weight: 700;
+  color: #667085;
+  background: #f4f6f9;
+  padding: 6px 10px;
+  border-radius: 20px;
+}
 
-    /* 날씨 한 줄 */
 
-    .weather-row {
-      display: grid;
+/* =========================
+   날씨 행
+========================= */
 
-      grid-template-columns:
-        36px 70px 45px 1fr;
+.weather-row {
+  display: grid;
+  grid-template-columns: 36px 70px 45px 1fr;
+  align-items: center;
+  min-height: 52px;
+  padding: 0 18px;
+  border-bottom: 1px solid #f1f3f6;
+}
 
-      align-items: center;
+.weather-row:last-child {
+  border-bottom: none;
+}
 
-      min-height: 52px;
-      padding: 0 18px;
+.change {
+  font-size: 18px;
+  text-align: center;
+}
 
-      border-bottom: 1px solid #f1f3f6;
-    }
+.time {
+  font-weight: 700;
+  font-size: 14px;
+}
 
-    .weather-row:last-child {
-      border-bottom: none;
-    }
+.weather-icon {
+  font-size: 21px;
+  text-align: center;
+}
 
-    .change {
-      font-size: 18px;
-      text-align: center;
-    }
+.weather-name {
+  font-size: 14px;
+}
 
-    .time {
-      font-weight: 700;
-      font-size: 14px;
-    }
 
-    .weather-icon {
-      font-size: 21px;
-      text-align: center;
-    }
+/* =========================
+   특수 날씨
+========================= */
 
-    .weather-name {
-      font-size: 14px;
-    }
+.special {
+  background: linear-gradient(90deg,#fff8e8,#ffffff);
+}
 
-    /* 특수 날씨 */
+.special .weather-name {
+  font-weight: 800;
+}
 
-    .special {
-      background:
-        linear-gradient(
-          90deg,
-          #fff8e8,
-          #ffffff
-        );
-    }
 
-    .special .weather-name {
-      font-weight: 800;
-    }
+/* =========================
+   슬라이드 모드
+========================= */
 
-    /* 하단 */
+.slider-wrapper {
+  display: none;
+  overflow: hidden;
+  touch-action: pan-y;
+}
 
-    footer {
-      text-align: center;
-      color: #9aa2b1;
-      font-size: 12px;
-      margin-top: 28px;
-      line-height: 1.7;
-    }
+.slider-track {
+  display: flex;
+  transition: transform .28s ease;
+}
 
-    /* 휴대폰 */
+.slide {
+  min-width: 100%;
+}
 
-    @media (max-width: 520px) {
+.slide .period {
+  margin-bottom: 4px;
+}
 
-      .container {
-        padding: 22px 12px 45px;
-      }
+.slider-dots {
+  display: none;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin: 14px 0 20px;
+}
 
-      .header h1 {
-        font-size: 25px;
-      }
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #d4d9e2;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
 
-      .weather-row {
-        grid-template-columns:
-          30px 62px 38px 1fr;
+.dot.active {
+  width: 10px;
+  height: 10px;
+  background: #4b5568;
+}
 
-        padding: 0 12px;
-      }
 
-      .summary-main {
-        font-size: 19px;
-      }
-    }
-  </style>
+/* =========================
+   하단
+========================= */
+
+footer {
+  text-align: center;
+  color: #9aa2b1;
+  font-size: 12px;
+  margin-top: 28px;
+  line-height: 1.7;
+}
+
+
+/* =========================
+   모바일
+========================= */
+
+@media (max-width: 520px) {
+
+  .container {
+    padding: 22px 12px 45px;
+  }
+
+  .header h1 {
+    font-size: 25px;
+  }
+
+  .date-title {
+    font-size: 17px;
+  }
+
+  .summary-main {
+    font-size: 18px;
+  }
+
+  .weather-row {
+    grid-template-columns: 30px 62px 38px 1fr;
+    padding: 0 12px;
+  }
+
+  .period-change {
+    font-size: 13px;
+  }
+}
+
+</style>
 </head>
 
 
@@ -244,389 +334,587 @@
 
 <div class="container">
 
-  <!-- 제목 -->
 
-  <header class="header">
+<header class="header">
 
-    <h1>🌤️ 두근두근타운 날씨</h1>
+  <h1>🌤️ 두근두근타운 날씨</h1>
 
-    <p>
-      Heartopia 시간별 날씨 예보
-    </p>
+  <p>Heartopia 시간별 날씨 예보</p>
 
-  </header>
+</header>
 
 
-  <!-- 업데이트 상태 -->
+<div class="update-status">
 
-  <div class="update-status">
+  <span class="status-dot"></span>
 
-    <span class="status-dot"></span>
-
-    <span>
-      정상 작동 중 · 마지막 업데이트 10:30
-    </span>
-
-  </div>
-
-
-  <!-- 전체 요약 -->
-
-  <section class="summary">
-
-    <div class="summary-title">
-      오늘의 날씨 변동
-    </div>
-
-    <div class="summary-main">
-      🔄 전체 변경 8회 · 변동률 33.3%
-    </div>
-
-    <div class="summary-sub">
-      🟡 보통 · 10월 6일 06:00 ~ 10월 7일 05:00
-    </div>
-
-  </section>
-
-
-  <!-- 설명 -->
-
-  <div class="legend">
-
-    <span>⭕ 날씨 변경</span>
-
-    <span>❌ 이전 시간과 동일</span>
-
-  </div>
-
-
-  <!-- 오전 -->
-
-  <section class="period">
-
-    <div class="period-header">
-
-      <div class="period-title">
-        🌅 06:00 ~ 11:00
-      </div>
-
-      <div class="period-change">
-        🔄 변경 2회
-      </div>
-
-    </div>
-
-
-    <div class="weather-row">
-
-      <div class="change">⭕</div>
-      <div class="time">06:00</div>
-      <div class="weather-icon">☀️</div>
-      <div class="weather-name">맑음</div>
-
-    </div>
-
-
-    <div class="weather-row">
-
-      <div class="change">❌</div>
-      <div class="time">07:00</div>
-      <div class="weather-icon">☀️</div>
-      <div class="weather-name">맑음</div>
-
-    </div>
-
-
-    <div class="weather-row">
-
-      <div class="change">⭕</div>
-      <div class="time">08:00</div>
-      <div class="weather-icon">🌧️</div>
-      <div class="weather-name">보통 비</div>
-
-    </div>
-
-
-    <div class="weather-row">
-
-      <div class="change">❌</div>
-      <div class="time">09:00</div>
-      <div class="weather-icon">🌧️</div>
-      <div class="weather-name">보통 비</div>
-
-    </div>
-
-
-    <div class="weather-row">
-
-      <div class="change">❌</div>
-      <div class="time">10:00</div>
-      <div class="weather-icon">🌧️</div>
-      <div class="weather-name">보통 비</div>
-
-    </div>
-
-
-    <div class="weather-row">
-
-      <div class="change">❌</div>
-      <div class="time">11:00</div>
-      <div class="weather-icon">🌧️</div>
-      <div class="weather-name">보통 비</div>
-
-    </div>
-
-  </section>
-
-
-  <!-- 오후 -->
-
-  <section class="period">
-
-    <div class="period-header">
-
-      <div class="period-title">
-        ☀️ 12:00 ~ 17:00
-      </div>
-
-      <div class="period-change">
-        🔄 변경 2회
-      </div>
-
-    </div>
-
-
-    <div class="weather-row">
-
-      <div class="change">⭕</div>
-      <div class="time">12:00</div>
-      <div class="weather-icon">☁️</div>
-      <div class="weather-name">흐림</div>
-
-    </div>
-
-
-    <div class="weather-row">
-
-      <div class="change">❌</div>
-      <div class="time">13:00</div>
-      <div class="weather-icon">☁️</div>
-      <div class="weather-name">흐림</div>
-
-    </div>
-
-
-    <div class="weather-row special">
-
-      <div class="change">⭕</div>
-      <div class="time">14:00</div>
-      <div class="weather-icon">🌈</div>
-      <div class="weather-name">무지개</div>
-
-    </div>
-
-
-    <div class="weather-row">
-
-      <div class="change">❌</div>
-      <div class="time">15:00</div>
-      <div class="weather-icon">☀️</div>
-      <div class="weather-name">맑음</div>
-
-    </div>
-
-
-    <div class="weather-row">
-
-      <div class="change">❌</div>
-      <div class="time">16:00</div>
-      <div class="weather-icon">☀️</div>
-      <div class="weather-name">맑음</div>
-
-    </div>
-
-
-    <div class="weather-row">
-
-      <div class="change">❌</div>
-      <div class="time">17:00</div>
-      <div class="weather-icon">☀️</div>
-      <div class="weather-name">맑음</div>
-
-    </div>
-
-  </section>
-
-
-  <!-- 저녁 -->
-
-  <section class="period">
-
-    <div class="period-header">
-
-      <div class="period-title">
-        🌙 18:00 ~ 23:00
-      </div>
-
-      <div class="period-change">
-        🔄 변경 2회
-      </div>
-
-    </div>
-
-
-    <div class="weather-row">
-
-      <div class="change">⭕</div>
-      <div class="time">18:00</div>
-      <div class="weather-icon">🌤️</div>
-      <div class="weather-name">쾌청</div>
-
-    </div>
-
-
-    <div class="weather-row">
-
-      <div class="change">❌</div>
-      <div class="time">19:00</div>
-      <div class="weather-icon">🌤️</div>
-      <div class="weather-name">쾌청</div>
-
-    </div>
-
-
-    <div class="weather-row">
-
-      <div class="change">❌</div>
-      <div class="time">20:00</div>
-      <div class="weather-icon">🌤️</div>
-      <div class="weather-name">쾌청</div>
-
-    </div>
-
-
-    <div class="weather-row special">
-
-      <div class="change">⭕</div>
-      <div class="time">21:00</div>
-      <div class="weather-icon">☄️</div>
-      <div class="weather-name">유성우</div>
-
-    </div>
-
-
-    <div class="weather-row">
-
-      <div class="change">❌</div>
-      <div class="time">22:00</div>
-      <div class="weather-icon">🌤️</div>
-      <div class="weather-name">쾌청</div>
-
-    </div>
-
-
-    <div class="weather-row">
-
-      <div class="change">❌</div>
-      <div class="time">23:00</div>
-      <div class="weather-icon">🌤️</div>
-      <div class="weather-name">쾌청</div>
-
-    </div>
-
-  </section>
-
-
-  <!-- 다음날 -->
-
-  <section class="period">
-
-    <div class="period-header">
-
-      <div class="period-title">
-        🌌 다음날 00:00 ~ 05:00
-      </div>
-
-      <div class="period-change">
-        🔄 변경 2회
-      </div>
-
-    </div>
-
-
-    <div class="weather-row">
-
-      <div class="change">⭕</div>
-      <div class="time">00:00</div>
-      <div class="weather-icon">🌙</div>
-      <div class="weather-name">달빛 비</div>
-
-    </div>
-
-
-    <div class="weather-row">
-
-      <div class="change">❌</div>
-      <div class="time">01:00</div>
-      <div class="weather-icon">🌙</div>
-      <div class="weather-name">달빛 비</div>
-
-    </div>
-
-
-    <div class="weather-row">
-
-      <div class="change">❌</div>
-      <div class="time">02:00</div>
-      <div class="weather-icon">🌙</div>
-      <div class="weather-name">달빛 비</div>
-
-    </div>
-
-
-    <div class="weather-row special">
-
-      <div class="change">⭕</div>
-      <div class="time">03:00</div>
-      <div class="weather-icon">🌌</div>
-      <div class="weather-name">오로라</div>
-
-    </div>
-
-
-    <div class="weather-row">
-
-      <div class="change">❌</div>
-      <div class="time">04:00</div>
-      <div class="weather-icon">☁️</div>
-      <div class="weather-name">흐림</div>
-
-    </div>
-
-
-    <div class="weather-row">
-
-      <div class="change">❌</div>
-      <div class="time">05:00</div>
-      <div class="weather-icon">☁️</div>
-      <div class="weather-name">흐림</div>
-
-    </div>
-
-  </section>
-
-
-  <footer>
-
-    Heartopia Weather KR
-    <br>
-
-    예보 정보는 게임 내 실제 날씨와
-    차이가 발생할 수 있습니다.
-
-  </footer>
+  <span>
+    정상 작동 중 · 마지막 업데이트 10:30
+  </span>
 
 </div>
+
+
+<section class="summary">
+
+  <div class="date-title">
+    📅 10월 6일 ~ 10월 7일
+  </div>
+
+  <div class="summary-main">
+    🔄 전체 변경 8회 ·
+    변동률 33.3%
+    <span class="rate-status">🟡 보통</span>
+  </div>
+
+  <div class="summary-sub">
+    06:00 ~ 다음날 05:00 기준
+  </div>
+
+</section>
+
+
+<div class="legend">
+
+  <span>⭕ 날씨 변경</span>
+
+  <span>❌ 이전 시간과 동일</span>
+
+</div>
+
+
+<div class="view-controls">
+
+  <button
+    id="verticalButton"
+    class="view-button active"
+    onclick="setView('vertical')">
+
+    ☰ 세로로 보기
+
+  </button>
+
+
+  <button
+    id="sliderButton"
+    class="view-button"
+    onclick="setView('slider')">
+
+    ⇆ 넘겨서 보기
+
+  </button>
+
+</div>
+
+
+
+<!-- =========================
+     세로 보기
+========================= -->
+
+<div id="verticalView">
+
+
+<section class="period">
+
+<div class="period-header">
+
+  <div class="period-title">
+    🌅 06:00 ~ 11:00
+  </div>
+
+  <div class="period-change">
+    🔄 변경 2회
+  </div>
+
+</div>
+
+<div class="weather-row">
+<div class="change">⭕</div>
+<div class="time">06:00</div>
+<div class="weather-icon">☀️</div>
+<div class="weather-name">맑음</div>
+</div>
+
+<div class="weather-row">
+<div class="change">❌</div>
+<div class="time">07:00</div>
+<div class="weather-icon">☀️</div>
+<div class="weather-name">맑음</div>
+</div>
+
+<div class="weather-row">
+<div class="change">⭕</div>
+<div class="time">08:00</div>
+<div class="weather-icon">🌧️</div>
+<div class="weather-name">보통 비</div>
+</div>
+
+<div class="weather-row">
+<div class="change">❌</div>
+<div class="time">09:00</div>
+<div class="weather-icon">🌧️</div>
+<div class="weather-name">보통 비</div>
+</div>
+
+<div class="weather-row">
+<div class="change">❌</div>
+<div class="time">10:00</div>
+<div class="weather-icon">🌧️</div>
+<div class="weather-name">보통 비</div>
+</div>
+
+<div class="weather-row">
+<div class="change">❌</div>
+<div class="time">11:00</div>
+<div class="weather-icon">🌧️</div>
+<div class="weather-name">보통 비</div>
+</div>
+
+</section>
+
+
+
+<section class="period">
+
+<div class="period-header">
+
+<div class="period-title">
+☀️ 12:00 ~ 17:00
+</div>
+
+<div class="period-change">
+🔄 변경 2회
+</div>
+
+</div>
+
+<div class="weather-row">
+<div class="change">⭕</div>
+<div class="time">12:00</div>
+<div class="weather-icon">☁️</div>
+<div class="weather-name">흐림</div>
+</div>
+
+<div class="weather-row">
+<div class="change">❌</div>
+<div class="time">13:00</div>
+<div class="weather-icon">☁️</div>
+<div class="weather-name">흐림</div>
+</div>
+
+<div class="weather-row special">
+<div class="change">⭕</div>
+<div class="time">14:00</div>
+<div class="weather-icon">🌈</div>
+<div class="weather-name">무지개</div>
+</div>
+
+<div class="weather-row">
+<div class="change">❌</div>
+<div class="time">15:00</div>
+<div class="weather-icon">☀️</div>
+<div class="weather-name">맑음</div>
+</div>
+
+<div class="weather-row">
+<div class="change">❌</div>
+<div class="time">16:00</div>
+<div class="weather-icon">☀️</div>
+<div class="weather-name">맑음</div>
+</div>
+
+<div class="weather-row">
+<div class="change">❌</div>
+<div class="time">17:00</div>
+<div class="weather-icon">☀️</div>
+<div class="weather-name">맑음</div>
+</div>
+
+</section>
+
+
+
+<section class="period">
+
+<div class="period-header">
+
+<div class="period-title">
+🌙 18:00 ~ 23:00
+</div>
+
+<div class="period-change">
+🔄 변경 2회
+</div>
+
+</div>
+
+<div class="weather-row">
+<div class="change">⭕</div>
+<div class="time">18:00</div>
+<div class="weather-icon">🌤️</div>
+<div class="weather-name">쾌청</div>
+</div>
+
+<div class="weather-row">
+<div class="change">❌</div>
+<div class="time">19:00</div>
+<div class="weather-icon">🌤️</div>
+<div class="weather-name">쾌청</div>
+</div>
+
+<div class="weather-row">
+<div class="change">❌</div>
+<div class="time">20:00</div>
+<div class="weather-icon">🌤️</div>
+<div class="weather-name">쾌청</div>
+</div>
+
+<div class="weather-row special">
+<div class="change">⭕</div>
+<div class="time">21:00</div>
+<div class="weather-icon">☄️</div>
+<div class="weather-name">유성우</div>
+</div>
+
+<div class="weather-row">
+<div class="change">❌</div>
+<div class="time">22:00</div>
+<div class="weather-icon">🌤️</div>
+<div class="weather-name">쾌청</div>
+</div>
+
+<div class="weather-row">
+<div class="change">❌</div>
+<div class="time">23:00</div>
+<div class="weather-icon">🌤️</div>
+<div class="weather-name">쾌청</div>
+</div>
+
+</section>
+
+
+
+<section class="period">
+
+<div class="period-header">
+
+<div class="period-title">
+🌌 다음날 00:00 ~ 05:00
+</div>
+
+<div class="period-change">
+🔄 변경 2회
+</div>
+
+</div>
+
+<div class="weather-row">
+<div class="change">⭕</div>
+<div class="time">00:00</div>
+<div class="weather-icon">🌙</div>
+<div class="weather-name">달빛 비</div>
+</div>
+
+<div class="weather-row">
+<div class="change">❌</div>
+<div class="time">01:00</div>
+<div class="weather-icon">🌙</div>
+<div class="weather-name">달빛 비</div>
+</div>
+
+<div class="weather-row">
+<div class="change">❌</div>
+<div class="time">02:00</div>
+<div class="weather-icon">🌙</div>
+<div class="weather-name">달빛 비</div>
+</div>
+
+<div class="weather-row special">
+<div class="change">⭕</div>
+<div class="time">03:00</div>
+<div class="weather-icon">🌌</div>
+<div class="weather-name">오로라</div>
+</div>
+
+<div class="weather-row">
+<div class="change">❌</div>
+<div class="time">04:00</div>
+<div class="weather-icon">☁️</div>
+<div class="weather-name">흐림</div>
+</div>
+
+<div class="weather-row">
+<div class="change">❌</div>
+<div class="time">05:00</div>
+<div class="weather-icon">☁️</div>
+<div class="weather-name">흐림</div>
+</div>
+
+</section>
+
+
+</div>
+
+
+
+<!-- =========================
+     슬라이드 보기
+========================= -->
+
+<div id="sliderView" class="slider-wrapper">
+
+<div id="sliderTrack" class="slider-track"></div>
+
+</div>
+
+
+<div id="sliderDots" class="slider-dots">
+
+<button class="dot active" onclick="goSlide(0)"></button>
+<button class="dot" onclick="goSlide(1)"></button>
+<button class="dot" onclick="goSlide(2)"></button>
+<button class="dot" onclick="goSlide(3)"></button>
+
+</div>
+
+
+
+<footer>
+
+Heartopia Weather KR
+<br>
+
+예보 정보는 게임 내 실제 날씨와
+차이가 발생할 수 있습니다.
+
+</footer>
+
+
+</div>
+
+
+
+<script>
+
+let currentSlide = 0;
+let startX = 0;
+
+
+/* 세로 카드들을 이용해
+   슬라이드 카드 자동 생성 */
+
+function buildSlides() {
+
+  const vertical =
+    document.querySelectorAll(
+      "#verticalView .period"
+    );
+
+  const track =
+    document.getElementById(
+      "sliderTrack"
+    );
+
+  track.innerHTML = "";
+
+  vertical.forEach(period => {
+
+    const slide =
+      document.createElement("div");
+
+    slide.className = "slide";
+
+    slide.appendChild(
+      period.cloneNode(true)
+    );
+
+    track.appendChild(slide);
+
+  });
+
+}
+
+
+function setView(type) {
+
+  const vertical =
+    document.getElementById(
+      "verticalView"
+    );
+
+  const slider =
+    document.getElementById(
+      "sliderView"
+    );
+
+  const dots =
+    document.getElementById(
+      "sliderDots"
+    );
+
+  const verticalButton =
+    document.getElementById(
+      "verticalButton"
+    );
+
+  const sliderButton =
+    document.getElementById(
+      "sliderButton"
+    );
+
+
+  if (type === "slider") {
+
+    vertical.style.display = "none";
+
+    slider.style.display = "block";
+
+    dots.style.display = "flex";
+
+    verticalButton.classList.remove(
+      "active"
+    );
+
+    sliderButton.classList.add(
+      "active"
+    );
+
+  }
+
+  else {
+
+    vertical.style.display = "block";
+
+    slider.style.display = "none";
+
+    dots.style.display = "none";
+
+    sliderButton.classList.remove(
+      "active"
+    );
+
+    verticalButton.classList.add(
+      "active"
+    );
+
+  }
+
+
+  localStorage.setItem(
+    "heartopiaView",
+    type
+  );
+
+}
+
+
+function goSlide(index) {
+
+  currentSlide = index;
+
+  const track =
+    document.getElementById(
+      "sliderTrack"
+    );
+
+  track.style.transform =
+    `translateX(-${index * 100}%)`;
+
+
+  document
+    .querySelectorAll(".dot")
+    .forEach((dot, i) => {
+
+      dot.classList.toggle(
+        "active",
+        i === index
+      );
+
+    });
+
+}
+
+
+/* 손가락 스와이프 */
+
+const slider =
+  document.getElementById(
+    "sliderView"
+  );
+
+
+slider.addEventListener(
+  "touchstart",
+  event => {
+
+    startX =
+      event.touches[0].clientX;
+
+  },
+  { passive: true }
+);
+
+
+slider.addEventListener(
+  "touchend",
+  event => {
+
+    const endX =
+      event.changedTouches[0].clientX;
+
+    const distance =
+      startX - endX;
+
+
+    if (Math.abs(distance) < 45) {
+      return;
+    }
+
+
+    if (distance > 0) {
+
+      currentSlide =
+        Math.min(
+          currentSlide + 1,
+          3
+        );
+
+    }
+
+    else {
+
+      currentSlide =
+        Math.max(
+          currentSlide - 1,
+          0
+        );
+
+    }
+
+
+    goSlide(currentSlide);
+
+  },
+  { passive: true }
+);
+
+
+/* 시작 */
+
+buildSlides();
+
+const savedView =
+  localStorage.getItem(
+    "heartopiaView"
+  ) || "vertical";
+
+setView(savedView);
+
+goSlide(0);
+
+</script>
+
 
 </body>
 </html>
