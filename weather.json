@@ -1,0 +1,475 @@
+{
+  "startDate": "2026-10-06",
+  "endDate": "2026-10-07",
+  "dateLabel": "10월 6일 ~ 10월 7일",
+  "timeRange": "06:00 ~ 다음날 05:00",
+  "updated": "2026-10-06 12:36",
+  "updatedTime": "12:36",
+  "changes": 16,
+  "changeRate": 66.7,
+  "status": "🟠 변화 많음",
+  "weather": [
+    {
+      "time": "06:00",
+      "weather": "Sunny",
+      "name": "맑음",
+      "icon": "☀️",
+      "changed": true,
+      "mark": "⭕",
+      "special": false
+    },
+    {
+      "time": "07:00",
+      "weather": "Cloudy",
+      "name": "흐림",
+      "icon": "☁️",
+      "changed": true,
+      "mark": "⭕",
+      "special": false
+    },
+    {
+      "time": "08:00",
+      "weather": "Cloudy",
+      "name": "흐림",
+      "icon": "☁️",
+      "changed": false,
+      "mark": "❌",
+      "special": false
+    },
+    {
+      "time": "09:00",
+      "weather": "Sunny",
+      "name": "맑음",
+      "icon": "☀️",
+      "changed": true,
+      "mark": "⭕",
+      "special": false
+    },
+    {
+      "time": "10:00",
+      "weather": "Cloudy",
+      "name": "흐림",
+      "icon": "☁️",
+      "changed": true,
+      "mark": "⭕",
+      "special": false
+    },
+    {
+      "time": "11:00",
+      "weather": "Sunny",
+      "name": "맑음",
+      "icon": "☀️",
+      "changed": true,
+      "mark": "⭕",
+      "special": false
+    },
+    {
+      "time": "12:00",
+      "weather": "Sunny",
+      "name": "맑음",
+      "icon": "☀️",
+      "changed": true,
+      "mark": "⭕",
+      "special": false
+    },
+    {
+      "time": "13:00",
+      "weather": "Sunny",
+      "name": "맑음",
+      "icon": "☀️",
+      "changed": false,
+      "mark": "❌",
+      "special": false
+    },
+    {
+      "time": "14:00",
+      "weather": "Cloudy",
+      "name": "흐림",
+      "icon": "☁️",
+      "changed": true,
+      "mark": "⭕",
+      "special": false
+    },
+    {
+      "time": "15:00",
+      "weather": "Sunny",
+      "name": "맑음",
+      "icon": "☀️",
+      "changed": true,
+      "mark": "⭕",
+      "special": false
+    },
+    {
+      "time": "16:00",
+      "weather": "Sunny",
+      "name": "맑음",
+      "icon": "☀️",
+      "changed": false,
+      "mark": "❌",
+      "special": false
+    },
+    {
+      "time": "17:00",
+      "weather": "Sunny",
+      "name": "맑음",
+      "icon": "☀️",
+      "changed": false,
+      "mark": "❌",
+      "special": false
+    },
+    {
+      "time": "18:00",
+      "weather": "Clear",
+      "name": "쾌청",
+      "icon": "🌤️",
+      "changed": true,
+      "mark": "⭕",
+      "special": false
+    },
+    {
+      "time": "19:00",
+      "weather": "Cloudy",
+      "name": "흐림",
+      "icon": "☁️",
+      "changed": true,
+      "mark": "⭕",
+      "special": false
+    },
+    {
+      "time": "20:00",
+      "weather": "Clear",
+      "name": "쾌청",
+      "icon": "🌤️",
+      "changed": true,
+      "mark": "⭕",
+      "special": false
+    },
+    {
+      "time": "21:00",
+      "weather": "Clear",
+      "name": "쾌청",
+      "icon": "🌤️",
+      "changed": false,
+      "mark": "❌",
+      "special": false
+    },
+    {
+      "time": "22:00",
+      "weather": "Cloudy",
+      "name": "흐림",
+      "icon": "☁️",
+      "changed": true,
+      "mark": "⭕",
+      "special": false
+    },
+    {
+      "time": "23:00",
+      "weather": "Clear",
+      "name": "쾌청",
+      "icon": "🌤️",
+      "changed": true,
+      "mark": "⭕",
+      "special": false
+    },
+    {
+      "time": "00:00",
+      "weather": "Clear",
+      "name": "쾌청",
+      "icon": "🌤️",
+      "changed": true,
+      "mark": "⭕",
+      "special": false
+    },
+    {
+      "time": "01:00",
+      "weather": "Cloudy",
+      "name": "흐림",
+      "icon": "☁️",
+      "changed": true,
+      "mark": "⭕",
+      "special": false
+    },
+    {
+      "time": "02:00",
+      "weather": "Clear",
+      "name": "쾌청",
+      "icon": "🌤️",
+      "changed": true,
+      "mark": "⭕",
+      "special": false
+    },
+    {
+      "time": "03:00",
+      "weather": "Clear",
+      "name": "쾌청",
+      "icon": "🌤️",
+      "changed": false,
+      "mark": "❌",
+      "special": false
+    },
+    {
+      "time": "04:00",
+      "weather": "Clear",
+      "name": "쾌청",
+      "icon": "🌤️",
+      "changed": false,
+      "mark": "❌",
+      "special": false
+    },
+    {
+      "time": "05:00",
+      "weather": "Clear",
+      "name": "쾌청",
+      "icon": "🌤️",
+      "changed": false,
+      "mark": "❌",
+      "special": false
+    }
+  ],
+  "periods": [
+    {
+      "key": "morning",
+      "label": "06:00 ~ 11:00",
+      "changes": 5,
+      "weather": [
+        {
+          "time": "06:00",
+          "weather": "Sunny",
+          "name": "맑음",
+          "icon": "☀️",
+          "changed": true,
+          "mark": "⭕",
+          "special": false
+        },
+        {
+          "time": "07:00",
+          "weather": "Cloudy",
+          "name": "흐림",
+          "icon": "☁️",
+          "changed": true,
+          "mark": "⭕",
+          "special": false
+        },
+        {
+          "time": "08:00",
+          "weather": "Cloudy",
+          "name": "흐림",
+          "icon": "☁️",
+          "changed": false,
+          "mark": "❌",
+          "special": false
+        },
+        {
+          "time": "09:00",
+          "weather": "Sunny",
+          "name": "맑음",
+          "icon": "☀️",
+          "changed": true,
+          "mark": "⭕",
+          "special": false
+        },
+        {
+          "time": "10:00",
+          "weather": "Cloudy",
+          "name": "흐림",
+          "icon": "☁️",
+          "changed": true,
+          "mark": "⭕",
+          "special": false
+        },
+        {
+          "time": "11:00",
+          "weather": "Sunny",
+          "name": "맑음",
+          "icon": "☀️",
+          "changed": true,
+          "mark": "⭕",
+          "special": false
+        }
+      ]
+    },
+    {
+      "key": "afternoon",
+      "label": "12:00 ~ 17:00",
+      "changes": 3,
+      "weather": [
+        {
+          "time": "12:00",
+          "weather": "Sunny",
+          "name": "맑음",
+          "icon": "☀️",
+          "changed": true,
+          "mark": "⭕",
+          "special": false
+        },
+        {
+          "time": "13:00",
+          "weather": "Sunny",
+          "name": "맑음",
+          "icon": "☀️",
+          "changed": false,
+          "mark": "❌",
+          "special": false
+        },
+        {
+          "time": "14:00",
+          "weather": "Cloudy",
+          "name": "흐림",
+          "icon": "☁️",
+          "changed": true,
+          "mark": "⭕",
+          "special": false
+        },
+        {
+          "time": "15:00",
+          "weather": "Sunny",
+          "name": "맑음",
+          "icon": "☀️",
+          "changed": true,
+          "mark": "⭕",
+          "special": false
+        },
+        {
+          "time": "16:00",
+          "weather": "Sunny",
+          "name": "맑음",
+          "icon": "☀️",
+          "changed": false,
+          "mark": "❌",
+          "special": false
+        },
+        {
+          "time": "17:00",
+          "weather": "Sunny",
+          "name": "맑음",
+          "icon": "☀️",
+          "changed": false,
+          "mark": "❌",
+          "special": false
+        }
+      ]
+    },
+    {
+      "key": "evening",
+      "label": "18:00 ~ 23:00",
+      "changes": 5,
+      "weather": [
+        {
+          "time": "18:00",
+          "weather": "Clear",
+          "name": "쾌청",
+          "icon": "🌤️",
+          "changed": true,
+          "mark": "⭕",
+          "special": false
+        },
+        {
+          "time": "19:00",
+          "weather": "Cloudy",
+          "name": "흐림",
+          "icon": "☁️",
+          "changed": true,
+          "mark": "⭕",
+          "special": false
+        },
+        {
+          "time": "20:00",
+          "weather": "Clear",
+          "name": "쾌청",
+          "icon": "🌤️",
+          "changed": true,
+          "mark": "⭕",
+          "special": false
+        },
+        {
+          "time": "21:00",
+          "weather": "Clear",
+          "name": "쾌청",
+          "icon": "🌤️",
+          "changed": false,
+          "mark": "❌",
+          "special": false
+        },
+        {
+          "time": "22:00",
+          "weather": "Cloudy",
+          "name": "흐림",
+          "icon": "☁️",
+          "changed": true,
+          "mark": "⭕",
+          "special": false
+        },
+        {
+          "time": "23:00",
+          "weather": "Clear",
+          "name": "쾌청",
+          "icon": "🌤️",
+          "changed": true,
+          "mark": "⭕",
+          "special": false
+        }
+      ]
+    },
+    {
+      "key": "dawn",
+      "label": "00:00 ~ 05:00",
+      "changes": 3,
+      "weather": [
+        {
+          "time": "00:00",
+          "weather": "Clear",
+          "name": "쾌청",
+          "icon": "🌤️",
+          "changed": true,
+          "mark": "⭕",
+          "special": false
+        },
+        {
+          "time": "01:00",
+          "weather": "Cloudy",
+          "name": "흐림",
+          "icon": "☁️",
+          "changed": true,
+          "mark": "⭕",
+          "special": false
+        },
+        {
+          "time": "02:00",
+          "weather": "Clear",
+          "name": "쾌청",
+          "icon": "🌤️",
+          "changed": true,
+          "mark": "⭕",
+          "special": false
+        },
+        {
+          "time": "03:00",
+          "weather": "Clear",
+          "name": "쾌청",
+          "icon": "🌤️",
+          "changed": false,
+          "mark": "❌",
+          "special": false
+        },
+        {
+          "time": "04:00",
+          "weather": "Clear",
+          "name": "쾌청",
+          "icon": "🌤️",
+          "changed": false,
+          "mark": "❌",
+          "special": false
+        },
+        {
+          "time": "05:00",
+          "weather": "Clear",
+          "name": "쾌청",
+          "icon": "🌤️",
+          "changed": false,
+          "mark": "❌",
+          "special": false
+        }
+      ]
+    }
+  ]
+}
