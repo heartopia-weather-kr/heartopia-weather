@@ -64,18 +64,23 @@ def weather_icon(weather):
 
 # ============================================================
 # 특수 날씨 판정
-# 유성우/무지개/오로라는 숫자 차이를 무시하고 같은 종류로 처리
+# 무지개만 숫자를 무시하고, 유성우/오로라는 숫자 차이도 구분
 # ============================================================
 
 def normalize_weather(weather):
-    for special in ("Meteor Shower", "Rainbow", "Aurora"):
-        if re.match(
-            rf"^{re.escape(special)}(?:\s+\d+)?$",
-            weather,
-            re.IGNORECASE,
-        ):
-            return special.lower()
-    return weather.strip().lower()
+    weather = weather.strip()
+
+    # 무지개만 뒤의 숫자가 있더라도 같은 날씨로 처리
+    if re.match(
+        rf"^{re.escape('Rainbow')}(?:\s+\d+)?$",
+        weather,
+        re.IGNORECASE,
+    ):
+        return "rainbow"
+
+    # 유성우 / 오로라는 1, 2, 3 숫자 차이도
+    # 실제 날씨 변경으로 구분
+    return weather.lower()
 
 
 def is_weather_changed(hour, weather, previous_weather):
@@ -83,7 +88,7 @@ def is_weather_changed(hour, weather, previous_weather):
     if hour in [0, 6, 12, 18]:
         return True
 
-    # 특수 날씨의 숫자 차이는 무시
+# 날씨 이름과 숫자까지 비교하여 변경 여부 판단
     return normalize_weather(weather) != normalize_weather(previous_weather)
 
 
