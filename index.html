@@ -911,7 +911,152 @@ const savedView =
 setView(savedView);
 
 goSlide(0);
+/* ==========================================
+   실제 Heartopia 날씨 데이터 불러오기
+========================================== */
 
+async function loadWeatherData() {
+  try {
+    const response = await fetch(
+      "weather.json?t=" + Date.now()
+    );
+
+    if (!response.ok) {
+      throw new Error("weather.json을 불러오지 못했습니다.");
+    }
+
+    const data = await response.json();
+
+    /* 날짜 */
+    const dateTitle =
+      document.querySelector(".date-title");
+
+    if (dateTitle) {
+      dateTitle.innerHTML =
+        `📅 ${data.dateLabel}
+        <span style="font-size:13px; font-weight:500; color:#697386;">
+          · 🕕 ${data.timeRange}
+        </span>`;
+    }
+
+
+    /* 전체 변경 횟수 / 변동률 / 상태 */
+    const summaryMain =
+      document.querySelector(".summary-main");
+
+    if (summaryMain) {
+      summaryMain.innerHTML =
+        `🔄 전체 변경 ${data.changes}회 ·
+         변동률 ${data.changeRate}%
+         <span class="rate-status">${data.status}</span>`;
+    }
+
+
+    /* 마지막 업데이트 시간 */
+    const statusText =
+      document.querySelector(".status-text");
+
+    if (statusText) {
+      statusText.textContent =
+        `정상 작동 중 · 마지막 업데이트 ${data.updatedTime}`;
+    }
+
+
+    /* 24시간 날씨 */
+    const rows =
+      document.querySelectorAll(
+        "#verticalView .weather-row"
+      );
+
+    data.weather.forEach((weather, index) => {
+      const row = rows[index];
+
+      if (!row) return;
+
+      const change =
+        row.querySelector(".change");
+
+      const time =
+        row.querySelector(".time");
+
+      const icon =
+        row.querySelector(".weather-icon");
+
+      const name =
+        row.querySelector(".weather-name");
+
+      if (change) {
+        change.textContent = weather.mark;
+      }
+
+      if (time) {
+        time.textContent = weather.time;
+      }
+
+      if (icon) {
+        icon.textContent = weather.icon;
+      }
+
+      if (name) {
+        name.textContent = weather.name;
+      }
+
+      /* 특수 날씨 강조 */
+      if (weather.special) {
+        row.classList.add("special");
+      } else {
+        row.classList.remove("special");
+      }
+    });
+
+
+    /* 각 시간대 변경 횟수 */
+    const periods =
+      document.querySelectorAll(
+        "#verticalView .period"
+      );
+
+    data.periods.forEach((periodData, index) => {
+      const period = periods[index];
+
+      if (!period) return;
+
+      const changeText =
+        period.querySelector(".period-change");
+
+      if (changeText) {
+        changeText.textContent =
+          `변경 ${periodData.changes}회`;
+      }
+    });
+
+
+    /*
+      세로 카드 내용을 실제 데이터로 바꾼 뒤
+      슬라이드 카드를 다시 생성
+    */
+    buildSlides();
+
+    setView(savedView);
+
+    goSlide(0);
+
+    console.log(
+      "Heartopia 날씨 업데이트 완료:",
+      data.updated
+    );
+
+  } catch (error) {
+    console.error(
+      "Heartopia 날씨 로딩 실패:",
+      error
+    );
+  }
+}
+
+
+/* 실제 날씨 불러오기 시작 */
+loadWeatherData();
 </script>
 
 
