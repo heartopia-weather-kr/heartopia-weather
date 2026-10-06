@@ -154,7 +154,7 @@ async def select_date(page, target_date):
 
 async def read_hourly_forecast(page):
     text = await page.locator("body").inner_text()
-
+    print(text)
     lines = [
         line.strip()
         for line in text.splitlines()
