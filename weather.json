@@ -1,14 +1,14 @@
 {
-  "updated": "2026-10-06 19:54",
-  "updatedTime": "19:54",
+  "updated": "2026-10-06 20:10",
+  "updatedTime": "20:10",
   "days": [
     {
       "startDate": "2026-10-06",
       "endDate": "2026-10-07",
       "dateLabel": "10월 6일 ~ 10월 7일",
       "timeRange": "06:00 ~ 다음날 05:00",
-      "updated": "2026-10-06 19:54",
-      "updatedTime": "19:54",
+      "updated": "2026-10-06 20:10",
+      "updatedTime": "20:10",
       "changes": 16,
       "changeRate": 66.7,
       "status": "🟠 변화 많음",
@@ -482,8 +482,8 @@
       "endDate": "2026-10-08",
       "dateLabel": "10월 7일 ~ 10월 8일",
       "timeRange": "06:00 ~ 다음날 05:00",
-      "updated": "2026-10-06 19:54",
-      "updatedTime": "19:54",
+      "updated": "2026-10-06 20:10",
+      "updatedTime": "20:10",
       "changes": 12,
       "changeRate": 50.0,
       "status": "🟡 보통",
@@ -957,11 +957,11 @@
       "endDate": "2026-10-09",
       "dateLabel": "10월 8일 ~ 10월 9일",
       "timeRange": "06:00 ~ 다음날 05:00",
-      "updated": "2026-10-06 19:54",
-      "updatedTime": "19:54",
-      "changes": 11,
-      "changeRate": 45.8,
-      "status": "🟡 보통",
+      "updated": "2026-10-06 20:10",
+      "updatedTime": "20:10",
+      "changes": 13,
+      "changeRate": 54.2,
+      "status": "🟠 변화 많음",
       "weather": [
         {
           "time": "06:00",
@@ -1073,57 +1073,57 @@
         },
         {
           "time": "18:00",
-          "weather": "Meteor Shower",
+          "weather": "Meteor Shower 1",
           "name": "유성우",
           "icon": "☄️",
           "changed": true,
           "mark": "⭕",
-          "special": true
+          "special": false
         },
         {
           "time": "19:00",
-          "weather": "Meteor Shower",
+          "weather": "Meteor Shower 2",
           "name": "유성우",
           "icon": "☄️",
-          "changed": false,
-          "mark": "❌",
-          "special": true
+          "changed": true,
+          "mark": "⭕",
+          "special": false
         },
         {
           "time": "20:00",
-          "weather": "Meteor Shower",
+          "weather": "Meteor Shower 2",
           "name": "유성우",
           "icon": "☄️",
           "changed": false,
           "mark": "❌",
-          "special": true
+          "special": false
         },
         {
           "time": "21:00",
-          "weather": "Meteor Shower",
+          "weather": "Meteor Shower 2",
           "name": "유성우",
           "icon": "☄️",
           "changed": false,
           "mark": "❌",
-          "special": true
+          "special": false
         },
         {
           "time": "22:00",
-          "weather": "Meteor Shower",
+          "weather": "Meteor Shower 2",
           "name": "유성우",
           "icon": "☄️",
           "changed": false,
           "mark": "❌",
-          "special": true
+          "special": false
         },
         {
           "time": "23:00",
-          "weather": "Meteor Shower",
+          "weather": "Meteor Shower 1",
           "name": "유성우",
           "icon": "☄️",
-          "changed": false,
-          "mark": "❌",
-          "special": true
+          "changed": true,
+          "mark": "⭕",
+          "special": false
         },
         {
           "time": "00:00",
@@ -1306,61 +1306,61 @@
         {
           "key": "evening",
           "label": "18:00 ~ 23:00",
-          "changes": 1,
+          "changes": 3,
           "weather": [
             {
               "time": "18:00",
-              "weather": "Meteor Shower",
+              "weather": "Meteor Shower 1",
               "name": "유성우",
               "icon": "☄️",
               "changed": true,
               "mark": "⭕",
-              "special": true
+              "special": false
             },
             {
               "time": "19:00",
-              "weather": "Meteor Shower",
+              "weather": "Meteor Shower 2",
               "name": "유성우",
               "icon": "☄️",
-              "changed": false,
-              "mark": "❌",
-              "special": true
+              "changed": true,
+              "mark": "⭕",
+              "special": false
             },
             {
               "time": "20:00",
-              "weather": "Meteor Shower",
+              "weather": "Meteor Shower 2",
               "name": "유성우",
               "icon": "☄️",
               "changed": false,
               "mark": "❌",
-              "special": true
+              "special": false
             },
             {
               "time": "21:00",
-              "weather": "Meteor Shower",
+              "weather": "Meteor Shower 2",
               "name": "유성우",
               "icon": "☄️",
               "changed": false,
               "mark": "❌",
-              "special": true
+              "special": false
             },
             {
               "time": "22:00",
-              "weather": "Meteor Shower",
+              "weather": "Meteor Shower 2",
               "name": "유성우",
               "icon": "☄️",
               "changed": false,
               "mark": "❌",
-              "special": true
+              "special": false
             },
             {
               "time": "23:00",
-              "weather": "Meteor Shower",
+              "weather": "Meteor Shower 1",
               "name": "유성우",
               "icon": "☄️",
-              "changed": false,
-              "mark": "❌",
-              "special": true
+              "changed": true,
+              "mark": "⭕",
+              "special": false
             }
           ]
         },
@@ -1432,10 +1432,10 @@
       "endDate": "2026-10-10",
       "dateLabel": "10월 9일 ~ 10월 10일",
       "timeRange": "06:00 ~ 다음날 05:00",
-      "updated": "2026-10-06 19:54",
-      "updatedTime": "19:54",
-      "changes": 15,
-      "changeRate": 62.5,
+      "updated": "2026-10-06 20:10",
+      "updatedTime": "20:10",
+      "changes": 18,
+      "changeRate": 75.0,
       "status": "🟠 변화 많음",
       "weather": [
         {
@@ -1548,57 +1548,57 @@
         },
         {
           "time": "18:00",
-          "weather": "Meteor Shower",
+          "weather": "Meteor Shower 1",
           "name": "유성우",
           "icon": "☄️",
           "changed": true,
           "mark": "⭕",
-          "special": true
+          "special": false
         },
         {
           "time": "19:00",
-          "weather": "Meteor Shower",
+          "weather": "Meteor Shower 2",
           "name": "유성우",
           "icon": "☄️",
-          "changed": false,
-          "mark": "❌",
-          "special": true
+          "changed": true,
+          "mark": "⭕",
+          "special": false
         },
         {
           "time": "20:00",
-          "weather": "Meteor Shower",
+          "weather": "Meteor Shower 3",
           "name": "유성우",
           "icon": "☄️",
-          "changed": false,
-          "mark": "❌",
-          "special": true
+          "changed": true,
+          "mark": "⭕",
+          "special": false
         },
         {
           "time": "21:00",
-          "weather": "Meteor Shower",
+          "weather": "Meteor Shower 3",
           "name": "유성우",
           "icon": "☄️",
           "changed": false,
           "mark": "❌",
-          "special": true
+          "special": false
         },
         {
           "time": "22:00",
-          "weather": "Meteor Shower",
+          "weather": "Meteor Shower 3",
           "name": "유성우",
           "icon": "☄️",
           "changed": false,
           "mark": "❌",
-          "special": true
+          "special": false
         },
         {
           "time": "23:00",
-          "weather": "Meteor Shower",
+          "weather": "Meteor Shower 2",
           "name": "유성우",
           "icon": "☄️",
-          "changed": false,
-          "mark": "❌",
-          "special": true
+          "changed": true,
+          "mark": "⭕",
+          "special": false
         },
         {
           "time": "00:00",
@@ -1781,61 +1781,61 @@
         {
           "key": "evening",
           "label": "18:00 ~ 23:00",
-          "changes": 1,
+          "changes": 4,
           "weather": [
             {
               "time": "18:00",
-              "weather": "Meteor Shower",
+              "weather": "Meteor Shower 1",
               "name": "유성우",
               "icon": "☄️",
               "changed": true,
               "mark": "⭕",
-              "special": true
+              "special": false
             },
             {
               "time": "19:00",
-              "weather": "Meteor Shower",
+              "weather": "Meteor Shower 2",
               "name": "유성우",
               "icon": "☄️",
-              "changed": false,
-              "mark": "❌",
-              "special": true
+              "changed": true,
+              "mark": "⭕",
+              "special": false
             },
             {
               "time": "20:00",
-              "weather": "Meteor Shower",
+              "weather": "Meteor Shower 3",
               "name": "유성우",
               "icon": "☄️",
-              "changed": false,
-              "mark": "❌",
-              "special": true
+              "changed": true,
+              "mark": "⭕",
+              "special": false
             },
             {
               "time": "21:00",
-              "weather": "Meteor Shower",
+              "weather": "Meteor Shower 3",
               "name": "유성우",
               "icon": "☄️",
               "changed": false,
               "mark": "❌",
-              "special": true
+              "special": false
             },
             {
               "time": "22:00",
-              "weather": "Meteor Shower",
+              "weather": "Meteor Shower 3",
               "name": "유성우",
               "icon": "☄️",
               "changed": false,
               "mark": "❌",
-              "special": true
+              "special": false
             },
             {
               "time": "23:00",
-              "weather": "Meteor Shower",
+              "weather": "Meteor Shower 2",
               "name": "유성우",
               "icon": "☄️",
-              "changed": false,
-              "mark": "❌",
-              "special": true
+              "changed": true,
+              "mark": "⭕",
+              "special": false
             }
           ]
         },
@@ -1907,8 +1907,8 @@
       "endDate": "2026-10-11",
       "dateLabel": "10월 10일 ~ 10월 11일",
       "timeRange": "06:00 ~ 다음날 05:00",
-      "updated": "2026-10-06 19:54",
-      "updatedTime": "19:54",
+      "updated": "2026-10-06 20:10",
+      "updatedTime": "20:10",
       "changes": 15,
       "changeRate": 62.5,
       "status": "🟠 변화 많음",
@@ -2382,8 +2382,8 @@
       "endDate": "2026-10-12",
       "dateLabel": "10월 11일 ~ 10월 12일",
       "timeRange": "06:00 ~ 다음날 05:00",
-      "updated": "2026-10-06 19:54",
-      "updatedTime": "19:54",
+      "updated": "2026-10-06 20:10",
+      "updatedTime": "20:10",
       "changes": 10,
       "changeRate": 41.7,
       "status": "🟡 보통",
@@ -2857,8 +2857,8 @@
       "endDate": "2026-10-13",
       "dateLabel": "10월 12일 ~ 10월 13일",
       "timeRange": "06:00 ~ 다음날 05:00",
-      "updated": "2026-10-06 19:54",
-      "updatedTime": "19:54",
+      "updated": "2026-10-06 20:10",
+      "updatedTime": "20:10",
       "changes": 12,
       "changeRate": 50.0,
       "status": "🟡 보통",
