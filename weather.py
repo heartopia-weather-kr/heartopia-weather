@@ -311,7 +311,7 @@ def save_weather_json(data):
 # ============================================================
 
 async def main():
-now = datetime.now(KST)
+    now = datetime.now(KST)
 
 # 게임 날짜는 오전 06:00 기준으로 변경
 if now.hour < 6:
