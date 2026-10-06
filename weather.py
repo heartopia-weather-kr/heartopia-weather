@@ -154,7 +154,7 @@ async def select_date(page, target_date):
 
 async def read_hourly_forecast(page):
     text = await page.locator("body").inner_text()
-    print(text)
+
     lines = [
         line.strip()
         for line in text.splitlines()
@@ -192,8 +192,25 @@ async def read_hourly_forecast(page):
             ]:
                 continue
 
-            weather[hour] = candidate
-            break
+# 유성우 / 오로라는 바로 다음 줄의
+# 1, 2, 3 variant까지 함께 저장
+if candidate in ["Meteor Shower", "Aurora"]:
+    variant = None
+
+    if j + 1 < len(lines):
+        next_line = lines[j + 1]
+
+        if next_line in ["1", "2", "3"]:
+            variant = next_line
+
+    if variant:
+        weather[hour] = f"{candidate} {variant}"
+    else:
+        weather[hour] = candidate
+else:
+    weather[hour] = candidate
+
+break
 
     return weather
 
