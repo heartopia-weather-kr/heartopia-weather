@@ -192,28 +192,27 @@ async def read_hourly_forecast(page):
             ]:
                 continue
 
-# 유성우 / 오로라는 바로 다음 줄의
-# 1, 2, 3 variant까지 함께 저장
-if candidate in ["Meteor Shower", "Aurora"]:
-    variant = None
+            # 유성우 / 오로라는 바로 다음 줄의
+            # 1, 2, 3 variant까지 함께 저장
+            if candidate in ["Meteor Shower", "Aurora"]:
+                variant = None
 
-    if j + 1 < len(lines):
-        next_line = lines[j + 1]
+                if j + 1 < len(lines):
+                    next_line = lines[j + 1]
 
-        if next_line in ["1", "2", "3"]:
-            variant = next_line
+                    if next_line in ["1", "2", "3"]:
+                        variant = next_line
 
-    if variant:
-        weather[hour] = f"{candidate} {variant}"
-    else:
-        weather[hour] = candidate
-else:
-    weather[hour] = candidate
+                if variant:
+                    weather[hour] = f"{candidate} {variant}"
+                else:
+                    weather[hour] = candidate
+            else:
+                weather[hour] = candidate
 
-break
+            break
 
     return weather
-
 
 # ============================================================
 # 웹사이트용 24시간 데이터 만들기
