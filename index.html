@@ -1265,7 +1265,9 @@ async function loadWeatherData() {
       */
       buildSlides();
 
-      setView(savedView);
+      setView(
+        localStorage.getItem("heartopiaView") || "vertical"
+);
 
       goSlide(0);
     }
