@@ -363,13 +363,115 @@ footer {
     font-size: 13px;
   }
 }
+    /* 안내 팝업 디자인 */
+    .notice-popup-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.45);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 9999;
+    }
 
+    .notice-popup {
+      width: 100%;
+      max-width: 420px;
+      background: #ffffff;
+      border-radius: 24px;
+      padding: 26px 22px 18px;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.22);
+    }
+
+    .notice-popup-icon {
+      font-size: 42px;
+      margin-bottom: 8px;
+    }
+
+    .notice-popup-title {
+      font-size: 21px;
+      font-weight: 800;
+      color: #253047;
+      margin-bottom: 12px;
+    }
+
+    .notice-popup-text {
+      font-size: 14px;
+      line-height: 1.7;
+      color: #667085;
+      margin-bottom: 22px;
+      word-break: keep-all;
+    }
+
+    .notice-popup-buttons {
+      display: flex;
+      gap: 8px;
+    }
+
+    .notice-popup-button {
+      flex: 1;
+      border: 0;
+      border-radius: 12px;
+      padding: 13px 8px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .notice-popup-today {
+      background: #f1f4f8;
+      color: #667085;
+    }
+
+    .notice-popup-close {
+      background: #253047;
+      color: #ffffff;
+    }
+  
 </style>
 </head>
 
 
 <body>
+  
+  <!-- 안내 팝업 -->
+  <div class="notice-popup-overlay" id="noticePopup">
+    <div class="notice-popup">
 
+      <div class="notice-popup-icon">📢</div>
+
+      <div class="notice-popup-title">
+        날씨 예보 이용 안내
+      </div>
+
+      <div class="notice-popup-text">
+        본 사이트의 날씨 정보는 외부 예보 데이터를 기반으로 제공됩니다.<br><br>
+        게임 업데이트 또는 예보 데이터 변경에 따라
+        실제 게임 내 날씨와 차이가 발생할 수 있습니다.
+      </div>
+
+      <div class="notice-popup-buttons">
+        <button
+          type="button"
+          class="notice-popup-button notice-popup-today"
+          id="noticeHideToday"
+        >
+          오늘 하루 보지 않기
+        </button>
+
+        <button
+          type="button"
+          class="notice-popup-button notice-popup-close"
+          id="noticeClose"
+        >
+          닫기
+        </button>
+      </div>
+
+    </div>
+  </div>
 <div class="container">
 
 
@@ -1241,6 +1343,44 @@ async function loadWeatherData() {
 
 /* 실제 날씨 불러오기 시작 */
 loadWeatherData();
+  
+// =========================
+// 안내 팝업
+// =========================
+
+const noticePopup = document.getElementById("noticePopup");
+const noticeHideToday = document.getElementById("noticeHideToday");
+const noticeClose = document.getElementById("noticeClose");
+
+function getTodayKey() {
+  const now = new Date();
+
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const day = String(now.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+}
+
+function openNoticePopup() {
+  const hiddenDate = localStorage.getItem("noticeHiddenDate");
+
+  if (hiddenDate !== getTodayKey()) {
+    noticePopup.style.display = "flex";
+  }
+}
+
+noticeHideToday.addEventListener("click", () => {
+  localStorage.setItem("noticeHiddenDate", getTodayKey());
+  noticePopup.style.display = "none";
+});
+
+noticeClose.addEventListener("click", () => {
+  noticePopup.style.display = "none";
+});
+
+openNoticePopup();
+
 </script>
 
 
