@@ -894,7 +894,68 @@ function buildSlides() {
   });
 
 }
+function goToCurrentTime() {
 
+  const now = new Date();
+  const currentHour = now.getHours();
+
+  const currentTime =
+    `${String(currentHour).padStart(2, "0")}:00`;
+
+  const currentView =
+    localStorage.getItem("heartopiaView") || "vertical";
+
+
+  // 세로 보기
+  if (currentView === "vertical") {
+
+    const rows =
+      document.querySelectorAll(
+        "#verticalView .weather-row"
+      );
+
+    for (const row of rows) {
+
+      const time =
+        row.querySelector(".time");
+
+      if (
+        time &&
+        time.textContent.trim() === currentTime
+      ) {
+
+        row.scrollIntoView({
+          behavior: "smooth",
+          block: "center"
+        });
+
+        break;
+      }
+    }
+
+  }
+
+  // 넘겨서 보기
+  else {
+
+    let slideIndex;
+
+    if (currentHour >= 6 && currentHour <= 11) {
+      slideIndex = 0;
+    }
+    else if (currentHour >= 12 && currentHour <= 17) {
+      slideIndex = 1;
+    }
+    else if (currentHour >= 18 && currentHour <= 23) {
+      slideIndex = 2;
+    }
+    else {
+      slideIndex = 3;
+    }
+
+    goSlide(slideIndex);
+  }
+}
 
 function setView(type) {
 
@@ -1330,6 +1391,9 @@ async function loadWeatherData() {
 
     /* 처음에는 현재 게임 날짜 표시 */
     renderDay(0);
+
+    /* 현재 시간 위치로 자동 이동 */
+    goToCurrentTime();
 
     console.log(
       "Heartopia 7일 날씨 업데이트 완료:",
