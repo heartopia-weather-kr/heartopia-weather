@@ -1343,14 +1343,20 @@ async function loadWeatherData() {
 
 /* 실제 날씨 불러오기 시작 */
 loadWeatherData();
-  
+
 // =========================
-// 안내 팝업
+// notice.json 공지 팝업
 // =========================
 
 const noticePopup = document.getElementById("noticePopup");
 const noticeHideToday = document.getElementById("noticeHideToday");
 const noticeClose = document.getElementById("noticeClose");
+
+const noticeIcon = document.querySelector(".notice-popup-icon");
+const noticeTitle = document.querySelector(".notice-popup-title");
+const noticeText = document.querySelector(".notice-popup-text");
+
+let currentNoticeId = "";
 
 function getTodayKey() {
   const now = new Date();
@@ -1362,16 +1368,63 @@ function getTodayKey() {
   return `${year}-${month}-${day}`;
 }
 
-function openNoticePopup() {
-  const hiddenDate = localStorage.getItem("noticeHiddenDate");
+async function loadNotice() {
+  try {
+    const response = await fetch(`notice.json?t=${Date.now()}`);
 
-  if (hiddenDate !== getTodayKey()) {
-    noticePopup.style.display = "flex";
+    if (!response.ok) {
+      throw new Error("notice.json 불러오기 실패");
+    }
+
+    const notice = await response.json();
+
+    // 공지가 꺼져 있으면 표시하지 않음
+    if (!notice.enabled) {
+      return;
+    }
+
+    currentNoticeId = notice.id || "default";
+
+    // 아이콘
+    noticeIcon.textContent = notice.icon || "📢";
+
+    // 제목
+    noticeTitle.textContent = notice.title || "안내";
+
+    // 내용
+    if (Array.isArray(notice.message)) {
+      noticeText.innerHTML = "";
+
+      notice.message.forEach((line) => {
+        const lineElement = document.createElement("div");
+
+        if (line === "") {
+          lineElement.innerHTML = "&nbsp;";
+        } else {
+          lineElement.textContent = line;
+        }
+
+        noticeText.appendChild(lineElement);
+      });
+    }
+
+    // 오늘 하루 보지 않기 확인
+    const hiddenKey = localStorage.getItem("noticeHiddenKey");
+    const todayKey = `${currentNoticeId}-${getTodayKey()}`;
+
+    if (hiddenKey !== todayKey) {
+      noticePopup.style.display = "flex";
+    }
+
+  } catch (error) {
+    console.error("공지 불러오기 실패:", error);
   }
 }
 
 noticeHideToday.addEventListener("click", () => {
-  localStorage.setItem("noticeHiddenDate", getTodayKey());
+  const todayKey = `${currentNoticeId}-${getTodayKey()}`;
+
+  localStorage.setItem("noticeHiddenKey", todayKey);
   noticePopup.style.display = "none";
 });
 
@@ -1379,7 +1432,7 @@ noticeClose.addEventListener("click", () => {
   noticePopup.style.display = "none";
 });
 
-openNoticePopup();
+loadNotice();
 
 </script>
 
