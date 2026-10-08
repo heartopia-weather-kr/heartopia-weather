@@ -1747,6 +1747,130 @@ calculatorOverlay.addEventListener("click", (event) => {
     calculatorOverlay.style.display = "none";
   }
 });
+
+/* ===== 날씨 변동 계산하기 ===== */
+
+document.getElementById("calculatorRunBtn").addEventListener("click", () => {
+
+  const days = window.calculatorWeatherData;
+
+  if (!Array.isArray(days) || days.length === 0) {
+    alert("날씨 데이터를 아직 불러오지 못했습니다.");
+    return;
+  }
+
+  const dateIndex = Number(
+    document.getElementById("calculatorDate").value
+  );
+
+  const startHour = Number(
+    document.getElementById("calculatorStart").value
+  );
+
+  const endHour = Number(
+    document.getElementById("calculatorEnd").value
+  );
+
+  const day = days[dateIndex];
+
+  if (!day || !Array.isArray(day.weather)) {
+    alert("선택한 날짜의 날씨 정보가 없습니다.");
+    return;
+  }
+
+  /* 게임 날짜 기준: 06시 → 23시 → 00시 → 05시 */
+  const toGameIndex = (hour) => (hour + 18) % 24;
+
+  const startIndex = toGameIndex(startHour);
+  const endIndex = toGameIndex(endHour);
+
+  if (endIndex <= startIndex) {
+    alert("종료 시간은 시작 시간보다 늦어야 합니다.\n게임 날짜 기준 06:00 ~ 다음 날 05:00 범위에서 선택해 주세요.");
+    return;
+  }
+
+  const selectedWeather = day.weather.slice(
+    startIndex,
+    endIndex + 1
+  );
+
+  /* 시작 시각은 제외하고 실제 플레이 중 변동만 계산 */
+  const changes = selectedWeather
+    .slice(1)
+    .filter(item => item.changed === true)
+    .length;
+
+  const opportunities = selectedWeather.length - 1;
+
+  const changeRate = opportunities > 0
+    ? (changes / opportunities * 100).toFixed(1)
+    : "0.0";
+
+  /* 시간별 날씨 흐름 */
+  const weatherRows = selectedWeather.map((item, index) => {
+    const status = index === 0
+      ? "시작 날씨"
+      : item.changed ? "⭕ 변동" : "❌ 유지";
+
+    return `
+      <div style="
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        gap:8px;
+        padding:12px 0;
+        border-bottom:1px solid #e5e7eb;
+      ">
+        <span style="font-weight:700;">${item.time}</span>
+        <span>${item.icon} ${item.name}</span>
+        <span style="font-size:13px;">${status}</span>
+      </div>
+    `;
+  }).join("");
+
+  const result = document.getElementById("calculatorResult");
+
+  result.innerHTML = `
+    <div style="font-weight:700;margin-bottom:12px;">
+      📅 ${day.dateLabel}
+    </div>
+
+    <div style="margin-bottom:14px;">
+      ⏱️ ${String(startHour).padStart(2, "0")}:00
+      ~ ${String(endHour).padStart(2, "0")}:00
+    </div>
+
+    <div style="
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+      margin-bottom:18px;
+    ">
+      <div style="background:white;padding:15px;border-radius:12px;text-align:center;">
+        <div style="font-size:13px;color:#64748b;">날씨 변동 횟수</div>
+        <div style="font-size:26px;font-weight:800;color:#263149;">
+          ${changes}회
+        </div>
+      </div>
+
+      <div style="background:white;padding:15px;border-radius:12px;text-align:center;">
+        <div style="font-size:13px;color:#64748b;">변동률</div>
+        <div style="font-size:26px;font-weight:800;color:#263149;">
+          ${changeRate}%
+        </div>
+      </div>
+    </div>
+
+    <div style="font-weight:700;margin-bottom:8px;">
+      🌤️ 시간별 날씨 흐름
+    </div>
+
+    ${weatherRows}
+  `;
+
+  result.style.display = "block";
+});
+
 </script>
 
 </body>
