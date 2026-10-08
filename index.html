@@ -1703,6 +1703,32 @@ calculatorOverlay.addEventListener("click", (event) => {
 <script>
 /* ===== 날씨 변동 계산기 팝업 열기 / 닫기 ===== */
 
+/* ===== 계산기 시간 선택 목록 ===== */
+
+const calculatorStartSelect =
+  document.getElementById("calculatorStart");
+
+const calculatorEndSelect =
+  document.getElementById("calculatorEnd");
+
+for (let hour = 0; hour < 24; hour++) {
+  const time = String(hour).padStart(2, "0") + ":00";
+
+  const startOption = document.createElement("option");
+  startOption.value = hour;
+  startOption.textContent = time;
+  calculatorStartSelect.appendChild(startOption);
+
+  const endOption = document.createElement("option");
+  endOption.value = hour;
+  endOption.textContent = time;
+  calculatorEndSelect.appendChild(endOption);
+}
+
+/* 기본 선택 시간 */
+calculatorStartSelect.value = "19";
+calculatorEndSelect.value = "21";
+
 const calculatorOpenBtn = document.getElementById("calculatorOpenBtn");
 const calculatorCloseBtn = document.getElementById("calculatorCloseBtn");
 const calculatorOverlay = document.getElementById("calculatorOverlay");
