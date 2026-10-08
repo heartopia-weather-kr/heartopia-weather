@@ -560,6 +560,19 @@ footer {
   }
 }
 
+/* 계산기 상세 날씨 기본 화살표 숨기기 */
+#calculatorResult summary {
+  list-style: none;
+}
+
+#calculatorResult summary::-webkit-details-marker {
+  display: none;
+}
+
+#calculatorResult summary::marker {
+  content: "";
+}
+
 </style>
 </head>
 
