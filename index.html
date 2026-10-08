@@ -1281,6 +1281,26 @@ async function loadWeatherData() {
 
     const data = await response.json();
 
+    window.calculatorWeatherData = data.days;
+
+/* ===== 계산기 날짜 선택 목록 ===== */
+
+const calculatorDateSelect =
+  document.getElementById("calculatorDate");
+
+if (calculatorDateSelect) {
+  calculatorDateSelect.innerHTML = "";
+
+  data.days.forEach((day, index) => {
+    const option = document.createElement("option");
+
+    option.value = index;
+    option.textContent = day.dateLabel;
+
+    calculatorDateSelect.appendChild(option);
+  });
+}
+    
     if (!Array.isArray(data.days) || data.days.length === 0) {
       throw new Error("7일 날씨 데이터가 없습니다.");
     }
