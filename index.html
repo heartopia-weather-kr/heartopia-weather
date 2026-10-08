@@ -1861,11 +1861,26 @@ document.getElementById("calculatorRunBtn").addEventListener("click", () => {
       </div>
     </div>
 
-    <div style="font-weight:700;margin-bottom:8px;">
-      🌤️ 시간별 날씨 흐름
-    </div>
+<details style="margin-top:10px;">
 
+  <summary style="
+    cursor:pointer;
+    font-weight:700;
+    padding:12px 0;
+    color:#263149;
+  ">
+    🌤️ 시간별 날씨 흐름
+    <span style="float:right;font-size:13px;">
+      ▼ 펼쳐보기
+    </span>
+  </summary>
+
+  <div style="margin-top:8px;">
     ${weatherRows}
+  </div>
+
+</details>
+
   `;
 
   result.style.display = "block";
