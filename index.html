@@ -572,6 +572,15 @@ footer {
 #calculatorResult summary::marker {
   content: "";
 }
+/* 상세 날씨를 펼쳤을 때 오른쪽 문구 변경 */
+#calculatorResult details[open] .calculator-expand-label {
+  font-size: 0 !important;
+}
+
+#calculatorResult details[open] .calculator-expand-label::after {
+  content: "▲ 접기";
+  font-size: 13px;
+}
 
 </style>
 </head>
@@ -1883,9 +1892,9 @@ document.getElementById("calculatorRunBtn").addEventListener("click", () => {
     color:#263149;
   ">
     🌤️ 시간별 날씨 흐름
-    <span style="float:right;font-size:13px;">
-      ▼ 펼쳐보기
-    </span>
+<span class="calculator-expand-label" style="float:right;font-size:13px;">
+  ▼ 펼쳐보기
+</span>
   </summary>
 
   <div style="margin-top:8px;">
