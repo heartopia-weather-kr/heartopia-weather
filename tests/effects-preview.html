@@ -1,0 +1,11 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>개발 전용 · 날씨 효과 21종</title>
+<link rel="stylesheet" href="../assets/weather.css"><link rel="stylesheet" href="../assets/midnight.css"><link rel="stylesheet" href="../assets/weather-atmosphere.css"><link rel="stylesheet" href="effects-preview.css">
+<script src="../assets/weather-core.js" defer></script><script src="../assets/midnight-icons.js" defer></script><script src="../assets/weather-atmosphere.js" defer></script><script src="effects-preview.js" defer></script>
+</head><body>
+<div class="preview-toolbar"><strong>개발 전용 · 21종 효과 미리보기</strong><button id="preview-theme" type="button" data-preview-theme>Midnight 보기</button><label class="preview-strength">효과 강도 <input type="range" min="50" max="160" value="100" step="10" data-preview-strength aria-label="전체 미리보기 효과 강도"><output data-preview-strength-value>100%</output></label></div>
+<p class="preview-note">카드를 클릭하거나 Enter로 확대할 수 있습니다. 강도는 이 개발 화면에만 적용되며, 실제 예보·사이트 설정과 무관합니다. 이동 속도는 항상 동일합니다.</p>
+<div id="preview-grid" class="preview-grid"></div>
+<dialog id="preview-detail" aria-labelledby="preview-detail-title"><div class="preview-dialog-header"><h2 id="preview-detail-title">날씨 확대 미리보기</h2><button id="preview-detail-close" type="button" class="round-button" aria-label="확대 미리보기 닫기" autofocus>×</button></div><div class="preview-toolbar"><button id="preview-detail-theme" type="button" data-preview-theme>Midnight 보기</button><label class="preview-strength">효과 강도 <input type="range" min="50" max="160" value="100" step="10" data-preview-strength aria-label="확대 미리보기 효과 강도"><output data-preview-strength-value>100%</output></label></div><section id="preview-detail-card" class="card hero preview-hero preview-detail-card"><div class="hero-top"><h1>개발용 · 오늘 날씨 카드 예시</h1><div class="change-badge"><span>선택 날씨</span><strong>미리보기</strong></div></div><div id="preview-detail-weather" class="current-weather"></div></section><p class="preview-note">실제 사이트와 같은 효과 코드입니다. 유성은 드물게 지나가므로 잠시 관찰해 주세요. X·바깥 클릭·Esc로 닫습니다.</p></dialog>
+</body></html>

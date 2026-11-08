@@ -1,0 +1,31 @@
+/* Development page only; never imported by index.html. */
+body { padding:20px; }
+.preview-toolbar { display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-bottom:16px; }
+.preview-toolbar button { border:1px solid var(--line);border-radius:20px;padding:8px 14px;background:var(--card); }
+.preview-note { font-size:13px;line-height:1.8;margin:10px 0 18px;color:var(--muted); }
+.preview-strength { display:inline-flex;align-items:center;gap:8px;font-size:13px; }
+.preview-strength input { width:130px;accent-color:var(--purple); }
+.preview-strength output { min-width:40px;font-variant-numeric:tabular-nums; }
+.preview-grid { display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:16px; }
+.preview-hero { background-image:linear-gradient(#ffffff1f,#ffffff38),url('../assets/hero-landscape.png'); }
+.preview-grid .hero { min-height:220px;cursor:pointer; }
+.preview-grid .hero:focus-visible { outline:3px solid var(--purple);outline-offset:3px; }
+.preview-title { position:relative;z-index:1;background:#fff9;padding:8px 12px;border-radius:12px;display:inline-block;color:#241a4d; }
+.preview-grid .hero p { margin-top:12px;font-size:12px; }
+[data-theme="midnight"] .preview-hero { background-image:linear-gradient(#11182a9c,#14182aab),url('../assets/hero-landscape.png'); }
+[data-theme="midnight"] .preview-title { background:#1c2340de;color:#f4efff; }
+#preview-detail { width:min(820px,calc(100% - 24px));max-height:calc(100dvh - 24px);overflow:auto;overscroll-behavior:contain;padding:18px; }
+.preview-dialog-header { display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px; }
+.preview-dialog-header h2 { font-size:21px; }
+.preview-detail-card { min-height:300px; }
+.preview-detail-card .change-badge strong { font-size:20px; }
+.preview-detail-card .hero-arrow { font-size:42px; }
+.preview-grid[data-suspended="true"] .hero-atmosphere * { animation-play-state:paused!important; }
+@media(max-width:400px) {
+  body { padding:12px; }
+  #preview-detail { padding:12px; }
+  .preview-strength input { width:110px; }
+  .preview-detail-card { padding-inline:10px; }
+  .preview-detail-card .current-weather { grid-template-columns:minmax(0,1fr) 40px minmax(0,1fr); }
+  .preview-detail-card .hero-forecast strong { font-size:17px; }
+}

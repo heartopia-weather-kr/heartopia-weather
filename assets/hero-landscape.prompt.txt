@@ -1,0 +1,5 @@
+Tool: built-in image_gen (edit)
+Source: design-reference/dashboard-light.png
+Output: assets/hero-landscape.png
+
+Edit target: the supplied UI reference image. Extract ONLY the scenic illustration behind the top-left today-weather card as a standalone wide landscape background (approximately 3:1). Remove ALL text, numbers, weather icons, arrows, UI cards/badges, borders, and all other panels. Reconstruct the empty sky behind them. Preserve the original illustration's pastel blue sky with pink/lilac horizon, leafy branch at upper left, distant mountains, green flower meadow along bottom, and small windmill/cottage at lower right. Keep original style, composition and colors. Empty central sky for live text overlay. Output only the clean scenic background, edge-to-edge, no UI, no weather icons, no letters, no logos.
