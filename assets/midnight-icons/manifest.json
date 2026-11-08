@@ -1,0 +1,296 @@
+{
+  "Sunny": {
+    "file": "sunny.png",
+    "size": [
+      152,
+      128
+    ],
+    "sourceBox": [
+      235,
+      104,
+      375,
+      220
+    ],
+    "transparentPadding": 6
+  },
+  "Clear": {
+    "file": "clear.png",
+    "size": [
+      187,
+      128
+    ],
+    "sourceBox": [
+      465,
+      104,
+      640,
+      220
+    ],
+    "transparentPadding": 6
+  },
+  "Cloudy": {
+    "file": "cloudy.png",
+    "size": [
+      190,
+      117
+    ],
+    "sourceBox": [
+      722,
+      112,
+      900,
+      217
+    ],
+    "transparentPadding": 6
+  },
+  "Sunshower": {
+    "file": "sunshower.png",
+    "size": [
+      172,
+      133
+    ],
+    "sourceBox": [
+      240,
+      299,
+      400,
+      420
+    ],
+    "transparentPadding": 6
+  },
+  "Light Rain": {
+    "file": "light-rain.png",
+    "size": [
+      161,
+      133
+    ],
+    "sourceBox": [
+      506,
+      299,
+      655,
+      420
+    ],
+    "transparentPadding": 6
+  },
+  "Moderate Rain": {
+    "file": "moderate-rain.png",
+    "size": [
+      169,
+      133
+    ],
+    "sourceBox": [
+      772,
+      299,
+      929,
+      420
+    ],
+    "transparentPadding": 6
+  },
+  "Heavy Rain": {
+    "file": "heavy-rain.png",
+    "size": [
+      172,
+      133
+    ],
+    "sourceBox": [
+      1040,
+      299,
+      1200,
+      420
+    ],
+    "transparentPadding": 6
+  },
+  "Moon Rain": {
+    "file": "moon-rain.png",
+    "size": [
+      176,
+      133
+    ],
+    "sourceBox": [
+      1311,
+      299,
+      1475,
+      420
+    ],
+    "transparentPadding": 6
+  },
+  "Light Snow": {
+    "file": "light-snow.png",
+    "size": [
+      176,
+      122
+    ],
+    "sourceBox": [
+      242,
+      493,
+      406,
+      603
+    ],
+    "transparentPadding": 6
+  },
+  "Snow": {
+    "file": "snow.png",
+    "size": [
+      176,
+      122
+    ],
+    "sourceBox": [
+      510,
+      493,
+      674,
+      603
+    ],
+    "transparentPadding": 6
+  },
+  "Heavy Snow": {
+    "file": "heavy-snow.png",
+    "size": [
+      182,
+      122
+    ],
+    "sourceBox": [
+      778,
+      493,
+      948,
+      603
+    ],
+    "transparentPadding": 6
+  },
+  "Rainbow": {
+    "file": "rainbow.png",
+    "size": [
+      198,
+      108
+    ],
+    "sourceBox": [
+      230,
+      684,
+      416,
+      780
+    ],
+    "transparentPadding": 6
+  },
+  "Moon Rainbow": {
+    "file": "moon-rainbow.png",
+    "size": [
+      198,
+      110
+    ],
+    "sourceBox": [
+      500,
+      682,
+      686,
+      780
+    ],
+    "transparentPadding": 6
+  },
+  "Meteor Shower 1": {
+    "file": "meteor-shower-1.png",
+    "size": [
+      172,
+      110
+    ],
+    "sourceBox": [
+      790,
+      682,
+      950,
+      780
+    ],
+    "transparentPadding": 6
+  },
+  "Meteor Shower 2": {
+    "file": "meteor-shower-2.png",
+    "size": [
+      183,
+      110
+    ],
+    "sourceBox": [
+      1049,
+      682,
+      1220,
+      780
+    ],
+    "transparentPadding": 6
+  },
+  "Meteor Shower 3": {
+    "file": "meteor-shower-3.png",
+    "size": [
+      189,
+      110
+    ],
+    "sourceBox": [
+      1305,
+      682,
+      1482,
+      780
+    ],
+    "transparentPadding": 6
+  },
+  "Aurora 1": {
+    "file": "aurora-1.png",
+    "size": [
+      179,
+      127
+    ],
+    "sourceBox": [
+      240,
+      835,
+      407,
+      950
+    ],
+    "transparentPadding": 6
+  },
+  "Aurora 2": {
+    "file": "aurora-2.png",
+    "size": [
+      180,
+      127
+    ],
+    "sourceBox": [
+      510,
+      835,
+      678,
+      950
+    ],
+    "transparentPadding": 6
+  },
+  "Aurora 3": {
+    "file": "aurora-3.png",
+    "size": [
+      184,
+      127
+    ],
+    "sourceBox": [
+      775,
+      835,
+      947,
+      950
+    ],
+    "transparentPadding": 6
+  },
+  "Heatwave": {
+    "file": "heatwave.png",
+    "size": [
+      174,
+      127
+    ],
+    "sourceBox": [
+      1048,
+      835,
+      1210,
+      950
+    ],
+    "transparentPadding": 6
+  },
+  "Petal Rain": {
+    "file": "petal-rain.png",
+    "size": [
+      174,
+      127
+    ],
+    "sourceBox": [
+      1315,
+      835,
+      1477,
+      950
+    ],
+    "transparentPadding": 6
+  }
+}

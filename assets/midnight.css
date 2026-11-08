@@ -1,0 +1,106 @@
+/* Theme controls and palette. Geometry and weather calculations stay shared. */
+.theme-switch { display:flex;gap:6px; }
+.theme-button {
+  display:inline-flex;align-items:center;justify-content:center;gap:5px;
+  border:1px solid var(--line);border-radius:24px;padding:8px 13px;
+  background:var(--card);color:var(--ink);font-size:14px;font-weight:750;
+}
+.theme-button[aria-pressed="true"] {
+  background:linear-gradient(#bc75ff,#8c39e7);color:white;border-color:#cda4f2;
+  box-shadow:inset 0 1px 5px #fff7,0 2px 6px #9e6cd65c;
+}
+[data-theme="midnight"] {
+  color-scheme:dark;
+  --page:#101426;--card:#1c2340;--soft:#252c4a;--ink:#f4efff;
+  --muted:#b6accd;--purple:#a78bfa;--line:#48416c;
+  --shadow:0 3px 0 #151a31,0 7px 22px #080c2080;
+  scrollbar-color:#686087 #171d33;
+}
+[data-theme="midnight"] body { background:radial-gradient(ellipse at 20% 0,#28213f,transparent 55%),var(--page); }
+[data-theme="midnight"] .site-header { background:#171b30f2; }
+[data-theme="midnight"] .brand>span { text-shadow:0 2px 6px #9580ed33; }
+[data-theme="midnight"] .card { background:linear-gradient(135deg,var(--card),#20243f); }
+[data-theme="midnight"] .hero {
+  background-image:linear-gradient(#11182a9c,#14182aab),url('hero-landscape.png');border-color:var(--line);
+}
+[data-theme="midnight"] .upcoming {
+  background-image:linear-gradient(#141a3270,#14182a8c),url('update-shutter.png');
+}
+[data-theme="midnight"] :is(.hero,.upcoming) { background-size:cover;background-position:center bottom;background-repeat:no-repeat; }
+[data-theme="midnight"] .hero h1 { background:#1c2340d9;color:#e2d5ff; }
+[data-theme="midnight"] .hero-forecast { text-shadow:0 1px 5px #101426; }
+[data-theme="midnight"] .time-pill { background:#202941ed;border-color:#82709f;box-shadow:0 2px 4px #10142670; }
+[data-theme="midnight"] .change-badge { background:#1e2541e6;border-color:#71618f;box-shadow:0 0 13px #a05ede28; }
+[data-theme="midnight"] .change-badge strong { color:#d3baff;text-shadow:none; }
+[data-theme="midnight"] .hero-arrow { color:#cfb4ff; }
+[data-theme="midnight"] #current-change.is-changed { color:#b0eac3;background:#183d30eb;border-color:#46765b; }
+[data-theme="midnight"] #current-change.is-unchanged { color:#ffc0c9;background:#482631eb;border-color:#875265; }
+[data-theme="midnight"] .current-change { color:var(--muted);background:var(--soft);border-color:var(--line); }
+[data-theme="midnight"] .upcoming-symbol { color:#d1b7ff;filter:drop-shadow(0 3px 5px #100e2755); }
+[data-theme="midnight"] .upcoming strong { color:#e4d4ff;background:#282640e6;border-color:#74608e;box-shadow:0 3px 7px #0d102866; }
+[data-theme="midnight"] .upcoming p { color:#e1d7ef;background:#1a213be6; }
+[data-theme="midnight"] .status-line { color:#d3c7e7;background:var(--soft);border-color:var(--line); }
+[data-theme="midnight"] .day-card { background:linear-gradient(#28304d,#212640);box-shadow:0 3px 4px #0b0f2366; }
+[data-theme="midnight"] .day-card.selected { outline-color:#b89afa; }
+[data-theme="midnight"] .special { background:linear-gradient(120deg,#35283f,#2b2747)!important;border-color:#835d8b!important; }
+[data-theme="midnight"] .special-star { color:#f4b2e8; }
+[data-theme="midnight"] .day-card.special:after { color:#e8a1d6;text-shadow:0 0 6px #e68bc24d; }
+[data-theme="midnight"] .weather-icon { mix-blend-mode:normal; }
+[data-theme="midnight"] .weather-icon .icon-art { display:none; }
+[data-theme="midnight"] .weather-icon .icon-midnight { display:block; }
+[data-theme="midnight"] .clock-ring { border-color:#695a87;background:radial-gradient(circle,#28263f 45%,#292d45 65%,transparent 70%); }
+[data-theme="midnight"] .clock-center { border-color:#756191;background:linear-gradient(#2c2b48,#242b46);box-shadow:0 3px 12px #0b0f2559; }
+[data-theme="midnight"] .clock-center small { color:var(--muted); }
+[data-theme="midnight"] .clock-time { background:#222a45d9; }
+[data-theme="midnight"] .clock-orbit {
+  --orbit-color:#695a87;--shift-color:#69edb1;
+  --shift-glow:drop-shadow(0 0 .8px #48c98a) drop-shadow(0 0 1.8px #63ce875c);
+}
+[data-theme="midnight"] .round-button,
+[data-theme="midnight"] .segmented button { background:linear-gradient(#303452,#252b48);color:var(--ink);box-shadow:0 2px 4px #0b102833; }
+[data-theme="midnight"] .segmented button[aria-pressed="true"],
+[data-theme="midnight"] .theme-button[aria-pressed="true"] {
+  background:linear-gradient(#7550ad,#5d3d99);border-color:#b097d7;color:#fff6ff;box-shadow:0 0 7px #9869d13d;
+}
+[data-theme="midnight"] .primary-button { background:linear-gradient(#7755b0,#63449c);border-color:#9e85c5;box-shadow:0 2px 6px #070a1c55; }
+[data-theme="midnight"] dialog { background:var(--card);box-shadow:0 15px 60px #05071999; }
+[data-theme="midnight"] dialog::backdrop { background:#070b1fc2; }
+[data-theme="midnight"] .calculator-dialog-heading { background:var(--card); }
+[data-theme="midnight"] .period { background:#202741;border-color:var(--line); }
+[data-theme="midnight"] .period-heading { background:var(--soft); }
+[data-theme="midnight"] .period-count { color:#e2cdfd;background:#3c3156; }
+[data-theme="midnight"] .weather-row { border-color:#343853; }
+[data-theme="midnight"] .mark-changed { color:#b0eac3;background:#1e4233; }
+[data-theme="midnight"] .mark-unchanged { color:#ffc0c9;background:#492b35; }
+[data-theme="midnight"] .mark-start { color:#decaef;background:#3a3051; }
+[data-theme="midnight"] .level-low { color:#ffc0c9;background:#492b35; }
+[data-theme="midnight"] .level-normal { color:#f8e6a5;background:#49402a; }
+[data-theme="midnight"] .level-high { color:#b0eac3;background:#1e4233; }
+[data-theme="midnight"] select,
+[data-theme="midnight"] input,
+[data-theme="midnight"] textarea { color:var(--ink);background:var(--soft);border-color:var(--line); }
+[data-theme="midnight"] option { color:var(--ink);background:var(--soft); }
+[data-theme="midnight"] .result-summary { color:#e2cdfd;background:#3a3155; }
+[data-theme="midnight"] details { border-color:var(--line); }
+[data-theme="midnight"] summary { background:var(--soft); }
+[data-theme="midnight"] .rule-caption,
+[data-theme="midnight"] footer { color:var(--muted); }
+[data-theme="midnight"] .text-button { color:#d1b4fa; }
+[data-theme="midnight"] .empty { color:#cdc2df; }
+[data-theme="midnight"] .form-error,
+[data-theme="midnight"] .load-error { color:#ffbacb; }
+[data-theme="midnight"] .calculator-toggle small { border-color:#79678f; }
+[data-theme="midnight"] .calculator-icon-button:hover { color:#dec8ff; }
+[data-theme="midnight"] :is(button,a,select,input,textarea,summary):focus-visible { outline-color:#c9a9ff; }
+@media(max-width:760px) {
+  .theme-switch { gap:4px; }
+  .theme-button { width:30px;height:32px;padding:0;font-size:17px; }
+  .theme-label { display:none; }
+}
+@media(max-width:400px) {
+  .site-header { gap:8px; }
+}
+@media(max-width:360px) {
+  .site-header { padding-inline:12px; }
+  .brand { font-size:17px;white-space:nowrap; }
+}

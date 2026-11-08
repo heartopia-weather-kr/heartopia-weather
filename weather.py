@@ -22,11 +22,11 @@ KST = ZoneInfo("Asia/Seoul")
 
 def korean_weather(weather):
     if re.match(r"^Meteor Shower(?:\s+\d+)?$", weather, re.IGNORECASE):
-        return "유성우"
+        return "유성우 " + (weather.split()[-1] if weather.split()[-1].isdigit() else "1")
     if re.match(r"^Rainbow(?:\s+\d+)?$", weather, re.IGNORECASE):
         return "무지개"
     if re.match(r"^Aurora(?:\s+\d+)?$", weather, re.IGNORECASE):
-        return "오로라"
+        return "오로라 " + (weather.split()[-1] if weather.split()[-1].isdigit() else "1")
 
     names = {
         "Sunny": "맑음",
@@ -35,8 +35,14 @@ def korean_weather(weather):
         "Sunshower": "여우비",
         "Light Rain": "약한 비",
         "Moderate Rain": "보통 비",
+        "Heavy Rain": "강한 비",
+        "Moon Rainbow": "달 무지개",
         "Moon Rain": "달빛 비",
-        "Snow": "눈",
+        "Light Snow": "약한 눈",
+        "Snow": "보통 눈",
+        "Heavy Snow": "강한 눈",
+        "Heatwave": "폭염",
+        "Petal Rain": "꽃잎 비",
     }
     return names.get(weather, weather)
 
@@ -56,8 +62,14 @@ def weather_icon(weather):
         "Sunshower": "🦊",
         "Light Rain": "🌦️",
         "Moderate Rain": "🌧️",
+        "Heavy Rain": "🌧️",
+        "Moon Rainbow": "🌈",
         "Moon Rain": "🌙",
         "Snow": "❄️",
+        "Light Snow": "❄️",
+        "Heavy Snow": "❄️",
+        "Heatwave": "🔥",
+        "Petal Rain": "🌸",
     }
     return icons.get(weather, "❓")
 
@@ -256,7 +268,7 @@ def build_weather_data(today, tomorrow, today_weather, tomorrow_weather):
             "special": (
                 weather.lower().startswith("meteor shower")
                 or weather.lower().startswith("aurora")
-                or normalize_weather(weather) == "rainbow"
+                or normalize_weather(weather) in {"rainbow", "moon rainbow"}
             ),
         })
 
@@ -364,6 +376,7 @@ async def main():
 
         page = await browser.new_page(
             locale="en-US",
+            timezone_id="Asia/Seoul",
         )
 
         try:

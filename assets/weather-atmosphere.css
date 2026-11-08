@@ -1,0 +1,108 @@
+/* A motion with stronger, per-weather contours. No background/asset recoloring. */
+.hero { isolation:isolate; }
+.hero-atmosphere {
+  position:absolute;inset:0;z-index:-1;overflow:hidden;border-radius:inherit;
+  pointer-events:none;opacity:calc(.65 * var(--preview-strength,1));
+  --rain-color:#467fae;--snow-color:#fffefa;--snow-outline:#638dadb3;--spark-color:#fff3b1;
+  --cloud-color:#536c8e;--aurora-a:#72cbb8;--aurora-b:#ac8cda;
+  --aurora-min:.12;--aurora-max:.32;
+}
+.hero-atmosphere * { pointer-events:none; }
+.atmosphere-plane { position:absolute;inset:0;animation:atmosphere-enter 1.1s ease both; }
+.atmosphere-plane.is-leaving { animation:atmosphere-exit .9s ease both; }
+.atmosphere-haze,.atmosphere-particle { position:absolute;display:block; }
+.atmosphere-haze { inset:0;opacity:0; }
+.atmosphere-particle { left:var(--x);animation-delay:var(--delay)!important; }
+[data-family="warm"] .atmosphere-haze,
+[data-family="sunshine"] .atmosphere-haze,
+[data-effect="sunshower"] .atmosphere-haze,
+[data-family="heat"] .atmosphere-haze {
+  background:radial-gradient(ellipse at 45% 0,#ffe6a1,transparent 68%);
+  animation:atmosphere-warm var(--effect-duration) ease-in-out infinite;
+}
+[data-family="sunshine"] .atmosphere-particle {
+  top:var(--y);width:4px;height:4px;border-radius:50%;background:var(--spark-color);
+  box-shadow:0 0 0 .5px #ba964c8c,0 0 4px #fff1bd66;animation:atmosphere-spark var(--speed) ease-in-out infinite;
+}
+[data-family="cloud"] .atmosphere-particle {
+  top:var(--y);width:75%;height:42%;border-radius:50%;
+  background:radial-gradient(ellipse,var(--cloud-color),transparent 70%);
+  animation:atmosphere-cloud var(--speed) ease-in-out infinite alternate;
+}
+[data-family="rain"] .atmosphere-particle {
+  top:-12%;width:1.2px;height:17px;border-radius:1px;
+  background:linear-gradient(transparent,var(--rain-color));
+  animation:atmosphere-rain var(--speed) linear infinite;
+}
+[data-effect="moderate-rain"] .atmosphere-particle { height:21px; }
+[data-effect="heavy-rain"] .atmosphere-particle { height:26px;width:1.6px; }
+[data-effect="moon-rain"] { --rain-color:#438bd1; }
+[data-family="snow"] .atmosphere-particle {
+  top:-8%;width:3.5px;height:3.5px;border-radius:50%;background:var(--snow-color);
+  box-shadow:0 0 0 .6px var(--snow-outline),0 0 2px #ffffff66;
+  animation:atmosphere-snow var(--speed) linear infinite;
+}
+[data-effect="snow"] .atmosphere-particle { width:4.5px;height:4.5px; }
+[data-effect="heavy-snow"] .atmosphere-particle { width:5px;height:5px;--drift:36px!important; }
+[data-family="rainbow"] .atmosphere-haze {
+  inset:-25% -6% 22%;border-radius:50%;
+  background:radial-gradient(ellipse at 50% 100%,transparent 55%,#956ac9 57%,#598fc7 59%,#69b685 61%,#e9cb79 63%,#df8bb3 65%,transparent 68%);
+  animation:atmosphere-rainbow var(--effect-duration) ease-in-out infinite;
+}
+[data-effect="moon-rainbow"] .atmosphere-haze { filter:saturate(.35); }
+[data-family="meteor"] .atmosphere-particle {
+  top:var(--y);width:58px;height:2.2px;border-radius:50%;
+  background:linear-gradient(90deg,transparent,#657eb9 68%,#f4f2ff);
+  box-shadow:0 0 2px #8393ce66;
+  animation:atmosphere-meteor var(--speed) linear infinite;
+}
+[data-family="aurora"] .atmosphere-particle {
+  top:calc(4% + var(--index)*9%);left:-15%;width:115%;height:42%;
+  background:linear-gradient(115deg,transparent 15%,var(--aurora-a) 43%,var(--aurora-b) 61%,transparent 85%);
+  border-radius:45% 60% 35% 75%;filter:blur(8px);
+  border-top:1px solid #a1dfd48c;
+  animation:atmosphere-aurora var(--speed) ease-in-out infinite alternate;
+}
+[data-effect="aurora-1"] { --aurora-min:.1;--aurora-max:.26; }
+[data-effect="aurora-1"] .atmosphere-particle { max-height:32%; }
+[data-effect="aurora-3"] { --aurora-min:.14;--aurora-max:.36; }
+[data-effect="aurora-3"] .atmosphere-particle { height:48%; }
+[data-family="heat"] .atmosphere-haze { background:radial-gradient(ellipse at 50% 0,#f3bf76aa,transparent 75%); }
+[data-family="heat"] .atmosphere-haze::after {
+  content:"";position:absolute;inset:28% 8% 0;
+  background:repeating-linear-gradient(175deg,transparent 0 19px,#e8b87955 22px,transparent 26px);
+  mask-image:linear-gradient(transparent,#0008,transparent);
+  animation:atmosphere-heat-ripple 12s ease-in-out infinite alternate;
+}
+[data-family="petal"] .atmosphere-particle {
+  top:-8%;width:5px;height:8px;border-radius:80% 15% 75% 35%;background:#dc83b6;
+  box-shadow:0 0 0 .4px #a9578b55;
+  animation:atmosphere-petal var(--speed) linear infinite;
+}
+.hero-atmosphere[data-paused="true"] *,
+.hero-atmosphere[data-paused="true"] { animation-play-state:paused!important; }
+[data-theme="midnight"] .hero-atmosphere {
+  opacity:calc(.5 * var(--preview-strength,1));--rain-color:#b3d5ff;--snow-color:#e6efff;--snow-outline:#a8c3ea80;--spark-color:#fff0cf;
+  --cloud-color:#080f24;--aurora-a:#6ce0bc;--aurora-b:#b39ae9;
+}
+[data-theme="midnight"] [data-effect="moon-rain"] { --rain-color:#91bfff; }
+[data-theme="midnight"] [data-family="meteor"] .atmosphere-particle { background:linear-gradient(90deg,transparent,#b6a1ed 68%,#f1eeff);box-shadow:0 0 3px #b6a0fa55; }
+[data-theme="midnight"] [data-family="aurora"] .atmosphere-particle { filter:blur(7px); }
+[data-theme="midnight"] [data-family="rainbow"] .atmosphere-haze { background:radial-gradient(ellipse at 50% 100%,transparent 55%,#b28fe2 57%,#77b1de 59%,#82d5a5 61%,#e8d799 63%,#e4a4c5 65%,transparent 68%); }
+[data-theme="midnight"] [data-family="petal"] .atmosphere-particle { background:#f0b0d6; }
+@keyframes atmosphere-enter { from{opacity:0}to{opacity:1} }
+@keyframes atmosphere-exit { from{opacity:1}to{opacity:0} }
+@keyframes atmosphere-warm { 0%,100%{opacity:.1;transform:translateY(-2%)}50%{opacity:.38;transform:translateY(1%)} }
+@keyframes atmosphere-spark { 0%,76%,100%{opacity:0;transform:translateY(0)}84%,91%{opacity:.75;transform:translateY(-3px)} }
+@keyframes atmosphere-cloud { from{opacity:.16;transform:translateX(-28%)}to{opacity:.3;transform:translateX(12%)} }
+@keyframes atmosphere-rain { from{opacity:0;transform:translate3d(0,0,0)}12%,78%{opacity:.72}to{opacity:0;transform:translate3d(-12px,340px,0)} }
+@keyframes atmosphere-snow { 0%{opacity:0;transform:translate3d(0,0,0)}12%,80%{opacity:.85}100%{opacity:0;transform:translate3d(var(--drift),340px,0)} }
+@keyframes atmosphere-rainbow { 0%,100%{opacity:.16;transform:translateY(2%)}50%{opacity:.44;transform:translateY(-1%)} }
+@keyframes atmosphere-meteor { 0%,88%,100%{opacity:0;transform:translate3d(0,0,0) rotate(-32deg)}90%{opacity:.85}97%{opacity:0;transform:translate3d(-110px,70px,0) rotate(-32deg)} }
+@keyframes atmosphere-aurora { from{opacity:var(--aurora-min);transform:translateX(-4%) skewY(-3deg)}to{opacity:var(--aurora-max);transform:translateX(4%) skewY(2deg)} }
+@keyframes atmosphere-petal { 0%{opacity:0;transform:translate3d(0,0,0) rotate(-15deg)}12%,80%{opacity:.82}100%{opacity:0;transform:translate3d(45px,340px,0) rotate(100deg)} }
+@keyframes atmosphere-heat-ripple { from{transform:translateY(0) skewX(-.7deg)}to{transform:translateY(-5px) skewX(.7deg)} }
+@media(prefers-reduced-motion:reduce) {
+  .hero-atmosphere { display:none; }
+  .hero-atmosphere,.hero-atmosphere * { animation:none!important; }
+}
