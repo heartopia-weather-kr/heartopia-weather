@@ -1,14 +1,14 @@
 {
-  "updated": "2026-11-08 16:50",
-  "updatedTime": "16:50",
+  "updated": "2026-11-08 23:39",
+  "updatedTime": "23:39",
   "days": [
     {
       "startDate": "2026-11-08",
       "endDate": "2026-11-09",
       "dateLabel": "11월 8일 ~ 11월 9일",
       "timeRange": "06:00 ~ 다음날 05:00",
-      "updated": "2026-11-08 16:50",
-      "updatedTime": "16:50",
+      "updated": "2026-11-08 23:39",
+      "updatedTime": "23:39",
       "changes": 8,
       "changeRate": 33.3,
       "status": "🟡 보통",
@@ -482,8 +482,8 @@
       "endDate": "2026-11-10",
       "dateLabel": "11월 9일 ~ 11월 10일",
       "timeRange": "06:00 ~ 다음날 05:00",
-      "updated": "2026-11-08 16:50",
-      "updatedTime": "16:50",
+      "updated": "2026-11-08 23:39",
+      "updatedTime": "23:39",
       "changes": 9,
       "changeRate": 37.5,
       "status": "🟡 보통",
@@ -957,8 +957,8 @@
       "endDate": "2026-11-11",
       "dateLabel": "11월 10일 ~ 11월 11일",
       "timeRange": "06:00 ~ 다음날 05:00",
-      "updated": "2026-11-08 16:50",
-      "updatedTime": "16:50",
+      "updated": "2026-11-08 23:39",
+      "updatedTime": "23:39",
       "changes": 12,
       "changeRate": 50.0,
       "status": "🟡 보통",
@@ -1432,8 +1432,8 @@
       "endDate": "2026-11-12",
       "dateLabel": "11월 11일 ~ 11월 12일",
       "timeRange": "06:00 ~ 다음날 05:00",
-      "updated": "2026-11-08 16:50",
-      "updatedTime": "16:50",
+      "updated": "2026-11-08 23:39",
+      "updatedTime": "23:39",
       "changes": 14,
       "changeRate": 58.3,
       "status": "🟠 변화 많음",
@@ -1907,8 +1907,8 @@
       "endDate": "2026-11-13",
       "dateLabel": "11월 12일 ~ 11월 13일",
       "timeRange": "06:00 ~ 다음날 05:00",
-      "updated": "2026-11-08 16:50",
-      "updatedTime": "16:50",
+      "updated": "2026-11-08 23:39",
+      "updatedTime": "23:39",
       "changes": 14,
       "changeRate": 58.3,
       "status": "🟠 변화 많음",
@@ -2024,56 +2024,56 @@
         {
           "time": "18:00",
           "weather": "Moon Rainbow",
-          "name": "Moon Rainbow",
-          "icon": "❓",
+          "name": "달 무지개",
+          "icon": "🌈",
           "changed": true,
           "mark": "⭕",
-          "special": false
+          "special": true
         },
         {
           "time": "19:00",
           "weather": "Moon Rainbow",
-          "name": "Moon Rainbow",
-          "icon": "❓",
+          "name": "달 무지개",
+          "icon": "🌈",
           "changed": false,
           "mark": "❌",
-          "special": false
+          "special": true
         },
         {
           "time": "20:00",
           "weather": "Moon Rainbow",
-          "name": "Moon Rainbow",
-          "icon": "❓",
+          "name": "달 무지개",
+          "icon": "🌈",
           "changed": false,
           "mark": "❌",
-          "special": false
+          "special": true
         },
         {
           "time": "21:00",
           "weather": "Moon Rainbow",
-          "name": "Moon Rainbow",
-          "icon": "❓",
+          "name": "달 무지개",
+          "icon": "🌈",
           "changed": false,
           "mark": "❌",
-          "special": false
+          "special": true
         },
         {
           "time": "22:00",
           "weather": "Moon Rainbow",
-          "name": "Moon Rainbow",
-          "icon": "❓",
+          "name": "달 무지개",
+          "icon": "🌈",
           "changed": false,
           "mark": "❌",
-          "special": false
+          "special": true
         },
         {
           "time": "23:00",
           "weather": "Moon Rainbow",
-          "name": "Moon Rainbow",
-          "icon": "❓",
+          "name": "달 무지개",
+          "icon": "🌈",
           "changed": false,
           "mark": "❌",
-          "special": false
+          "special": true
         },
         {
           "time": "00:00",
@@ -2261,56 +2261,56 @@
             {
               "time": "18:00",
               "weather": "Moon Rainbow",
-              "name": "Moon Rainbow",
-              "icon": "❓",
+              "name": "달 무지개",
+              "icon": "🌈",
               "changed": true,
               "mark": "⭕",
-              "special": false
+              "special": true
             },
             {
               "time": "19:00",
               "weather": "Moon Rainbow",
-              "name": "Moon Rainbow",
-              "icon": "❓",
+              "name": "달 무지개",
+              "icon": "🌈",
               "changed": false,
               "mark": "❌",
-              "special": false
+              "special": true
             },
             {
               "time": "20:00",
               "weather": "Moon Rainbow",
-              "name": "Moon Rainbow",
-              "icon": "❓",
+              "name": "달 무지개",
+              "icon": "🌈",
               "changed": false,
               "mark": "❌",
-              "special": false
+              "special": true
             },
             {
               "time": "21:00",
               "weather": "Moon Rainbow",
-              "name": "Moon Rainbow",
-              "icon": "❓",
+              "name": "달 무지개",
+              "icon": "🌈",
               "changed": false,
               "mark": "❌",
-              "special": false
+              "special": true
             },
             {
               "time": "22:00",
               "weather": "Moon Rainbow",
-              "name": "Moon Rainbow",
-              "icon": "❓",
+              "name": "달 무지개",
+              "icon": "🌈",
               "changed": false,
               "mark": "❌",
-              "special": false
+              "special": true
             },
             {
               "time": "23:00",
               "weather": "Moon Rainbow",
-              "name": "Moon Rainbow",
-              "icon": "❓",
+              "name": "달 무지개",
+              "icon": "🌈",
               "changed": false,
               "mark": "❌",
-              "special": false
+              "special": true
             }
           ]
         },
@@ -2382,8 +2382,8 @@
       "endDate": "2026-11-14",
       "dateLabel": "11월 13일 ~ 11월 14일",
       "timeRange": "06:00 ~ 다음날 05:00",
-      "updated": "2026-11-08 16:50",
-      "updatedTime": "16:50",
+      "updated": "2026-11-08 23:39",
+      "updatedTime": "23:39",
       "changes": 12,
       "changeRate": 50.0,
       "status": "🟡 보통",
@@ -2857,8 +2857,8 @@
       "endDate": "2026-11-15",
       "dateLabel": "11월 14일 ~ 11월 15일",
       "timeRange": "06:00 ~ 다음날 05:00",
-      "updated": "2026-11-08 16:50",
-      "updatedTime": "16:50",
+      "updated": "2026-11-08 23:39",
+      "updatedTime": "23:39",
       "changes": 14,
       "changeRate": 58.3,
       "status": "🟠 변화 많음",
@@ -2884,8 +2884,8 @@
         {
           "time": "08:00",
           "weather": "Heavy Rain",
-          "name": "Heavy Rain",
-          "icon": "❓",
+          "name": "강한 비",
+          "icon": "🌧️",
           "changed": true,
           "mark": "⭕",
           "special": false
@@ -3107,8 +3107,8 @@
             {
               "time": "08:00",
               "weather": "Heavy Rain",
-              "name": "Heavy Rain",
-              "icon": "❓",
+              "name": "강한 비",
+              "icon": "🌧️",
               "changed": true,
               "mark": "⭕",
               "special": false
