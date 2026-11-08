@@ -374,11 +374,6 @@ main {
   font-size:22px;
   margin-top:5px
 }
-.clock-center small {
-  font-size:9px;
-  color:var(--muted);
-  margin-top:3px
-}
 .clock-hour {
   position:absolute;
   transform:translate(-50%,-50%);
@@ -1161,7 +1156,6 @@ body:has(dialog[open]) { overflow:hidden; }
 .clock-center .weather-icon { width:25.8cqw;height:13.9cqw; }
 .clock-center>strong { font-size:6.77cqw; }
 .clock-center .center-time { font-size:7.1cqw;margin-top:1.6cqw; }
-.clock-center small { font-size:2.9cqw;margin-top:1cqw; }
 @media(min-width:1250px) {
   .weather-clock { width:442px; }
 }
@@ -1294,6 +1288,16 @@ dialog :is(input,textarea,select,option,[contenteditable]:not([contenteditable="
 dialog [contenteditable]:not([contenteditable="false"]) * {
   -webkit-user-select:text;
   user-select:text;
+}
+/* The two labels stay together; the count may wrap on narrow screens. */
+.hero-top { flex-wrap:wrap;gap:8px; }
+.hero-labels { display:flex;align-items:center;gap:7px;max-width:100%; }
+.hero-date { padding:5px 10px;border-radius:20px;background:#ffffffb3;color:#564a86;font-size:13px;font-weight:700;white-space:nowrap; }
+.hero h1 { font-size:18px;font-weight:850;white-space:nowrap; }
+.hero-top .change-badge { position:static;margin-left:auto;flex-shrink:0; }
+@media(max-width:760px) {
+  .hero h1 { font-size:15.6px; }
+  .hero-date { font-size:12px;padding:5px 8px; }
 }
 @media(prefers-reduced-motion:reduce) {
   * {

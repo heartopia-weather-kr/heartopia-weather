@@ -50,7 +50,7 @@
 [data-theme="midnight"] .weather-icon .icon-midnight { display:block; }
 [data-theme="midnight"] .clock-ring { border-color:#695a87;background:radial-gradient(circle,#28263f 45%,#292d45 65%,transparent 70%); }
 [data-theme="midnight"] .clock-center { border-color:#756191;background:linear-gradient(#2c2b48,#242b46);box-shadow:0 3px 12px #0b0f2559; }
-[data-theme="midnight"] .clock-center small { color:var(--muted); }
+[data-theme="midnight"] .hero-date { background:#1c2340d9;color:#e2d5ff; }
 [data-theme="midnight"] .clock-time { background:#222a45d9; }
 [data-theme="midnight"] .clock-orbit {
   --orbit-color:#695a87;--shift-color:#69edb1;
