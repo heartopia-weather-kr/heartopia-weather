@@ -30,11 +30,17 @@
   function rowCard(row,first=false){const node=el('div','weather-row'+(C.special(row)?' special':''));const mark=el('span','change-mark '+(first?'mark-start':row.changed?'mark-changed':'mark-unchanged'),first?'시작':row.changed?'◯':'−');mark.setAttribute('aria-label',first?'시작 날씨':row.changed?'날씨 변경':'날씨 유지');node.append(mark,el('strong','row-time',row.time),icon(row),el('span','row-name',C.name(row)));if(C.special(row))node.append(el('span','special-star','✧'));return node;}
   function dateLabel(date){return new Intl.DateTimeFormat('ko-KR',{timeZone:'Asia/Seoul',month:'2-digit',day:'2-digit',weekday:'short'}).format(new Date(date+'T12:00:00+09:00'));}
   function currentDay(){return state.data?.days.find(day=>day.startDate===C.kst().gameDate);}
+  function updateTodayDate(){
+    const date=C.kst().gameDate, weekday=new Intl.DateTimeFormat('ko-KR',{timeZone:'Asia/Seoul',weekday:'short'}).format(new Date(date+'T12:00:00+09:00'));
+    $('today-date').dateTime=date;
+    $('today-date').textContent=`${Number(date.slice(5,7))}월 ${Number(date.slice(8,10))}일 (${weekday})`;
+  }
   function freshness(){
     if(!state.data)return;
     $('status').textContent=`마지막 업데이트: ${state.data.updated} (KST)`;
   }
   function renderToday(){
+    updateTodayDate();
     const day=currentDay(), container=$('current-weather');container.replaceChildren();
     if(!day){atmosphere.update(null);container.append(el('p','empty','현재 날짜의 예보가 없어요. 아래에서 저장된 날짜를 확인해 주세요.'));$('today-changes').textContent='—';return;}
     $('today-changes').textContent=day.changes+'회';
@@ -95,7 +101,7 @@
         clip.append(makeSvg('path',{d:layout.sector(hour),'data-hour':hour}));
       }
     }
-    const now=C.kst(),row=day.weather[(now.hour+18)%24],center=$('clock-center');center.replaceChildren();center.append(icon(row),el('strong','',C.name(row)),el('strong','center-time',String(now.hour).padStart(2,'0')+':'+String(now.minute).padStart(2,'0')),el('small','',dateLabel(day.startDate)+(now.hour<6?' · 다음 날':'')));
+    const now=C.kst(),row=day.weather[(now.hour+18)%24],center=$('clock-center');center.replaceChildren();center.append(icon(row),el('strong','',C.name(row)),el('strong','center-time',String(now.hour).padStart(2,'0')+':'+String(now.minute).padStart(2,'0')));
     positionClockLabels();
   }
   function positionClockLabels(){
@@ -155,7 +161,7 @@
   $('notice-close').addEventListener('click',()=>$('notice-dialog').close());$('notice-hide').addEventListener('click',()=>{saveSetting('noticeHiddenKey',noticeKey());$('notice-dialog').close();});$('notice-open').addEventListener('click',()=>state.notice?showNotice():loadNotice());
   $('notice-dialog').addEventListener('click',event=>{const box=$('notice-dialog').getBoundingClientRect();if(event.clientX<box.left||event.clientX>box.right||event.clientY<box.top||event.clientY>box.bottom)$('notice-dialog').close();});
   let lastGameDate=C.kst().gameDate;
-  setInterval(()=>{if(!state.data)return;freshness();renderToday();const period=C.kst().hour<12?'am':'pm';if(period!==state.clockPeriod){state.clockPeriod=period;state.clockMode=period;}renderClock();if(lastGameDate!==C.kst().gameDate){lastGameDate=C.kst().gameDate;loadWeather();}},60000);
+  setInterval(()=>{updateTodayDate();if(!state.data)return;freshness();renderToday();const period=C.kst().hour<12?'am':'pm';if(period!==state.clockPeriod){state.clockPeriod=period;state.clockMode=period;}renderClock();if(lastGameDate!==C.kst().gameDate){lastGameDate=C.kst().gameDate;loadWeather();}},60000);
   setInterval(loadWeather,15*60000);
-  loadWeather();loadNotice();
+  updateTodayDate();loadWeather();loadNotice();
 })();

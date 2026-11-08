@@ -29,6 +29,9 @@ try:
         page.locator('.day-card').last.wait_for()
         page.locator('#notice-close').click()
         assert page.locator('#refresh').count()==0
+        assert page.locator('#today-date').inner_text() == '11월 8일 (일)'
+        assert page.locator('#today-title').inner_text() == '현재 날씨'
+        assert page.locator('#clock-center small').count() == 0
         def assert_no_drag(selector):
             node=page.locator(selector).first
             assert node.evaluate('(node)=>getComputedStyle(node).userSelect')=='none',selector
@@ -57,7 +60,7 @@ try:
         assert page.locator('#status').inner_text() == '마지막 업데이트: 2026-11-08 16:50 (KST)'
         assert page.locator('.icon-catalog').count() == 0
         assert page.evaluate('WeatherCore.catalog.length') == 21
-        assert page.locator('#today-date').count() == 0
+        assert page.locator('#today-date').count() == 1
         assert page.locator('#clock-now, .clock-caption').count() == 0
         assert page.locator('#week-title svg.line-icon').count() == 1
         assert page.locator('.upcoming svg').count() == 1
@@ -153,11 +156,15 @@ try:
         page.clock.run_for(121000)
         assert page.locator('#clock-am').get_attribute('aria-pressed') == 'true'
         assert page.locator('.center-time').inner_text().startswith('00:')
+        assert page.locator('#today-date').get_attribute('datetime') == '2026-11-08'
+        assert page.locator('#today-date').inner_text() == '11월 8일 (일)'
         assert page.locator('#clock-center>strong').first.inner_text() == forecast['days'][0]['weather'][18]['name']
         check_shifts(0,0)
         page.clock.set_system_time(__import__('datetime').datetime.fromisoformat('2026-11-08T20:59:00+00:00'))
         page.clock.run_for(121000)
         assert page.locator('.center-time').inner_text().startswith('06:')
+        assert page.locator('#today-date').get_attribute('datetime') == '2026-11-09'
+        assert page.locator('#today-date').inner_text() == '11월 9일 (월)'
         assert page.locator('#clock-center>strong').first.inner_text() == forecast['days'][1]['weather'][0]['name']
         check_shifts(1,0)
         page.clock.set_system_time(__import__('datetime').datetime.fromisoformat('2026-11-08T10:00:00+00:00'))
@@ -346,6 +353,14 @@ try:
             for theme in ['light','midnight']:
                 dense_page.evaluate('(theme)=>WeatherTheme.set(theme)',theme)
                 assert dense_page.evaluate((ROOT/'tests/clock_geometry.js').read_text())==[],(theme,width)
+                assert dense_page.evaluate("""() => {
+                    const date=document.querySelector('#today-date').getBoundingClientRect();
+                    const title=document.querySelector('#today-title').getBoundingClientRect();
+                    const count=document.querySelector('.change-badge').getBoundingClientRect();
+                    const separate=(a,b)=>a.right<=b.left || b.right<=a.left || a.bottom<=b.top || b.bottom<=a.top;
+                    return date.right<=title.left && Math.abs((date.top+date.bottom-title.top-title.bottom)/2)<1 && separate(date,count) && separate(title,count)
+                        && document.querySelector('#clock-center small')===null;
+                }"""),(theme,width,'hero badge alignment')
                 if width in [1536,390]:
                     dense_page.screenshot(path=str(Path(tempfile.gettempdir())/f'heartopia-rings-{theme}-{width}.png'),full_page=True)
             assert dense_page.evaluate("""() => {
