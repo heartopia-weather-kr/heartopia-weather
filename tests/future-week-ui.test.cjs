@@ -6,7 +6,9 @@ const source=fs.readFileSync('assets/weather-app.js','utf8');
 const html=fs.readFileSync('index.html','utf8');
 const python=fs.readFileSync('weather.py','utf8');
 const data=JSON.parse(fs.readFileSync('weather.json','utf8'));
+// The live weather.json may already contain eight days; start with seven for this schema test.
 const extended=structuredClone(data);
+extended.days=extended.days.slice(0,7);
 const last=extended.days.at(-1);
 const next=new Date(last.startDate+'T00:00:00Z');
 next.setUTCDate(next.getUTCDate()+1);
@@ -21,5 +23,8 @@ assert.match(source,/if\(day.startDate<=C.kst\(\).gameDate\)return/);
 assert.match(source,/forecastMode:'full'/);
 assert.match(source,/grouped-periods/);
 assert.match(source,/touchcancel/);
+assert.match(source,/lockBackgroundScroll\(\)/);
+assert.match(source,/unlockBackgroundScroll\(\)/);
+assert.match(source,/modal-scroll-locked/);
 for(const id of ['view-full','view-grouped','group-navigation','group-prev','group-next','group-dots'])assert.ok(html.includes('id="'+id+'"'),id);
 console.log('PASS: 8-day schema, future-only cards, grouped view controls and swipe handling');
