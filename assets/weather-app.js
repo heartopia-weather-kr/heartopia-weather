@@ -178,15 +178,32 @@
   if(window.ResizeObserver)new ResizeObserver(positionClockLabels).observe($('weather-clock'));
   else window.addEventListener('resize',positionClockLabels,{passive:true});
   const modalOpeners=new Map();
+  let lockedScrollY=null;
+  function lockBackgroundScroll(){
+    if(lockedScrollY!==null)return;
+    lockedScrollY=window.scrollY;
+    document.body.style.top=-lockedScrollY+'px';
+    document.body.classList.add('modal-scroll-locked');
+  }
+  function unlockBackgroundScroll(){
+    if(lockedScrollY===null||document.querySelector('dialog[open]'))return;
+    const y=lockedScrollY;
+    lockedScrollY=null;
+    document.body.classList.remove('modal-scroll-locked');
+    document.body.style.top='';
+    window.scrollTo(0,y);
+  }
   function openModal(id,opener){
     if(document.querySelector('dialog[open]'))return;
-    modalOpeners.set(id,opener);$(id).showModal();
+    modalOpeners.set(id,opener);
+    lockBackgroundScroll();
+    try{$(id).showModal();}catch(error){unlockBackgroundScroll();throw error;}
   }
   function setupModal(id,closeId){
     const dialog=$(id);
     $(closeId).addEventListener('click',()=>dialog.close());
     dialog.addEventListener('click',event=>{const box=dialog.getBoundingClientRect();if(event.clientX<box.left||event.clientX>box.right||event.clientY<box.top||event.clientY>box.bottom)dialog.close();});
-    dialog.addEventListener('close',()=>{const opener=modalOpeners.get(id);if(opener?.isConnected)opener.focus({preventScroll:true});modalOpeners.delete(id);});
+    dialog.addEventListener('close',()=>{unlockBackgroundScroll();const opener=modalOpeners.get(id);if(opener?.isConnected)opener.focus({preventScroll:true});modalOpeners.delete(id);});
   }
   function populateCalculator(){
     const selected=$('calculator-date').selectedOptions[0]?.textContent;
@@ -206,7 +223,7 @@
     }finally{state.loading=false;}
   }
   function noticeKey(){return `${state.notice?.id||'default'}-${C.kst().date}`;}
-  function showNotice(){if(!state.notice?.enabled)return;const notice=state.notice;$('notice-title').textContent=(notice.icon||'')+' '+(notice.title||'이용 안내');$('notice-message').replaceChildren();const lines=Array.isArray(notice.message)?notice.message:[notice.message||''];lines.forEach(line=>$('notice-message').append(el('p','',String(line))));if(!$('notice-dialog').open)$('notice-dialog').showModal();}
+  function showNotice(){if(!state.notice?.enabled)return;const notice=state.notice;$('notice-title').textContent=(notice.icon||'')+' '+(notice.title||'이용 안내');$('notice-message').replaceChildren();const lines=Array.isArray(notice.message)?notice.message:[notice.message||''];lines.forEach(line=>$('notice-message').append(el('p','',String(line))));if(!$('notice-dialog').open){lockBackgroundScroll();try{$('notice-dialog').showModal();}catch(error){unlockBackgroundScroll();throw error;}}}
   async function loadNotice(){try{const response=await fetch('notice.json?t='+Date.now(),{cache:'no-store'});if(!response.ok)throw new Error('공지 로딩 실패');state.notice=await response.json();$('notice-open').hidden=!state.notice.enabled;if(readSetting('noticeHiddenKey','')!==noticeKey())showNotice();}catch{$('notice-open').textContent='공지 다시 불러오기';}}
   setupModal('forecast-dialog','forecast-close');
   $('view-full').addEventListener('click',()=>setForecastMode('full'));
@@ -236,6 +253,7 @@
   ['calculator-date','calculator-start','calculator-end'].forEach(id=>$(id).addEventListener('change',()=>$('calculator-result').replaceChildren()));
   $('calculator-form').addEventListener('submit',event=>{event.preventDefault();const result=$('calculator-result');result.replaceChildren();try{if(!state.data)throw new Error('예보를 먼저 불러와 주세요.');const day=state.data.days[Number($('calculator-date').value)], calculation=C.calculate(day,Number($('calculator-start').value),Number($('calculator-end').value));result.append(el('h3','',day.dateLabel),el('div','result-summary',`변경 ${calculation.changes}회 · 변동률 ${calculation.rate}%`));const details=el('details'),summary=el('summary','','시간별 날씨 흐름 펼쳐보기');details.append(summary);calculation.rows.forEach((row,i)=>details.append(rowCard(row,i===0)));result.append(details);}catch(error){result.append(el('p','form-error',error.message));}});
   $('notice-close').addEventListener('click',()=>$('notice-dialog').close());$('notice-hide').addEventListener('click',()=>{saveSetting('noticeHiddenKey',noticeKey());$('notice-dialog').close();});$('notice-open').addEventListener('click',()=>state.notice?showNotice():loadNotice());
+  $('notice-dialog').addEventListener('close',unlockBackgroundScroll);
   $('notice-dialog').addEventListener('click',event=>{const box=$('notice-dialog').getBoundingClientRect();if(event.clientX<box.left||event.clientX>box.right||event.clientY<box.top||event.clientY>box.bottom)$('notice-dialog').close();});
   let lastGameDate=C.kst().gameDate;
   setInterval(()=>{updateTodayDate();if(!state.data)return;freshness();renderToday();const period=C.kst().hour<12?'am':'pm';if(period!==state.clockPeriod){state.clockPeriod=period;state.clockMode=period;}renderClock();if(lastGameDate!==C.kst().gameDate){lastGameDate=C.kst().gameDate;loadWeather();}},60000);
