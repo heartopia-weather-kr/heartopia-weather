@@ -25,7 +25,7 @@
     const object=value=>value!==null && typeof value==='object' && !Array.isArray(value);
     const text=value=>typeof value==='string' && value.trim().length>0;
     const date=value=>typeof value==='string' && /^\d{4}-\d{2}-\d{2}$/.test(value) && Number.isFinite(Date.parse(value)) && new Date(value).toISOString().slice(0,10)===value;
-    if (!data || !Array.isArray(data.days) || !data.days.length || data.days.length > 7) throw new Error('예보 날짜 데이터가 올바르지 않습니다.');
+    if (!data || !Array.isArray(data.days) || !data.days.length || data.days.length > 8) throw new Error('예보 날짜 데이터가 올바르지 않습니다.');
     if (!text(data.updated) || !/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/.test(data.updated) || !date(data.updated.slice(0,10)) || !/^([01]\d|2[0-3]):[0-5]\d$/.test(data.updated.slice(11))) throw new Error('갱신 시각이 올바르지 않습니다.');
     data.days.forEach((day,index) => {
       if (!object(day) || !date(day.startDate) || !Array.isArray(day.weather) || day.weather.length !== 24) throw new Error('24시간 예보가 완전하지 않습니다.');
