@@ -24,6 +24,8 @@ assert.match(source,/if\(day.startDate<=C.kst\(\).gameDate\)return/);
 assert.match(source,/forecastMode:'full'/);
 assert.match(source,/grouped-periods/);
 assert.match(source,/touchcancel/);
+assert.match(source,/DialogScrollGuard\.install\(document,window\)/);
+assert.match(html,/dialog-scroll-guard\.js/);
 assert.match(css,/dialog\s*\{[^}]*position:fixed;[^}]*inset:0;[^}]*margin:auto;/);
 assert.match(css,/max-height:calc\(100dvh - 24px\)/);
 for(const id of ['view-full','view-grouped','group-navigation','group-prev','group-next','group-dots'])assert.ok(html.includes('id="'+id+'"'),id);
