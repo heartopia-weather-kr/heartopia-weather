@@ -4,7 +4,7 @@
   const C=window.WeatherCore, $=id=>document.getElementById(id);
   const readSetting=(key,fallback)=>{try{return localStorage.getItem(key)||fallback;}catch{return fallback;}};
   const saveSetting=(key,value)=>{try{localStorage.setItem(key,value);}catch{/* Browsing without storage remains usable. */}};
-  const state={data:null,day:0,clockMode:C.kst().hour<12?'am':'pm',clockPeriod:C.kst().hour<12?'am':'pm',notice:null,loading:false};
+  const state={data:null,day:0,clockMode:C.kst().hour<12?'am':'pm',clockPeriod:C.kst().hour<12?'am':'pm',notice:null,loading:false,forecastMode:'full',forecastPeriod:0};
   const atmosphere=window.WeatherAtmosphere.create(document.querySelector('.hero'));
   const periodLabels=['오전 · 06:00 ~ 11:00','오후 · 12:00 ~ 17:00','저녁 · 18:00 ~ 23:00','새벽 · 다음 날 00:00 ~ 05:00'];
   function el(tag,className,text){const node=document.createElement(tag);if(className)node.className=className;if(text!==undefined)node.textContent=text;return node;}
@@ -83,13 +83,14 @@
   function renderWeek(){
     $('week-days').replaceChildren();
     state.data.days.forEach((day,index)=>{
+      if(day.startDate<=C.kst().gameDate)return;
       const representative=day.weather.find(C.special)||day.weather[0];
       const button=el('button','day-card'+(day.weather.some(C.special)?' special':'')+(day.startDate===C.kst().gameDate?' selected':''));button.type='button';button.setAttribute('aria-haspopup','dialog');button.setAttribute('aria-controls','forecast-dialog');button.setAttribute('aria-label',dateLabel(day.startDate)+' 상세 예보 보기');
       button.append(el('strong','day-date',dateLabel(day.startDate)),icon(representative),el('strong','day-weather',C.name(representative)));
       button.title='특수 날씨가 있으면 우선 표시 · 없으면 06시 예보';button.addEventListener('click',()=>{selectDay(index);openModal('forecast-dialog',button);});$('week-days').append(button);
     });
   }
-  function selectDay(index){if(!state.data||index<0||index>=state.data.days.length)return;state.day=index;renderSelected();}
+  function selectDay(index){if(!state.data||index<0||index>=state.data.days.length||state.data.days[index].startDate<=C.kst().gameDate)return;state.day=index;renderSelected();}
   function renderSelected(){
     const day=state.data.days[state.day];$('selected-date').textContent=dateLabel(day.startDate);$('prev-date').disabled=state.day===0;$('next-date').disabled=state.day===state.data.days.length-1;
     // Preserve weather.py's <=25 / <=50 / <=75 / >75 thresholds.
@@ -99,11 +100,43 @@
     badge.replaceChildren(count,el('span','badge-divider','|'),rate,el('span','badge-divider','|'),el('span','badge-level',day.status.replace(/^[^가-힣]+/,'')));
     renderPeriods();
   }
+  function setForecastMode(mode){
+    if(mode!=='full'&&mode!=='grouped')return;
+    state.forecastMode=mode;
+    renderPeriods();
+  }
+  function setForecastPeriod(index){
+    if(index<0||index>3||state.forecastMode!=='grouped')return;
+    state.forecastPeriod=index;
+    renderPeriods();
+  }
   function renderPeriods(){
-    const day=state.data.days[state.day], container=$('periods');container.replaceChildren();
-    for(let i=0;i<4;i++){
+    const day=state.data.days[state.day], container=$('periods'),grouped=state.forecastMode==='grouped';
+    $('view-full').setAttribute('aria-pressed',String(!grouped));
+    $('view-grouped').setAttribute('aria-pressed',String(grouped));
+    $('group-navigation').hidden=!grouped;
+    $('group-dots').hidden=!grouped;
+    container.classList.toggle('grouped-periods',grouped);
+    container.replaceChildren();
+    const indices=grouped?[state.forecastPeriod]:[0,1,2,3];
+    for(const i of indices){
       const rows=day.weather.slice(i*6,i*6+6), section=el('section','period');
       const header=el('div','period-heading');header.append(el('h3','',periodLabels[i]),el('span','period-count',`변경 ${rows.filter(row=>row.changed).length}회`));section.append(header);rows.forEach(row=>section.append(rowCard(row)));container.append(section);
+    }
+    if(grouped){
+      const i=state.forecastPeriod;
+      $('group-title').textContent=['오전','오후','저녁','새벽'][i];
+      $('group-range').textContent=periodLabels[i].split(' · ')[1];
+      $('group-prev').disabled=i===0;
+      $('group-next').disabled=i===3;
+      const dots=$('group-dots');dots.replaceChildren();
+      for(let j=0;j<4;j++){
+        const dot=el('button','group-dot'+(j===i?' active':''));dot.type='button';
+        dot.setAttribute('aria-label',`${['오전','오후','저녁','새벽'][j]} 시간대 보기`);
+        dot.setAttribute('aria-pressed',String(j===i));
+        dot.addEventListener('click',()=>setForecastPeriod(j));
+        dots.append(dot);
+      }
     }
   }
   function renderClock(){
@@ -165,7 +198,7 @@
     try{
       const response=await fetch('weather.json?t='+Date.now(),{cache:'no-store'});if(!response.ok)throw new Error('예보 파일을 불러오지 못했습니다.');
       const data=C.validate(await response.json()), previous=state.data?.days[state.day]?.startDate;
-      state.data=data;state.day=Math.max(0,data.days.findIndex(day=>day.startDate===(previous||C.kst().gameDate)));
+      state.data=data;state.day=Math.max(0,data.days.findIndex(day=>day.startDate===previous&&day.startDate>C.kst().gameDate));if(state.day===0)state.day=Math.max(0,data.days.findIndex(day=>day.startDate>C.kst().gameDate));
       populateCalculator();renderToday();renderWeek();renderSelected();renderClock();freshness();$('load-error').hidden=true;
     }catch(error){
       $('load-error').hidden=false;$('load-error').textContent=error.message+(state.data?' 마지막으로 불러온 예보를 표시합니다.':' 예보는 자동으로 다시 불러옵니다.');
@@ -176,6 +209,23 @@
   function showNotice(){if(!state.notice?.enabled)return;const notice=state.notice;$('notice-title').textContent=(notice.icon||'')+' '+(notice.title||'이용 안내');$('notice-message').replaceChildren();const lines=Array.isArray(notice.message)?notice.message:[notice.message||''];lines.forEach(line=>$('notice-message').append(el('p','',String(line))));if(!$('notice-dialog').open)$('notice-dialog').showModal();}
   async function loadNotice(){try{const response=await fetch('notice.json?t='+Date.now(),{cache:'no-store'});if(!response.ok)throw new Error('공지 로딩 실패');state.notice=await response.json();$('notice-open').hidden=!state.notice.enabled;if(readSetting('noticeHiddenKey','')!==noticeKey())showNotice();}catch{$('notice-open').textContent='공지 다시 불러오기';}}
   setupModal('forecast-dialog','forecast-close');
+  $('view-full').addEventListener('click',()=>setForecastMode('full'));
+  $('view-grouped').addEventListener('click',()=>setForecastMode('grouped'));
+  $('group-prev').addEventListener('click',()=>setForecastPeriod(state.forecastPeriod-1));
+  $('group-next').addEventListener('click',()=>setForecastPeriod(state.forecastPeriod+1));
+  // Recognize horizontal swipes on the six-hour content only; preserve vertical scrolling.
+  const groupArea=$('periods');let gesture=null;
+  groupArea.addEventListener('touchstart',event=>{
+    if(state.forecastMode!=='grouped'||event.touches.length!==1){gesture=null;return;}
+    gesture={x:event.touches[0].clientX,y:event.touches[0].clientY};
+  },{passive:true});
+  groupArea.addEventListener('touchend',event=>{
+    if(!gesture||state.forecastMode!=='grouped')return;
+    const dx=event.changedTouches[0].clientX-gesture.x,dy=event.changedTouches[0].clientY-gesture.y;
+    gesture=null;
+    if(Math.abs(dx)>55&&Math.abs(dx)>Math.abs(dy)*1.5)setForecastPeriod(state.forecastPeriod+(dx<0?1:-1));
+  },{passive:true});
+  groupArea.addEventListener('touchcancel',()=>{gesture=null;},{passive:true});
   setupModal('calculator-dialog','calculator-close');
   $('prev-date').addEventListener('click',()=>selectDay(state.day-1));$('next-date').addEventListener('click',()=>selectDay(state.day+1));
   ['am','pm'].forEach(mode=>$('clock-'+mode).addEventListener('click',()=>{state.clockMode=mode;renderClock();}));
