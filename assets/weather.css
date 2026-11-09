@@ -1102,6 +1102,7 @@ dialog::backdrop {
   max-height:calc(100dvh - 40px);
   overflow-y:auto;
   overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch;
   padding:20px;
 }
 .forecast-close {
@@ -1244,6 +1245,7 @@ body:has(dialog[open]) { overflow:hidden; }
   max-height:calc(100dvh - 40px);
   overflow-y:auto;
   overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch;
   padding:22px;
 }
 .calculator-dialog-heading { position:sticky;top:0;z-index:2;background:#fcf9ff;padding-bottom:10px; }
