@@ -18,7 +18,7 @@
     return Boolean(row && previous && normalize(row.weather)!==normalize(previous.weather));
   }
   function shareText(day) {
-    if(!day || !/^\\d{4}-\\d{2}-\\d{2}$/.test(day.startDate) || !Array.isArray(day.weather) || day.weather.length!==24) throw new Error('완전한 하루 예보가 필요합니다.');
+    if(!day || !/^\d{4}-\d{2}-\d{2}$/.test(day.startDate) || !Array.isArray(day.weather) || day.weather.length!==24) throw new Error('완전한 하루 예보가 필요합니다.');
     const date=new Date(day.startDate+'T12:00:00+09:00');
     if(Number.isNaN(date.getTime()))throw new Error('예보 날짜가 올바르지 않습니다.');
     const weekday=new Intl.DateTimeFormat('ko-KR',{timeZone:'Asia/Seoul',weekday:'short'}).format(date);
@@ -34,7 +34,7 @@
         entries.push(`${hour<6?'다음 날 ':''}${time} ${label}${regular?' [정기]':''}`);
       }
     });
-    return heading+'\\n\\n'+entries.join('\\n');
+    return heading+'\n\n'+entries.join('\n');
   }
   root.WeatherVisual={normalize,actualChange,shareText};
 })(typeof window==='undefined'?globalThis:window);
