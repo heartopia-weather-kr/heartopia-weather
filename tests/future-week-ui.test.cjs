@@ -4,6 +4,7 @@ require('../assets/weather-core.js');
 const C=globalThis.WeatherCore;
 const source=fs.readFileSync('assets/weather-app.js','utf8');
 const html=fs.readFileSync('index.html','utf8');
+const css=fs.readFileSync('assets/weather.css','utf8');
 const python=fs.readFileSync('weather.py','utf8');
 const data=JSON.parse(fs.readFileSync('weather.json','utf8'));
 // The live weather.json may already contain eight days; start with seven for this schema test.
@@ -23,5 +24,7 @@ assert.match(source,/if\(day.startDate<=C.kst\(\).gameDate\)return/);
 assert.match(source,/forecastMode:'full'/);
 assert.match(source,/grouped-periods/);
 assert.match(source,/touchcancel/);
+assert.match(css,/dialog\s*\{[^}]*position:fixed;[^}]*inset:0;[^}]*margin:auto;/);
+assert.match(css,/max-height:calc\(100dvh - 24px\)/);
 for(const id of ['view-full','view-grouped','group-navigation','group-prev','group-next','group-dots'])assert.ok(html.includes('id="'+id+'"'),id);
 console.log('PASS: 8-day schema, future-only cards, grouped view controls and swipe handling');
