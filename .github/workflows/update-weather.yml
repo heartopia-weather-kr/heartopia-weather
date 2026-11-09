@@ -1,6 +1,11 @@
 name: Update Heartopia Weather
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - weather.py
+      - .github/workflows/update-weather.yml
   workflow_dispatch:
   schedule:
     - cron: "30 * * * *"
