@@ -177,7 +177,6 @@
   }
   if(window.ResizeObserver)new ResizeObserver(positionClockLabels).observe($('weather-clock'));
   else window.addEventListener('resize',positionClockLabels,{passive:true});
-  window.DialogScrollGuard.install(document,window);
   const modalOpeners=new Map();
   function openModal(id,opener){
     if(document.querySelector('dialog[open]'))return;
