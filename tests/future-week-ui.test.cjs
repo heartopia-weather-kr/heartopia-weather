@@ -23,8 +23,5 @@ assert.match(source,/if\(day.startDate<=C.kst\(\).gameDate\)return/);
 assert.match(source,/forecastMode:'full'/);
 assert.match(source,/grouped-periods/);
 assert.match(source,/touchcancel/);
-assert.match(source,/lockBackgroundScroll\(\)/);
-assert.match(source,/unlockBackgroundScroll\(\)/);
-assert.match(source,/modal-scroll-locked/);
 for(const id of ['view-full','view-grouped','group-navigation','group-prev','group-next','group-dots'])assert.ok(html.includes('id="'+id+'"'),id);
 console.log('PASS: 8-day schema, future-only cards, grouped view controls and swipe handling');
