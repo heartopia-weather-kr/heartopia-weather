@@ -53,6 +53,33 @@
     const change=el('span','current-change'+(next?(next.changed?' is-changed':' is-unchanged'):''),next?(next.changed?'⭕ 변경':'❌ 유지'):'다음 예보 없음');change.id='current-change';transition.append(change);container.append(transition);
     if(next)container.append(forecast(next,next.time));
   }
+  let copyResetTimer;
+  async function copyWeather(){
+    const button=$('weather-copy'),label=$('weather-copy-text');
+    clearTimeout(copyResetTimer);
+    try{
+      const day=currentDay();
+      if(!day)throw new Error('현재 게임 날짜의 예보가 없습니다.');
+      const content=window.WeatherVisual.shareText(day);
+      if(navigator.clipboard && typeof navigator.clipboard.writeText==='function'){
+        await navigator.clipboard.writeText(content);
+      }else{
+        const field=document.createElement('textarea');
+        field.value=content;field.readOnly=true;field.setAttribute('aria-hidden','true');
+        field.style.cssText='position:fixed;left:-9999px;top:0;opacity:0';
+        document.body.append(field);field.focus();field.select();
+        let copied=false;
+        try{copied=document.execCommand('copy');}finally{field.remove();}
+        if(!copied)throw new Error('클립보드 복사 실패');
+      }
+      label.textContent='복사 완료 ✓';
+    }catch(error){
+      label.textContent='복사 실패';
+      console.warn('날씨 공유 복사 실패:',error);
+    }
+    copyResetTimer=setTimeout(()=>{label.textContent='복사';},2000);
+  }
+  $('weather-copy').addEventListener('click',copyWeather);
   function renderWeek(){
     $('week-days').replaceChildren();
     state.data.days.forEach((day,index)=>{
