@@ -10,7 +10,7 @@ const output=V.shareText(day);
 assert.match(output,/11월 9일 \(월\)/);
 assert.match(output,/06:00 맑음 \[정기\]/);
 assert.match(output,/09:00 흐림\n/);
-assert.match(output,/12:00 흐림 \[정기\]/);
+assert.match(output,/12:00 맑음 \[정기\]/);
 assert.match(output,/15:00 약한 비\n/);
 assert.match(output,/18:00 맑음 \[정기\]/);
 assert.match(output,/다음 날 00:00 쾌청 \[정기\]/);
