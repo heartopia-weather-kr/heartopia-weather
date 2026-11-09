@@ -609,6 +609,11 @@ footer {
   padding:15px
 }
 dialog {
+  /* Anchor modal dialogs to the visible viewport, not the document scroll offset. */
+  position:fixed;
+  inset:0;
+  margin:auto;
+  max-height:calc(100dvh - 24px);
   border:1.5px solid var(--line);
   border-radius:26px;
   background:#fcf9ff;
