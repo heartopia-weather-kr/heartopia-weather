@@ -609,11 +609,6 @@ footer {
   padding:15px
 }
 dialog {
-  /* Anchor modal dialogs to the visible viewport, not the document scroll offset. */
-  position:fixed;
-  inset:0;
-  margin:auto;
-  max-height:calc(100dvh - 24px);
   border:1.5px solid var(--line);
   border-radius:26px;
   background:#fcf9ff;
@@ -1102,7 +1097,6 @@ dialog::backdrop {
   max-height:calc(100dvh - 40px);
   overflow-y:auto;
   overscroll-behavior:contain;
-  -webkit-overflow-scrolling:touch;
   padding:20px;
 }
 .forecast-close {
@@ -1245,7 +1239,6 @@ body:has(dialog[open]) { overflow:hidden; }
   max-height:calc(100dvh - 40px);
   overflow-y:auto;
   overscroll-behavior:contain;
-  -webkit-overflow-scrolling:touch;
   padding:22px;
 }
 .calculator-dialog-heading { position:sticky;top:0;z-index:2;background:#fcf9ff;padding-bottom:10px; }
