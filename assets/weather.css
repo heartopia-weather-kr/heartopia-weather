@@ -1305,3 +1305,20 @@ dialog [contenteditable]:not([contenteditable="false"]) * {
     transition:none!important
   }
 }
+
+/* Compact forecast share control; no clock geometry changes. */
+.clock-heading-label { display:flex;align-items:center;gap:8px;min-width:0;flex-wrap:wrap; }
+.clock-heading-label h2 { margin:0; }
+.weather-copy-button {
+  display:inline-flex;align-items:center;justify-content:center;gap:3px;
+  padding:5px 9px;border:1px solid var(--line);border-radius:11px;
+  background:var(--soft);color:var(--ink);font:inherit;font-size:12px;font-weight:750;
+  white-space:nowrap;cursor:pointer;min-height:30px;
+}
+.weather-copy-button:hover { filter:brightness(.96); }
+.weather-copy-button:focus-visible { outline:2px solid var(--purple);outline-offset:2px; }
+@media(max-width:520px) {
+  .clock-card .section-heading { flex-wrap:wrap;gap:8px; }
+  .clock-heading-label { width:100%; }
+  .clock-card .segmented { margin-left:auto; }
+}
