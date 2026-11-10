@@ -8,7 +8,9 @@ on:
       - .github/workflows/update-weather.yml
   workflow_dispatch:
   schedule:
-    - cron: "30 * * * *"
+    # Two off-peak attempts per hour reduce gaps when GitHub skips/delays scheduled runs.
+    # GitHub schedules are best-effort, not guaranteed.
+    - cron: "13,43 * * * *"
 
 jobs:
   update-weather:
@@ -33,6 +35,22 @@ jobs:
 
       - name: Get Heartopia weather
         run: python weather.py
+
+      - name: Verify 8 game days and fresh date
+        run: |
+          python - <<'PY'
+          import json
+          from datetime import datetime, timedelta
+          from zoneinfo import ZoneInfo
+          data = json.load(open("weather.json", encoding="utf-8"))
+          now = datetime.now(ZoneInfo("Asia/Seoul"))
+          expected = (now - timedelta(days=1) if now.hour < 6 else now).date()
+          actual = [day["startDate"] for day in data["days"]]
+          assert len(actual) == 8, f"Expected 8 game days, got {len(actual)}"
+          assert actual[0] == expected.isoformat(), f"Stale start date: {actual[0]}, expected {expected}"
+          assert actual == [(expected + timedelta(days=i)).isoformat() for i in range(8)], f"Nonconsecutive dates: {actual}"
+          print(f"Verified 8 game days from {actual[0]} through {actual[-1]}")
+          PY
 
       - name: Save weather.json
         run: |
