@@ -1,0 +1,56 @@
+name: Test Discord Redeem Channel Access
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check-discord:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
+      DISCORD_CHANNEL_ID: "1569545070234046624"
+
+    steps:
+      - name: Check Discord channel read access
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          import sys
+          import urllib.error
+          import urllib.request
+
+          token = os.environ.get("DISCORD_BOT_TOKEN", "")
+          channel_id = os.environ["DISCORD_CHANNEL_ID"]
+          if not token:
+              sys.exit("FAIL: DISCORD_BOT_TOKEN secret is missing.")
+
+          request = urllib.request.Request(
+              f"https://discord.com/api/v10/channels/{channel_id}/messages?limit=5",
+              headers={
+                  "Authorization": f"Bot {token}",
+                  "User-Agent": "HeartopiaRedeemReadTest/1.0",
+                  "Accept": "application/json",
+              },
+          )
+          try:
+              with urllib.request.urlopen(request, timeout=20) as response:
+                  messages = json.load(response)
+          except urllib.error.HTTPError as exc:
+              # Do not print response body or authorization headers.
+              sys.exit(f"FAIL: Discord API returned HTTP {exc.code}. "
+                       "401 = invalid token; 403 = missing permission; 404 = inaccessible channel.")
+          except Exception as exc:
+              sys.exit(f"FAIL: Discord request error ({type(exc).__name__}).")
+
+          if not isinstance(messages, list):
+              sys.exit("FAIL: Unexpected Discord API response.")
+          print("PASS: Bot can read the configured Discord channel.")
+          print(f"Recent messages returned: {len(messages)}")
+          print("Message text, bot token, and message IDs are intentionally not logged.")
+          PY
