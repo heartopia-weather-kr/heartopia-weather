@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>두근두근타운 리딤코드</title>
+<link rel="stylesheet" href="assets/weather.css">
+<link rel="stylesheet" href="assets/midnight.css">
+<script src="assets/theme.js"></script>
+<style>
+.redeem-wrap{max-width:850px;margin:32px auto;padding:0 18px 64px}
+.redeem-card{padding:20px;margin:14px 0;border-radius:18px;border:1px solid #8885;background:var(--card-bg,rgba(120,120,150,.09))}
+.redeem-card h2{overflow-wrap:anywhere;margin:0 0 10px}
+.redeem-card p{margin:8px 0;overflow-wrap:anywhere}
+.redeem-card button{padding:10px 18px;border:1px solid #8888;border-radius:12px;cursor:pointer}
+.redeem-muted{opacity:.7}
+.redeem-status{margin:20px 0}
+</style>
+</head>
+<body>
+<header class="site-header"><a class="brand" href="./">← 두근두근타운 날씨</a></header>
+<main class="redeem-wrap">
+<h1>🎁 두근두근타운 리딤코드</h1>
+<p>공식 Discord 공지를 팔로우한 채널에서 확인된 코드만 표시합니다. 공지 전달이 지연되거나 누락될 수 있습니다.</p>
+<p id="redeem-status" class="redeem-status" role="status">리딤코드를 확인하고 있어요.</p>
+<section id="redeem-list" aria-label="리딤코드 목록"></section>
+</main>
+<script>
+(async()=>{
+  const status=document.getElementById('redeem-status'),list=document.getElementById('redeem-list');
+  try{
+    const response=await fetch('redeem-codes.json?ts='+Date.now(),{cache:'no-store'});
+    if(!response.ok)throw new Error('HTTP '+response.status);
+    const data=await response.json();
+    if(!Array.isArray(data.codes))throw new Error('invalid data');
+    if(!data.codes.length){status.textContent='아직 수집된 리딤코드가 없어요. 공식 공지 전달을 기다리고 있습니다.';return;}
+    const now=Date.now();
+    const codes=[...data.codes].sort((a,b)=>(a.expiresAt&&Date.parse(a.expiresAt)<=now?1:0)-(b.expiresAt&&Date.parse(b.expiresAt)<=now?1:0));
+    const active=codes.filter(x=>!x.expiresAt||Date.parse(x.expiresAt)>now).length;
+    status.textContent='수집된 코드 '+codes.length+'개 · 만료 확인 전/사용 가능 '+active+'개 (만료일 미확인 포함)';
+    for(const item of codes){
+      const card=document.createElement('article');card.className='redeem-card';
+      const title=document.createElement('h2');title.textContent=item.code;
+      const reward=document.createElement('p');reward.textContent=item.rewards||'보상 정보 없음';
+      const expiry=document.createElement('p');expiry.className='redeem-muted';
+      const expired=item.expiresAt&&Date.parse(item.expiresAt)<=now;
+      expiry.textContent=item.expiresAt?(expired?'만료 · ':'만료 예정 · ')+new Intl.DateTimeFormat('ko-KR',{timeZone:'Asia/Seoul',dateStyle:'medium',timeStyle:'short'}).format(new Date(item.expiresAt)):'만료일 미확인';
+      const copy=document.createElement('button');copy.type='button';copy.textContent='코드 복사';
+      copy.addEventListener('click',async()=>{try{await navigator.clipboard.writeText(item.code);copy.textContent='복사 완료';}catch{copy.textContent='복사 실패';}});
+      card.append(title,reward,expiry,copy);
+      if(item.source&&item.source.startsWith('https://discord.com/channels/')){
+        const source=document.createElement('p'),a=document.createElement('a');a.href=item.source;a.target='_blank';a.rel='noopener noreferrer';a.textContent='Discord 원문 보기';source.append(a);card.append(source);
+      }
+      list.append(card);
+    }
+  }catch{status.textContent='리딤코드 데이터를 불러오지 못했어요. 잠시 후 다시 확인해 주세요.';}
+})();
+</script>
+</body>
+</html>
