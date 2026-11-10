@@ -1,0 +1,38 @@
+name: Update Heartopia Redeem Codes
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - redeem_collector.py
+      - .github/workflows/update-redeem.yml
+  schedule:
+    - cron: "7,37 * * * *"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: redeem-code-update
+  cancel-in-progress: false
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Verify redeem-code parser\n        run: python -m unittest discover -s tests -p 'test_redeem_collector.py'\n      - name: Collect followed Discord redeem posts
+        env:
+          DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
+        run: python redeem_collector.py
+      - name: Commit only if redeem codes changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add redeem-codes.json
+          git diff --cached --quiet || (git commit -m "Update Heartopia redeem codes" && git push)
