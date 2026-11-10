@@ -2,6 +2,11 @@ name: Update Heartopia Redeem Codes
 
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - redeem_collector.py
+      - .github/workflows/update-redeem.yml
   schedule:
     - cron: "7,37 * * * *"
 
