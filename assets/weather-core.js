@@ -14,7 +14,7 @@
     if (/^(meteor shower|aurora)$/.test(key)) return byName.get(key + ' 1');
     return byName.get(key);
   }
-  function name(row) { return entry(row.weather)?.[1] || row.name || row.weather; }
+  function name(row) { if (/^meteor shower(?:\s+[123])?$/i.test(row.weather.trim())) return '유성우'; return entry(row.weather)?.[1] || row.name || row.weather; }
   function special(row) { return Boolean(row.special || /^(rainbow(?:\s+\d+)?|moon rainbow|meteor shower(?:\s+\d+)?|aurora(?:\s+\d+)?)$/i.test(row.weather.trim())); }
   function kst(now = new Date()) {
     const date = new Date(now.getTime() + 9 * 3600000), hour = date.getUTCHours();
