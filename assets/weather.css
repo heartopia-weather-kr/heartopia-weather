@@ -1349,3 +1349,12 @@ dialog [contenteditable]:not([contenteditable="false"]) * {
 
 /* Distinct game-day ring colors, with strong contrast in Light mode. */
 .clock-orbit { --clock-previous-day:#7944b3; --clock-current-day:#008d84; }
+
+/* Extra forecast icons: readable on Light, neon accented on Midnight. */
+.extra-weather-icon { overflow:visible; mix-blend-mode:normal; --extra-outline:#40578d; --extra-fill:#dce6ff; --extra-glow:none; }
+.extra-weather-icon .extra-cloud { fill:var(--extra-fill); stroke:var(--extra-outline); stroke-width:3.5; stroke-linejoin:round; filter:var(--extra-glow); }
+.extra-weather-icon .extra-rain { fill:none; stroke:#13a4ed; stroke-width:5; stroke-linecap:round; }
+.extra-weather-icon .extra-bolt { fill:#ffdc58; stroke:#f19c23; stroke-width:2; stroke-linejoin:round; }
+.extra-weather-icon .extra-rainbow { fill:none; stroke:#e65fbd; stroke-width:7; stroke-linecap:round; }
+.extra-weather-icon .extra-rainbow-inner { fill:none; stroke:#53c9eb; stroke-width:6; stroke-linecap:round; }
+.extra-weather-icon .extra-sparkle { fill:#ffe37c; stroke:#e5a640; stroke-width:1.5; }
