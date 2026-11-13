@@ -82,8 +82,10 @@
   $('weather-copy').addEventListener('click',copyWeather);
   function renderWeek(){
     $('week-days').replaceChildren();
+    let shown=0;
     state.data.days.forEach((day,index)=>{
-      if(day.startDate<=C.kst().gameDate)return;
+      if(day.startDate<=C.kst().gameDate||shown>=7)return;
+      shown++;
       const representative=day.weather.find(C.special)||day.weather[0];
       const button=el('button','day-card'+(day.weather.some(C.special)?' special':'')+(day.startDate===C.kst().gameDate?' selected':''));button.type='button';button.setAttribute('aria-haspopup','dialog');button.setAttribute('aria-controls','forecast-dialog');button.setAttribute('aria-label',dateLabel(day.startDate)+' 상세 예보 보기');
       button.append(el('strong','day-date',dateLabel(day.startDate)),icon(representative),el('strong','day-weather',C.name(representative)));
