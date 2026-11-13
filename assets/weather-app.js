@@ -9,7 +9,21 @@
   const periodLabels=['오전 · 06:00 ~ 11:00','오후 · 12:00 ~ 17:00','저녁 · 18:00 ~ 23:00','새벽 · 다음 날 00:00 ~ 05:00'];
   function el(tag,className,text){const node=document.createElement(tag);if(className)node.className=className;if(text!==undefined)node.textContent=text;return node;}
   let iconId=0;
+  function extraWeatherIcon(kind){
+    // Inline SVG artwork shares the existing icon sizing; theme colors come from CSS.
+    const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+    svg.setAttribute('viewBox','0 0 120 92');svg.setAttribute('class','weather-icon extra-weather-icon');
+    svg.setAttribute('aria-hidden','true');svg.setAttribute('draggable','false');
+    const cloud='<path class="extra-cloud" d="M26 58 C12 58 11 39 25 34 C27 19 43 13 55 23 C65 8 88 16 91 33 C110 32 113 58 94 58 Z"/>';
+    const rain='<path class="extra-rain" d="M35 66 L29 78 M54 66 L48 78 M84 66 L78 78"/>';
+    const bolt='<path class="extra-bolt" d="M67 47 L52 67 L64 66 L55 86 L83 58 L69 59 L79 47 Z"/>';
+    const rainbow='<path class="extra-rainbow" d="M53 49 C54 12 103 8 110 47"/><path class="extra-rainbow-inner" d="M61 49 C62 25 96 24 101 47"/>';
+    const sparkle='<path class="extra-sparkle" d="M22 11 L26 20 L35 24 L26 28 L22 37 L18 28 L9 24 L18 20 Z M104 58 L107 65 L114 68 L107 71 L104 78 L101 71 L94 68 L101 65 Z"/>';
+    svg.innerHTML=kind==='Thunderstorm'?cloud+rain+bolt:rainbow+cloud+sparkle;
+    return svg;
+  }
   function icon(row,transparent=false){
+    if(row.weather==='Thunderstorm'||row.weather==='Fortune Cloud')return extraWeatherIcon(row.weather);
     const item=C.entry(row.weather);
     if(!item)return el('span','unknown-icon','?');
     // Viewports use the original sheet; no generated or redesigned replacements.
