@@ -11,6 +11,7 @@
   const byName = new Map(catalog.map(item => [item[0].toLowerCase(), item]));
   function entry(weather) {
     const key = weather.trim().toLowerCase();
+    if (key==='moderate snow') return byName.get('snow');
     if (/^rainbow(?:\s+\d+)?$/.test(key)) return byName.get('rainbow');
     if (/^(meteor shower|aurora)$/.test(key)) return byName.get(key + ' 1');
     return byName.get(key);
