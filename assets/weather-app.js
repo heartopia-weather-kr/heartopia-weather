@@ -92,9 +92,13 @@
       button.title='특수 날씨가 있으면 우선 표시 · 없으면 06시 예보';button.addEventListener('click',()=>{selectDay(index);openModal('forecast-dialog',button);});$('week-days').append(button);
     });
   }
-  function selectDay(index){if(!state.data||index<0||index>=state.data.days.length||state.data.days[index].startDate<=C.kst().gameDate)return;state.day=index;renderSelected();}
+  function visibleForecastIndices(){
+    if(!state.data)return [];
+    return state.data.days.map((day,index)=>day.startDate>C.kst().gameDate?index:-1).filter(index=>index>=0).slice(0,7);
+  }
+  function selectDay(index){if(!visibleForecastIndices().includes(index))return;state.day=index;renderSelected();}
   function renderSelected(){
-    const day=state.data.days[state.day];$('selected-date').textContent=dateLabel(day.startDate);$('prev-date').disabled=state.day===0;$('next-date').disabled=state.day===state.data.days.length-1;
+    const day=state.data.days[state.day];$('selected-date').textContent=dateLabel(day.startDate);const visible=visibleForecastIndices();$('prev-date').disabled=state.day===visible[0];$('next-date').disabled=state.day===visible[visible.length-1];
     // Preserve weather.py's <=25 / <=50 / <=75 / >75 thresholds.
     // Both upper levels share the requested green presentation.
     const badge=$('day-summary');badge.className='summary-badge '+(day.changeRate<=25?'level-low':day.changeRate<=50?'level-normal':'level-high');
