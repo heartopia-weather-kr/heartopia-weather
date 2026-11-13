@@ -355,19 +355,19 @@ async def main():
     else:
         base_date = now
 
-    # 오늘 + 미래 7일의 게임 날짜를 만들기 위해
-    # 총 9개의 실제 날짜(마지막 날 다음 날 05시 포함)가 필요함
+    # 오늘 + 미래 8일의 게임 날짜를 만들기 위해
+    # 총 10개의 실제 날짜(마지막 날 다음 날 05시 포함)가 필요함
     dates = [
         base_date + timedelta(days=i)
-        for i in range(9)
+        for i in range(10)
     ]
 
     print()
     print("=" * 50)
-    print("Heartopia 오늘 + 미래 7일 날씨 수집")
+    print("Heartopia 오늘 + 미래 8일 날씨 수집")
     print("=" * 50)
     print("시작 날짜:", dates[0].strftime("%Y-%m-%d"))
-    print("마지막 날짜:", dates[7].strftime("%Y-%m-%d"))
+    print("마지막 날짜:", dates[8].strftime("%Y-%m-%d"))
     print()
 
     async with async_playwright() as p:
@@ -388,7 +388,7 @@ async def main():
                 timeout=60000,
             )
 
-            # 실제 달력 날짜 9일치의 24시간 예보를 먼저 수집
+            # 실제 달력 날짜 10일치의 24시간 예보를 먼저 수집
             weather_by_date = {}
 
             for target_date in dates:
@@ -416,11 +416,11 @@ async def main():
                     f"날씨 읽기 완료"
                 )
 
-            # 수집한 9일 데이터를 이용해
-            # 06:00 ~ 다음날 05:00 기준의 8일치 데이터를 만듦
+            # 수집한 10일 데이터를 이용해
+            # 06:00 ~ 다음날 05:00 기준의 9일치 데이터를 만듦
             days = []
 
-            for i in range(8):
+            for i in range(9):
                 today = dates[i]
                 tomorrow = dates[i + 1]
 
