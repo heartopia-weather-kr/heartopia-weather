@@ -139,21 +139,47 @@
       }
     }
   }
+  // Calendar hours 00-05 belong to the previous game day; 06-11 to the new one.
+  // Keep the actual hourly forecast unchanged when the 06:00 game-date label rolls over.
+  function clockForecast(hour,now,gameDay){
+    const date=now.date,gameDate=now.gameDate;
+    const previous=state.data.days.find(d=>d.endDate===date&&d.startDate!==date);
+    const today=state.data.days.find(d=>d.startDate===date);
+    const active=state.data.days.find(d=>d.startDate===gameDate);
+    const source=hour<6?(previous||active):(today||active);
+    const row=source?.weather[(hour+18)%24];
+    return {row,source};
+  }
   function renderClock(){
-    const day=currentDay();if(!day){$('clock-hours').replaceChildren();$('clock-orbit').replaceChildren();$('clock-center').textContent='현재 날짜의 예보가 없어요.';return;}
+    const now=C.kst(),day=currentDay(),center=$('clock-center');
+    if(!day){$('clock-hours').replaceChildren();$('clock-orbit').replaceChildren();center.textContent='현재 날짜의 예보가 없어요.';return;}
     $('clock-am').setAttribute('aria-pressed',String(state.clockMode==='am'));$('clock-pm').setAttribute('aria-pressed',String(state.clockMode==='pm'));
     $('clock-hours').replaceChildren();
     const layout=window.ClockLayout,overlay=$('clock-orbit');overlay.replaceChildren();
     const makeSvg=(tag,attrs)=>{const node=document.createElementNS('http://www.w3.org/2000/svg',tag);Object.entries(attrs).forEach(([key,value])=>node.setAttribute(key,String(value)));return node;};
     const orbitAttrs={cx:layout.center,cy:layout.center,r:layout.orbitRadius,pathLength:360,transform:'rotate(-90 50 50)'};
+    // Game-date ring is inside the existing change-effect orbit; each half represents six hours.
+    const circle=(r,stroke,width,extra={})=>makeSvg('circle',{cx:50,cy:50,r,fill:'none',stroke,'stroke-width':width,...extra});
+    const midnightSplit=state.clockMode==='am'&&now.hour<6;
+    const colorOld='#82749d',colorNew='#20b9aa';
+    const ringRadius=29.4;
+    const ring=circle(ringRadius,midnightSplit?colorOld:colorNew,2.7,{opacity:'.83'});
+    overlay.append(ring);
+    if(midnightSplit){
+      // Left half: hours 06-11; right half: hours 00-05.
+      overlay.append(makeSvg('path',{d:'M 50 20.6 A 29.4 29.4 0 0 0 50 79.4',fill:'none',stroke:colorNew,'stroke-width':2.7,opacity:'.95'}));
+    }
     overlay.append(makeSvg('circle',{...orbitAttrs,class:'orbit-base'}));
     const defs=makeSvg('defs',{}),clip=makeSvg('clipPath',{id:'clock-change-sectors',clipPathUnits:'userSpaceOnUse'});defs.append(clip);overlay.append(defs);
     const highlighted=makeSvg('g',{'clip-path':'url(#clock-change-sectors)'});highlighted.append(makeSvg('circle',{...orbitAttrs,class:'orbit-shift'}));overlay.append(highlighted);
     const start=state.clockMode==='am'?0:12;
     for(let i=0;i<12;i++){
-      const hour=(start+i)%24,row=day.weather[(hour+18)%24],point=layout.point(hour),labelPoint=layout.point(hour,layout.labelRadius);
-      const changed=window.WeatherVisual.actualChange(state.data.days,day.startDate,hour);
-      const slot=el('div','clock-hour');slot.style.left=point.x+'%';slot.style.top=point.y+'%';slot.dataset.hour=String(hour);slot.setAttribute('role','img');slot.setAttribute('aria-label',`${hour<6?'다음 날 ':''}${row.time} ${C.name(row)}${changed?' · 실제 날씨 변경':''}`);
+      const hour=start+i,{row,source}=clockForecast(hour,now,day);
+      if(!row)continue;
+      const point=layout.point(hour),labelPoint=layout.point(hour,layout.labelRadius);
+      const changed=window.WeatherVisual.actualChange(state.data.days,source.startDate,hour);
+      const slot=el('div','clock-hour');slot.style.left=point.x+'%';slot.style.top=point.y+'%';slot.dataset.hour=String(hour);slot.setAttribute('role','img');
+      slot.setAttribute('aria-label',`${source.startDate} 게임 날짜 · ${hour<6?'다음 날 ':''}${row.time} ${C.name(row)}${changed?' · 실제 날씨 변경':''}`);
       const wrap=el('span','clock-icon-wrap'+(changed?' weather-shift':''));wrap.append(icon(row,true));slot.append(wrap);$('clock-hours').append(slot);
       const label=el('span','clock-time',String(hour%12||12));label.style.left=labelPoint.x+'%';label.style.top=labelPoint.y+'%';label.dataset.hour=String(hour);label.setAttribute('aria-hidden','true');$('clock-hours').append(label);
       if(changed){
@@ -161,7 +187,19 @@
         clip.append(makeSvg('path',{d:layout.sector(hour),'data-hour':hour}));
       }
     }
-    const now=C.kst(),row=day.weather[(now.hour+18)%24],center=$('clock-center');center.replaceChildren();center.append(icon(row),el('strong','',C.name(row)),el('strong','center-time',String(now.hour).padStart(2,'0')+':'+String(now.minute).padStart(2,'0')));
+    // Thin time-progress arc and the live cyan hand; both follow the selected 12-hour face.
+    const elapsed=(now.hour%12+now.minute/60+now.second/3600)/12;
+    const progress=circle(25.6,'#67e8f9',1.1,{opacity:'.92','stroke-linecap':'round','stroke-dasharray':`${elapsed*160.85} 160.85`,transform:'rotate(-90 50 50)'});
+    const activePeriod=(now.hour<12?'am':'pm')===state.clockMode;
+    if(activePeriod){
+      overlay.append(progress);
+      const angle=elapsed*2*Math.PI;
+      const tip={x:50+24*Math.sin(angle),y:50-24*Math.cos(angle)};
+      overlay.append(makeSvg('line',{x1:50,y1:50,x2:tip.x,y2:tip.y,stroke:'#67e8f9','stroke-width':'.85','stroke-linecap':'round',opacity:'.88'}));
+      overlay.append(makeSvg('circle',{cx:tip.x,cy:tip.y,r:1.35,fill:'#67e8f9'}));
+    }
+    const current=clockForecast(now.hour,now,day).row||day.weather[(now.hour+18)%24];
+    center.replaceChildren();center.append(icon(current),el('strong','',C.name(current)),el('strong','center-time',String(now.hour).padStart(2,'0')+':'+String(now.minute).padStart(2,'0')));
     positionClockLabels();
   }
   function positionClockLabels(){
