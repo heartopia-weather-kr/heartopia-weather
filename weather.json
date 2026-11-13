@@ -1,14 +1,14 @@
 {
-  "updated": "2026-11-14 07:02",
-  "updatedTime": "07:02",
+  "updated": "2026-11-14 08:53",
+  "updatedTime": "08:53",
   "days": [
     {
       "startDate": "2026-11-14",
       "endDate": "2026-11-15",
       "dateLabel": "11월 14일 ~ 11월 15일",
       "timeRange": "06:00 ~ 다음날 05:00",
-      "updated": "2026-11-14 07:02",
-      "updatedTime": "07:02",
+      "updated": "2026-11-14 08:53",
+      "updatedTime": "08:53",
       "changes": 14,
       "changeRate": 58.3,
       "status": "🟠 변화 많음",
@@ -482,8 +482,8 @@
       "endDate": "2026-11-16",
       "dateLabel": "11월 15일 ~ 11월 16일",
       "timeRange": "06:00 ~ 다음날 05:00",
-      "updated": "2026-11-14 07:02",
-      "updatedTime": "07:02",
+      "updated": "2026-11-14 08:53",
+      "updatedTime": "08:53",
       "changes": 11,
       "changeRate": 45.8,
       "status": "🟡 보통",
@@ -957,8 +957,8 @@
       "endDate": "2026-11-17",
       "dateLabel": "11월 16일 ~ 11월 17일",
       "timeRange": "06:00 ~ 다음날 05:00",
-      "updated": "2026-11-14 07:02",
-      "updatedTime": "07:02",
+      "updated": "2026-11-14 08:53",
+      "updatedTime": "08:53",
       "changes": 12,
       "changeRate": 50.0,
       "status": "🟡 보통",
@@ -1432,8 +1432,8 @@
       "endDate": "2026-11-18",
       "dateLabel": "11월 17일 ~ 11월 18일",
       "timeRange": "06:00 ~ 다음날 05:00",
-      "updated": "2026-11-14 07:02",
-      "updatedTime": "07:02",
+      "updated": "2026-11-14 08:53",
+      "updatedTime": "08:53",
       "changes": 16,
       "changeRate": 66.7,
       "status": "🟠 변화 많음",
@@ -1907,8 +1907,8 @@
       "endDate": "2026-11-19",
       "dateLabel": "11월 18일 ~ 11월 19일",
       "timeRange": "06:00 ~ 다음날 05:00",
-      "updated": "2026-11-14 07:02",
-      "updatedTime": "07:02",
+      "updated": "2026-11-14 08:53",
+      "updatedTime": "08:53",
       "changes": 9,
       "changeRate": 37.5,
       "status": "🟡 보통",
@@ -2382,8 +2382,8 @@
       "endDate": "2026-11-20",
       "dateLabel": "11월 19일 ~ 11월 20일",
       "timeRange": "06:00 ~ 다음날 05:00",
-      "updated": "2026-11-14 07:02",
-      "updatedTime": "07:02",
+      "updated": "2026-11-14 08:53",
+      "updatedTime": "08:53",
       "changes": 13,
       "changeRate": 54.2,
       "status": "🟠 변화 많음",
@@ -2857,8 +2857,8 @@
       "endDate": "2026-11-21",
       "dateLabel": "11월 20일 ~ 11월 21일",
       "timeRange": "06:00 ~ 다음날 05:00",
-      "updated": "2026-11-14 07:02",
-      "updatedTime": "07:02",
+      "updated": "2026-11-14 08:53",
+      "updatedTime": "08:53",
       "changes": 13,
       "changeRate": 54.2,
       "status": "🟠 변화 많음",
@@ -3332,8 +3332,8 @@
       "endDate": "2026-11-22",
       "dateLabel": "11월 21일 ~ 11월 22일",
       "timeRange": "06:00 ~ 다음날 05:00",
-      "updated": "2026-11-14 07:02",
-      "updatedTime": "07:02",
+      "updated": "2026-11-14 08:53",
+      "updatedTime": "08:53",
       "changes": 14,
       "changeRate": 58.3,
       "status": "🟠 변화 많음",
@@ -3807,8 +3807,8 @@
       "endDate": "2026-11-23",
       "dateLabel": "11월 22일 ~ 11월 23일",
       "timeRange": "06:00 ~ 다음날 05:00",
-      "updated": "2026-11-14 07:02",
-      "updatedTime": "07:02",
+      "updated": "2026-11-14 08:53",
+      "updatedTime": "08:53",
       "changes": 11,
       "changeRate": 45.8,
       "status": "🟡 보통",
@@ -3861,8 +3861,8 @@
         {
           "time": "11:00",
           "weather": "Moderate Snow",
-          "name": "Moderate Snow",
-          "icon": "❓",
+          "name": "보통 눈",
+          "icon": "❄️",
           "changed": true,
           "mark": "⭕",
           "special": false
@@ -3870,8 +3870,8 @@
         {
           "time": "12:00",
           "weather": "Moderate Snow",
-          "name": "Moderate Snow",
-          "icon": "❓",
+          "name": "보통 눈",
+          "icon": "❄️",
           "changed": true,
           "mark": "⭕",
           "special": false
@@ -3879,8 +3879,8 @@
         {
           "time": "13:00",
           "weather": "Moderate Snow",
-          "name": "Moderate Snow",
-          "icon": "❓",
+          "name": "보통 눈",
+          "icon": "❄️",
           "changed": false,
           "mark": "❌",
           "special": false
@@ -3888,8 +3888,8 @@
         {
           "time": "14:00",
           "weather": "Moderate Snow",
-          "name": "Moderate Snow",
-          "icon": "❓",
+          "name": "보통 눈",
+          "icon": "❄️",
           "changed": false,
           "mark": "❌",
           "special": false
@@ -3915,8 +3915,8 @@
         {
           "time": "17:00",
           "weather": "Moderate Snow",
-          "name": "Moderate Snow",
-          "icon": "❓",
+          "name": "보통 눈",
+          "icon": "❄️",
           "changed": true,
           "mark": "⭕",
           "special": false
@@ -3924,8 +3924,8 @@
         {
           "time": "18:00",
           "weather": "Moderate Snow",
-          "name": "Moderate Snow",
-          "icon": "❓",
+          "name": "보통 눈",
+          "icon": "❄️",
           "changed": true,
           "mark": "⭕",
           "special": false
@@ -3933,8 +3933,8 @@
         {
           "time": "19:00",
           "weather": "Moderate Snow",
-          "name": "Moderate Snow",
-          "icon": "❓",
+          "name": "보통 눈",
+          "icon": "❄️",
           "changed": false,
           "mark": "❌",
           "special": false
@@ -3942,8 +3942,8 @@
         {
           "time": "20:00",
           "weather": "Moderate Snow",
-          "name": "Moderate Snow",
-          "icon": "❓",
+          "name": "보통 눈",
+          "icon": "❄️",
           "changed": false,
           "mark": "❌",
           "special": false
@@ -3969,8 +3969,8 @@
         {
           "time": "23:00",
           "weather": "Moderate Snow",
-          "name": "Moderate Snow",
-          "icon": "❓",
+          "name": "보통 눈",
+          "icon": "❄️",
           "changed": true,
           "mark": "⭕",
           "special": false
@@ -4084,8 +4084,8 @@
             {
               "time": "11:00",
               "weather": "Moderate Snow",
-              "name": "Moderate Snow",
-              "icon": "❓",
+              "name": "보통 눈",
+              "icon": "❄️",
               "changed": true,
               "mark": "⭕",
               "special": false
@@ -4100,8 +4100,8 @@
             {
               "time": "12:00",
               "weather": "Moderate Snow",
-              "name": "Moderate Snow",
-              "icon": "❓",
+              "name": "보통 눈",
+              "icon": "❄️",
               "changed": true,
               "mark": "⭕",
               "special": false
@@ -4109,8 +4109,8 @@
             {
               "time": "13:00",
               "weather": "Moderate Snow",
-              "name": "Moderate Snow",
-              "icon": "❓",
+              "name": "보통 눈",
+              "icon": "❄️",
               "changed": false,
               "mark": "❌",
               "special": false
@@ -4118,8 +4118,8 @@
             {
               "time": "14:00",
               "weather": "Moderate Snow",
-              "name": "Moderate Snow",
-              "icon": "❓",
+              "name": "보통 눈",
+              "icon": "❄️",
               "changed": false,
               "mark": "❌",
               "special": false
@@ -4145,8 +4145,8 @@
             {
               "time": "17:00",
               "weather": "Moderate Snow",
-              "name": "Moderate Snow",
-              "icon": "❓",
+              "name": "보통 눈",
+              "icon": "❄️",
               "changed": true,
               "mark": "⭕",
               "special": false
@@ -4161,8 +4161,8 @@
             {
               "time": "18:00",
               "weather": "Moderate Snow",
-              "name": "Moderate Snow",
-              "icon": "❓",
+              "name": "보통 눈",
+              "icon": "❄️",
               "changed": true,
               "mark": "⭕",
               "special": false
@@ -4170,8 +4170,8 @@
             {
               "time": "19:00",
               "weather": "Moderate Snow",
-              "name": "Moderate Snow",
-              "icon": "❓",
+              "name": "보통 눈",
+              "icon": "❄️",
               "changed": false,
               "mark": "❌",
               "special": false
@@ -4179,8 +4179,8 @@
             {
               "time": "20:00",
               "weather": "Moderate Snow",
-              "name": "Moderate Snow",
-              "icon": "❓",
+              "name": "보통 눈",
+              "icon": "❄️",
               "changed": false,
               "mark": "❌",
               "special": false
@@ -4206,8 +4206,8 @@
             {
               "time": "23:00",
               "weather": "Moderate Snow",
-              "name": "Moderate Snow",
-              "icon": "❓",
+              "name": "보통 눈",
+              "icon": "❄️",
               "changed": true,
               "mark": "⭕",
               "special": false
