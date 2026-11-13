@@ -188,7 +188,7 @@
       }
     }
     // Thin time-progress arc and the live cyan hand; both follow the selected 12-hour face.
-    const elapsed=(now.hour%12+now.minute/60+now.second/3600)/12;
+    const elapsed=(now.hour%12+now.minute/60)/12;
     const progress=circle(25.6,'#67e8f9',1.1,{opacity:'.92','stroke-linecap':'round','stroke-dasharray':`${elapsed*160.85} 160.85`,transform:'rotate(-90 50 50)'});
     const activePeriod=(now.hour<12?'am':'pm')===state.clockMode;
     if(activePeriod){
