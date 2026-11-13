@@ -272,8 +272,37 @@
   $('calculator-form').addEventListener('submit',event=>{event.preventDefault();const result=$('calculator-result');result.replaceChildren();try{if(!state.data)throw new Error('예보를 먼저 불러와 주세요.');const day=state.data.days[Number($('calculator-date').value)], calculation=C.calculate(day,Number($('calculator-start').value),Number($('calculator-end').value));result.append(el('h3','',day.dateLabel),el('div','result-summary',`변경 ${calculation.changes}회 · 변동률 ${calculation.rate}%`));const details=el('details'),summary=el('summary','','시간별 날씨 흐름 펼쳐보기');details.append(summary);calculation.rows.forEach((row,i)=>details.append(rowCard(row,i===0)));result.append(details);}catch(error){result.append(el('p','form-error',error.message));}});
   $('notice-close').addEventListener('click',()=>$('notice-dialog').close());$('notice-hide').addEventListener('click',()=>{saveSetting('noticeHiddenKey',noticeKey());$('notice-dialog').close();});$('notice-open').addEventListener('click',()=>state.notice?showNotice():loadNotice());
   $('notice-dialog').addEventListener('click',event=>{const box=$('notice-dialog').getBoundingClientRect();if(event.clientX<box.left||event.clientX>box.right||event.clientY<box.top||event.clientY>box.bottom)$('notice-dialog').close();});
+  // The 06:00 KST game-day rollover is a local display change, not a network update.
+  // The already downloaded eight-day forecast is sufficient for the new day.
   let lastGameDate=C.kst().gameDate;
-  setInterval(()=>{updateTodayDate();if(!state.data)return;freshness();renderToday();const period=C.kst().hour<12?'am':'pm';if(period!==state.clockPeriod){state.clockPeriod=period;state.clockMode=period;}renderClock();if(lastGameDate!==C.kst().gameDate){lastGameDate=C.kst().gameDate;loadWeather();}},60000);
+  function refreshGameDay(){
+    const gameDate=C.kst().gameDate;
+    if(gameDate===lastGameDate)return;
+    lastGameDate=gameDate;
+    if(!state.data){updateTodayDate();return;}
+    // The previous selected day may have become "today"; move to the first future day.
+    const selected=state.data.days[state.day];
+    if(!selected||selected.startDate<=gameDate){
+      const next=state.data.days.findIndex(day=>day.startDate>gameDate);
+      state.day=next>=0?next:state.data.days.length-1;
+    }
+    populateCalculator();
+    renderToday();
+    renderWeek();
+    if(state.data.days[state.day]?.startDate>gameDate)renderSelected();
+    else if($('forecast-dialog').open)$('forecast-dialog').close();
+    renderClock();
+    freshness();
+  }
+  function scheduleGameDayRollover(){
+    const now=C.kst(),six=Date.parse(now.date+'T06:00:00+09:00');
+    const next=six<=Date.now()?six+86400000:six;
+    setTimeout(()=>{refreshGameDay();scheduleGameDayRollover();},Math.max(50,next-Date.now()+100));
+  }
+  scheduleGameDayRollover();
+  // Also detect clock changes or background-tab timer throttling on the regular tick.
+  setInterval(()=>{refreshGameDay();updateTodayDate();if(!state.data)return;freshness();renderToday();const period=C.kst().hour<12?'am':'pm';if(period!==state.clockPeriod){state.clockPeriod=period;state.clockMode=period;}renderClock();},60000);
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshGameDay();});
   setInterval(loadWeather,15*60000);
   updateTodayDate();loadWeather();loadNotice();
 })();
