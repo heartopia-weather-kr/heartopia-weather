@@ -161,7 +161,7 @@
     // Game-date ring is inside the existing change-effect orbit; each half represents six hours.
     const circle=(r,stroke,width,extra={})=>makeSvg('circle',{cx:50,cy:50,r,fill:'none',stroke,'stroke-width':width,...extra});
     const midnightSplit=state.clockMode==='am'&&now.hour<6;
-    const colorOld='#82749d',colorNew='#20b9aa';
+    const colorOld='var(--clock-previous-day)',colorNew='var(--clock-current-day)';
     const ringRadius=29.4;
     const ring=circle(ringRadius,midnightSplit?colorOld:colorNew,2.7,{opacity:'.83'});
     overlay.append(ring);
@@ -181,22 +181,19 @@
       const slot=el('div','clock-hour');slot.style.left=point.x+'%';slot.style.top=point.y+'%';slot.dataset.hour=String(hour);slot.setAttribute('role','img');
       slot.setAttribute('aria-label',`${source.startDate} 게임 날짜 · ${hour<6?'다음 날 ':''}${row.time} ${C.name(row)}${changed?' · 실제 날씨 변경':''}`);
       const wrap=el('span','clock-icon-wrap'+(changed?' weather-shift':''));wrap.append(icon(row,true));slot.append(wrap);$('clock-hours').append(slot);
-      const label=el('span','clock-time',String(hour%12||12));label.style.left=labelPoint.x+'%';label.style.top=labelPoint.y+'%';label.dataset.hour=String(hour);label.setAttribute('aria-hidden','true');$('clock-hours').append(label);
+      const label=el('span','clock-time',hour===0?'00':String(hour%12||12));label.style.left=labelPoint.x+'%';label.style.top=labelPoint.y+'%';label.dataset.hour=String(hour);label.setAttribute('aria-hidden','true');$('clock-hours').append(label);
       if(changed){
         overlay.append(makeSvg('circle',{class:'change-ring',cx:point.x,cy:point.y,r:layout.ringRadius,'data-hour':hour}));
         clip.append(makeSvg('path',{d:layout.sector(hour),'data-hour':hour}));
       }
     }
-    // Thin time-progress arc and the live cyan hand; both follow the selected 12-hour face.
+    // Thin time-progress arc follows the selected 12-hour face; no clock hand.
     const elapsed=(now.hour%12+now.minute/60)/12;
     const progress=circle(25.6,'#67e8f9',1.1,{opacity:'.92','stroke-linecap':'round','stroke-dasharray':`${elapsed*160.85} 160.85`,transform:'rotate(-90 50 50)'});
     const activePeriod=(now.hour<12?'am':'pm')===state.clockMode;
     if(activePeriod){
       overlay.append(progress);
-      const angle=elapsed*2*Math.PI;
-      const tip={x:50+24*Math.sin(angle),y:50-24*Math.cos(angle)};
-      overlay.append(makeSvg('line',{x1:50,y1:50,x2:tip.x,y2:tip.y,stroke:'#67e8f9','stroke-width':'.85','stroke-linecap':'round',opacity:'.88'}));
-      overlay.append(makeSvg('circle',{cx:tip.x,cy:tip.y,r:1.35,fill:'#67e8f9'}));
+
     }
     const current=clockForecast(now.hour,now,day).row||day.weather[(now.hour+18)%24];
     center.replaceChildren();center.append(icon(current),el('strong','',C.name(current)),el('strong','center-time',String(now.hour).padStart(2,'0')+':'+String(now.minute).padStart(2,'0')));
