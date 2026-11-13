@@ -104,3 +104,6 @@
   .site-header { padding-inline:12px; }
   .brand { font-size:17px;white-space:nowrap; }
 }
+
+/* Brighter previous-day lavender for visibility on Midnight backgrounds. */
+[data-theme="midnight"] .clock-orbit { --clock-previous-day:#d6a5ff; --clock-current-day:#26d9c7; }
