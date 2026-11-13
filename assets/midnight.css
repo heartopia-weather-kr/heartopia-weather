@@ -107,3 +107,11 @@
 
 /* Brighter previous-day lavender for visibility on Midnight backgrounds. */
 [data-theme="midnight"] .clock-orbit { --clock-previous-day:#d6a5ff; --clock-current-day:#26d9c7; }
+
+/* Midnight neon variant of the same weather shapes. */
+[data-theme="midnight"] .extra-weather-icon { --extra-outline:#c9d8ff; --extra-fill:#283354; --extra-glow:drop-shadow(0 0 4px #8cafff); }
+[data-theme="midnight"] .extra-weather-icon .extra-rain { stroke:#55d6ff; filter:drop-shadow(0 0 3px #29c4ff); }
+[data-theme="midnight"] .extra-weather-icon .extra-bolt { fill:#ffe06a; stroke:#ffac39; filter:drop-shadow(0 0 4px #ffc451); }
+[data-theme="midnight"] .extra-weather-icon .extra-rainbow { stroke:#ff8ddd; filter:drop-shadow(0 0 4px #f37be5); }
+[data-theme="midnight"] .extra-weather-icon .extra-rainbow-inner { stroke:#78dfff; }
+[data-theme="midnight"] .extra-weather-icon .extra-sparkle { fill:#ffe78a; filter:drop-shadow(0 0 4px #ffdd83); }
