@@ -1346,3 +1346,6 @@ dialog [contenteditable]:not([contenteditable="false"]) * {
   #forecast-dialog { width:calc(100% - 20px); }
   .grouped-periods .period { min-height:0; }
 }
+
+/* Distinct game-day ring colors, with strong contrast in Light mode. */
+.clock-orbit { --clock-previous-day:#7944b3; --clock-current-day:#008d84; }
