@@ -1376,3 +1376,28 @@ dialog [contenteditable]:not([contenteditable="false"]) * {
     padding:20px;
   }
 }
+
+
+/* Redeem-code popup: independent from forecast and calculator layouts. */
+.redeem-trigger{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:24px;padding:8px 12px;background:var(--card);color:var(--ink);font:inherit;font-size:14px;font-weight:750;cursor:pointer;white-space:nowrap}
+.redeem-trigger-icon{position:relative;display:inline-flex;line-height:1;font-size:20px}
+.redeem-dot{position:absolute;right:-5px;top:-5px;width:10px;height:10px;border:2px solid var(--card);border-radius:50%;background:#e53935}
+.redeem-dialog{width:min(480px,calc(100% - 24px));max-height:85dvh;overflow-y:auto;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px;box-shadow:var(--shadow)}
+.redeem-dialog-heading,.redeem-code-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.redeem-dialog-heading h2{margin:0;font-size:22px}
+.redeem-intro,.redeem-disclaimer,.redeem-expiry{color:var(--muted);font-size:13px}
+.redeem-section-title{display:flex;justify-content:space-between;font-size:16px;margin:20px 0 10px}
+.redeem-list{display:grid;gap:10px}
+.redeem-code{background:var(--soft);border:1px solid var(--line);border-radius:12px;padding:12px;min-width:0}
+.redeem-code-name{overflow-wrap:anywhere;font-size:15px}
+.redeem-new{border-radius:8px;background:#b91c1c;color:white;font-size:10px;padding:3px 6px;font-weight:800}
+.redeem-code-head{flex-wrap:wrap;justify-content:flex-start}
+.redeem-copy{margin-left:auto;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);padding:7px 10px;cursor:pointer}
+.redeem-rewards{margin:10px 0 6px;font-size:14px}
+.redeem-expiry{margin:5px 0 0}
+.redeem-expired-toggle{display:flex;align-items:center;gap:8px;width:100%;margin:20px 0 10px;padding:12px 0;border:0;border-top:1px solid var(--line);background:transparent;color:var(--ink);font:inherit;font-weight:750;cursor:pointer;text-align:left}
+.redeem-expired-toggle span:last-child{margin-left:auto}
+.redeem-empty{color:var(--muted);font-size:14px}
+.redeem-disclaimer{margin:18px 0 0}
+@media(max-width:760px){.redeem-trigger{padding:7px;min-width:38px;min-height:38px;justify-content:center}.redeem-trigger-label{display:none}.redeem-dialog{max-height:90dvh;padding:16px}}
+@media(max-width:400px){.redeem-trigger{padding:5px;min-width:34px}.redeem-trigger-icon{font-size:18px}}
