@@ -1401,3 +1401,5 @@ dialog [contenteditable]:not([contenteditable="false"]) * {
 .redeem-disclaimer{margin:18px 0 0}
 @media(max-width:760px){.redeem-trigger{padding:7px;min-width:38px;min-height:38px;justify-content:center}.redeem-trigger-label{display:none}.redeem-dialog{max-height:90dvh;padding:16px}}
 @media(max-width:400px){.redeem-trigger{padding:5px;min-width:34px}.redeem-trigger-icon{font-size:18px}}
+
+.redeem-list[hidden],.redeem-dot[hidden]{display:none}
