@@ -100,6 +100,7 @@
     }
   }
   button.addEventListener('click',async () => {
+    if (document.querySelector('dialog[open]')) return;
     if (!loaded) await load();
     if (loaded) {
       newOnOpen = new Set(available(Date.now()).filter(isUnseen).map(x => normalized(x.code)));
@@ -107,7 +108,6 @@
       newOnOpen.forEach(x => seen.add(x));
       save(); updateDot();
     } else { list.replaceChildren(); expired.replaceChildren(); }
-    if (document.querySelector('dialog[open]')) return;
     dialog.showModal();
   });
   document.getElementById('redeem-close').addEventListener('click',() => dialog.close());
