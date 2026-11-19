@@ -33,8 +33,9 @@
   } catch { /* Private browsing still permits viewing codes. */ }
   const save = () => { try { localStorage.setItem(storageKey, JSON.stringify([...seen])); } catch {} };
   const available = now => codes.filter(x => !isExpired(x, now));
+  const confirmedAvailable = now => available(now).filter(x => Number.isFinite(expiry(x)));
   const updateDot = () => {
-    dot.hidden = !loaded || !available(Date.now()).some(isUnseen);
+    dot.hidden = !loaded || !confirmedAvailable(Date.now()).some(isUnseen);
     button.setAttribute('aria-label', dot.hidden ? '리딤코드 열기' : '새 리딤코드 있음, 리딤코드 열기');
   };
   const node = (tag, cls, value) => {
@@ -106,6 +107,7 @@
       newOnOpen.forEach(x => seen.add(x));
       save(); updateDot();
     } else { list.replaceChildren(); expired.replaceChildren(); }
+    if (document.querySelector('dialog[open]')) return;
     dialog.showModal();
   });
   document.getElementById('redeem-close').addEventListener('click',() => dialog.close());
