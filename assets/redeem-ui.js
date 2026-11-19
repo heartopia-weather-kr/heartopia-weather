@@ -12,6 +12,7 @@
   const storageKey = 'heartopia-redeem-seen-v1';
   let codes = [], seen = new Set(), newOnOpen = new Set(), loaded = false;
   const copiedUntil = new Map();
+  let automaticCache = [], manualCache = [];
   let lastExpiredSignature = '';
   const normalized = value => String(value || '').trim().toLowerCase();
   const expiry = item => item.expiresAt ? Date.parse(item.expiresAt) : NaN;
@@ -55,6 +56,7 @@
       const head = node('div','redeem-code-head');
       const name = node('strong','redeem-code-name',item.code);
       head.append(name);
+      if (item.type === 'special') head.append(node('span','redeem-special','🎁 특별'));
       if (isNew) head.append(node('span','redeem-new','NEW'));
       const copy = node('button','redeem-copy','복사');
       copy.type = 'button'; copy.setAttribute('aria-label',item.code + ' 복사');
@@ -83,21 +85,49 @@
     document.getElementById('redeem-expired-count').textContent = String(old.length);
     updateDot();
   };
+  // Manual entries override automatic entries by case-insensitive code.
+  // A malformed or unavailable source never hides valid entries from the other source.
+  const validEntries = data => {
+    if (!data || !Array.isArray(data.codes)) throw new Error('Invalid redeem JSON');
+    return data.codes.filter(item => item && typeof item.code === 'string' &&
+      /^[a-zA-Z0-9_-]{5,40}$/.test(item.code.trim()) &&
+      (item.expiresAt == null || (typeof item.expiresAt === 'string' && Number.isFinite(Date.parse(item.expiresAt)))) &&
+      (item.rewards == null || typeof item.rewards === 'string') &&
+      (item.postedAt == null || (typeof item.postedAt === 'string' && Number.isFinite(Date.parse(item.postedAt)))));
+  };
+  const readSource = async path => {
+    const response = await fetch(path + '?t=' + Date.now(),{cache:'no-store'});
+    if (!response.ok) throw new Error(path + ': HTTP ' + response.status);
+    return validEntries(await response.json());
+  };
   async function load() {
-    try {
-      const response = await fetch('redeem-codes.json?t=' + Date.now(),{cache:'no-store'});
-      if (!response.ok) throw new Error('데이터를 불러올 수 없어요.');
-      const data = await response.json();
-      if (!Array.isArray(data.codes)) throw new Error('코드 목록 형식이 올바르지 않아요.');
-      codes = data.codes.filter(item => item && typeof item.code === 'string' && item.code.trim());
-      loaded = true; message.hidden = true; updateDot();
-      if (dialog.open) render();
-      return true;
-    } catch {
-      message.textContent = '리딤코드 목록을 불러오지 못했어요. 잠시 후 다시 시도해 주세요.';
-      message.hidden = false;
+    const results = await Promise.allSettled([
+      readSource('redeem-codes.json'),
+      readSource('manual-redeem-codes.json')
+    ]);
+    const [automatic, manual] = results;
+    if (automatic.status === 'rejected' && manual.status === 'rejected') {
+      if (!loaded) {
+        message.textContent = '리딤코드 목록을 불러오지 못했어요. 잠시 후 다시 시도해 주세요.';
+        message.hidden = false;
+      }
       return false;
     }
+    const byCode = new Map();
+    // Keep the last successfully loaded data from a source that temporarily fails.
+    // Separate source caches prevent a transient network error from losing its codes.
+    if (automatic.status === 'fulfilled') automaticCache = automatic.value;
+    if (manual.status === 'fulfilled') manualCache = manual.value;
+    for (const item of automaticCache) byCode.set(normalized(item.code), {...item,code:item.code.trim()});
+    for (const item of manualCache) byCode.set(normalized(item.code), {...item,code:item.code.trim(),type:'special'});
+    codes = [...byCode.values()];
+    loaded = true;
+    const partial = automatic.status === 'rejected' || manual.status === 'rejected';
+    message.textContent = partial ? '일부 리딤코드 정보를 불러오지 못했어요. 잠시 후 다시 확인해 주세요.' : '';
+    message.hidden = !partial;
+    updateDot();
+    if (dialog.open) render();
+    return true;
   }
   button.addEventListener('click',async () => {
     if (document.querySelector('dialog[open]')) return;

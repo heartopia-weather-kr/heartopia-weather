@@ -1409,3 +1409,6 @@ dialog [contenteditable]:not([contenteditable="false"]) * {
 .redeem-title-icon{display:inline-flex;vertical-align:middle;margin-right:3px;color:#a47ae8}
 .redeem-title-icon .redeem-ribbon-svg{width:26px;height:26px}
 @media(max-width:400px){.redeem-trigger .redeem-ribbon-svg{width:23px;height:23px}}
+
+/* Manually verified special redeem codes. */
+.redeem-special{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);font-size:11px;font-weight:750;padding:3px 7px}
