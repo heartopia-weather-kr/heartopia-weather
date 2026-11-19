@@ -1403,3 +1403,9 @@ dialog [contenteditable]:not([contenteditable="false"]) * {
 @media(max-width:400px){.redeem-trigger{padding:5px;min-width:34px}.redeem-trigger-icon{font-size:18px}}
 
 .redeem-list[hidden],.redeem-dot[hidden]{display:none}
+
+/* Ribbon coupon icon: inherits each theme color; keep existing button sizing. */
+.redeem-ribbon-svg{display:block;flex:none;width:26px;height:26px}
+.redeem-title-icon{display:inline-flex;vertical-align:middle;margin-right:3px;color:#a47ae8}
+.redeem-title-icon .redeem-ribbon-svg{width:26px;height:26px}
+@media(max-width:400px){.redeem-trigger .redeem-ribbon-svg{width:23px;height:23px}}
