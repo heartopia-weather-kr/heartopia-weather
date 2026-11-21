@@ -234,26 +234,22 @@ async def read_hourly_forecast(page):
 
 # ============================================================
 # 웹사이트용 24시간 데이터 만들기
-# 06:00 ~ 오늘 23:00 + 다음날 00:00 ~ 05:00
+# 00:00 ~ 23:00 (실제 달력 날짜)
 # ============================================================
 
-def build_weather_data(today, tomorrow, today_weather, tomorrow_weather):
+def build_weather_data(today, yesterday_weather, today_weather):
     rows = []
     changed_count = 0
 
-    hours = list(range(6, 24)) + list(range(0, 6))
+    hours = list(range(24))
 
     for index, hour in enumerate(hours):
-        source = today_weather if hour >= 6 else tomorrow_weather
-        weather = source[hour]
+        weather = today_weather[hour]
 
         if index == 0:
-            previous_weather = today_weather[5]
-        elif hour == 0:
-            previous_weather = today_weather[23]
+            previous_weather = yesterday_weather[23]
         else:
-            previous_source = today_weather if hour > 6 else tomorrow_weather
-            previous_weather = previous_source[hour - 1]
+            previous_weather = today_weather[hour - 1]
 
         changed = is_weather_changed(
             hour,
@@ -290,10 +286,10 @@ def build_weather_data(today, tomorrow, today_weather, tomorrow_weather):
         status = "🔴 매우 잦음"
 
     periods = [
-        {"key": "morning", "label": "06:00 ~ 11:00", "start": 0, "end": 6},
-        {"key": "afternoon", "label": "12:00 ~ 17:00", "start": 6, "end": 12},
-        {"key": "evening", "label": "18:00 ~ 23:00", "start": 12, "end": 18},
-        {"key": "dawn", "label": "00:00 ~ 05:00", "start": 18, "end": 24},
+        {"key": "dawn", "label": "00:00 ~ 05:00", "start": 0, "end": 6},
+        {"key": "morning", "label": "06:00 ~ 11:00", "start": 6, "end": 12},
+        {"key": "afternoon", "label": "12:00 ~ 17:00", "start": 12, "end": 18},
+        {"key": "evening", "label": "18:00 ~ 23:00", "start": 18, "end": 24},
     ]
 
     period_data = []
@@ -311,9 +307,9 @@ def build_weather_data(today, tomorrow, today_weather, tomorrow_weather):
 
     return {
         "startDate": today.strftime("%Y-%m-%d"),
-        "endDate": tomorrow.strftime("%Y-%m-%d"),
-        "dateLabel": f"{today.month}월 {today.day}일 ~ {tomorrow.month}월 {tomorrow.day}일",
-        "timeRange": "06:00 ~ 다음날 05:00",
+        "endDate": today.strftime("%Y-%m-%d"),
+        "dateLabel": f"{today.month}월 {today.day}일",
+        "timeRange": "00:00 ~ 23:00",
         "updated": datetime.now(KST).strftime("%Y-%m-%d %H:%M"),
         "updatedTime": datetime.now(KST).strftime("%H:%M"),
         "changes": changed_count,
@@ -355,25 +351,16 @@ def save_weather_json(data):
 async def main():
     now = datetime.now(KST)
 
-    # 게임 날짜는 오전 06:00 기준으로 변경
-    if now.hour < 6:
-        base_date = now - timedelta(days=1)
-    else:
-        base_date = now
-
-    # 오늘 + 미래 8일의 게임 날짜를 만들기 위해
-    # 총 10개의 실제 날짜(마지막 날 다음 날 05시 포함)가 필요함
-    dates = [
-        base_date + timedelta(days=i)
-        for i in range(10)
-    ]
+    # 달력 날짜는 자정에 변경. 전날 23시를 읽어 자정 변화도 판별.
+    base_date = now
+    dates = [base_date - timedelta(days=1) + timedelta(days=i) for i in range(10)]
 
     print()
     print("=" * 50)
     print("Heartopia 오늘 + 미래 8일 날씨 수집")
     print("=" * 50)
-    print("시작 날짜:", dates[0].strftime("%Y-%m-%d"))
-    print("마지막 날짜:", dates[8].strftime("%Y-%m-%d"))
+    print("시작 날짜:", dates[1].strftime("%Y-%m-%d"))
+    print("마지막 날짜:", dates[9].strftime("%Y-%m-%d"))
     print()
 
     async with async_playwright() as p:
@@ -422,27 +409,15 @@ async def main():
                     f"날씨 읽기 완료"
                 )
 
-            # 수집한 10일 데이터를 이용해
-            # 06:00 ~ 다음날 05:00 기준의 9일치 데이터를 만듦
+            # 전날 + 오늘~8일 뒤 10일 수집 → 달력 날짜 9일치
             days = []
 
             for i in range(9):
-                today = dates[i]
-                tomorrow = dates[i + 1]
-
-                today_weather = weather_by_date[
-                    today.strftime("%Y-%m-%d")
-                ]
-                tomorrow_weather = weather_by_date[
-                    tomorrow.strftime("%Y-%m-%d")
-                ]
-
-                day_data = build_weather_data(
-                    today,
-                    tomorrow,
-                    today_weather,
-                    tomorrow_weather,
-                )
+                today = dates[i + 1]
+                yesterday = dates[i]
+                today_weather = weather_by_date[today.strftime("%Y-%m-%d")]
+                yesterday_weather = weather_by_date[yesterday.strftime("%Y-%m-%d")]
+                day_data = build_weather_data(today, yesterday_weather, today_weather)
 
                 days.append(day_data)
 

@@ -20,7 +20,7 @@
   function special(row) { return Boolean(row.special || /^(rainbow(?:\s+\d+)?|moon rainbow|meteor shower(?:\s+\d+)?|aurora(?:\s+\d+)?)$/i.test(row.weather.trim())); }
   function kst(now = new Date()) {
     const date = new Date(now.getTime() + 9 * 3600000), hour = date.getUTCHours();
-    const gameDate = new Date(date); if (hour < 6) gameDate.setUTCDate(gameDate.getUTCDate() - 1);
+    const gameDate = date;
     return { date: date.toISOString().slice(0,10), hour, minute: date.getUTCMinutes(), gameDate: gameDate.toISOString().slice(0,10) };
   }
   function validate(data) {
@@ -33,15 +33,15 @@
       if (!object(day) || !date(day.startDate) || !Array.isArray(day.weather) || day.weather.length !== 24) throw new Error('24시간 예보가 완전하지 않습니다.');
       if (!text(day.status) || !text(day.dateLabel)) throw new Error('예보 표시 정보가 올바르지 않습니다.');
       if (index && Date.parse(day.startDate) - Date.parse(data.days[index-1].startDate) !== 86400000) throw new Error('예보 날짜가 연속적이지 않습니다.');
-      day.weather.forEach((row,i) => { if (!object(row) || row.time !== String((i+6)%24).padStart(2,'0')+':00' || !text(row.weather) || typeof row.changed !== 'boolean' || ('name' in row && !text(row.name)) || ('special' in row && typeof row.special!=='boolean')) throw new Error('시간별 예보 형식이 올바르지 않습니다.'); });
+      day.weather.forEach((row,i) => { if (!object(row) || row.time !== String(i).padStart(2,'0')+':00' || !text(row.weather) || typeof row.changed !== 'boolean' || ('name' in row && !text(row.name)) || ('special' in row && typeof row.special!=='boolean')) throw new Error('시간별 예보 형식이 올바르지 않습니다.'); });
       if (!Number.isInteger(day.changes) || !Number.isFinite(day.changeRate) || day.changes !== day.weather.filter(row => row.changed).length || day.changeRate !== Math.round(day.changes/24*1000)/10) throw new Error('예보 요약이 일치하지 않습니다.');
     });
     return data;
   }
   function calculate(day,start,end) {
     if (![start,end].every(hour => Number.isInteger(hour) && hour>=0 && hour<24)) throw new Error('시간을 선택해 주세요.');
-    const a=(start+18)%24, b=(end+18)%24;
-    if (b<=a) throw new Error('종료 시간은 게임 날짜 기준으로 시작 시간보다 늦어야 합니다.');
+    const a=start, b=end;
+    if (b<=a) throw new Error('종료 시간은 시작 시간보다 늦어야 합니다.');
     const rows=day.weather.slice(a,b+1), changes=rows.slice(1).filter(row=>row.changed).length;
     return {rows,changes,rate:(changes/(b-a)*100).toFixed(1)};
   }

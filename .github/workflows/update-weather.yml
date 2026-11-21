@@ -36,7 +36,7 @@ jobs:
       - name: Get Heartopia weather
         run: python weather.py
 
-      - name: Verify 9 game days and fresh date
+      - name: Verify 9 calendar days and fresh date
         run: |
           python - <<'PY'
           import json
@@ -44,7 +44,7 @@ jobs:
           from zoneinfo import ZoneInfo
           data = json.load(open("weather.json", encoding="utf-8"))
           now = datetime.now(ZoneInfo("Asia/Seoul"))
-          expected = (now - timedelta(days=1) if now.hour < 6 else now).date()
+          expected = now.date()
           actual = [day["startDate"] for day in data["days"]]
           assert len(actual) == 9, f"Expected 9 game days, got {len(actual)}"
           assert actual[0] == expected.isoformat(), f"Stale start date: {actual[0]}, expected {expected}"

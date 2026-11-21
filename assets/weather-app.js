@@ -6,7 +6,7 @@
   const saveSetting=(key,value)=>{try{localStorage.setItem(key,value);}catch{/* Browsing without storage remains usable. */}};
   const state={data:null,day:0,clockMode:C.kst().hour<12?'am':'pm',clockPeriod:C.kst().hour<12?'am':'pm',notice:null,loading:false,forecastMode:'full',forecastPeriod:0};
   const atmosphere=window.WeatherAtmosphere.create(document.querySelector('.hero'));
-  const periodLabels=['오전 · 06:00 ~ 11:00','오후 · 12:00 ~ 17:00','저녁 · 18:00 ~ 23:00','새벽 · 다음 날 00:00 ~ 05:00'];
+  const periodLabels=['새벽 · 00:00 ~ 05:00','오전 · 06:00 ~ 11:00','오후 · 12:00 ~ 17:00','저녁 · 18:00 ~ 23:00'];
   function el(tag,className,text){const node=document.createElement(tag);if(className)node.className=className;if(text!==undefined)node.textContent=text;return node;}
   let iconId=0;
   function extraWeatherIcon(kind){
@@ -58,7 +58,7 @@
     const day=currentDay(), container=$('current-weather');container.replaceChildren();
     if(!day){atmosphere.update(null);container.append(el('p','empty','현재 날짜의 예보가 없어요. 아래에서 저장된 날짜를 확인해 주세요.'));$('today-changes').textContent='—';return;}
     $('today-changes').textContent=day.changes+'회';
-    const index=(C.kst().hour+18)%24, now=day.weather[index];
+    const index=C.kst().hour, now=day.weather[index];
     atmosphere.update(now.weather);
     const next=index<23?day.weather[index+1]:state.data.days.find(item=>item.startDate===C.kst(new Date(Date.now()+86400000)).gameDate)?.weather[0];
     function forecast(row,label){const box=el('div','hero-forecast');box.append(el('span','time-pill',label),icon(row),el('strong','',C.name(row)));return box;}
@@ -100,10 +100,10 @@
     state.data.days.forEach((day,index)=>{
       if(day.startDate<=C.kst().gameDate||shown>=7)return;
       shown++;
-      const representative=day.weather.find(C.special)||day.weather[0];
+      const representative=day.weather.find(C.special)||day.weather.find(row=>/rain|snow|shower/i.test(row.weather))||day.weather[6]||day.weather[0];
       const button=el('button','day-card'+(day.weather.some(C.special)?' special':'')+(day.startDate===C.kst().gameDate?' selected':''));button.type='button';button.setAttribute('aria-haspopup','dialog');button.setAttribute('aria-controls','forecast-dialog');button.setAttribute('aria-label',dateLabel(day.startDate)+' 상세 예보 보기');
       button.append(el('strong','day-date',dateLabel(day.startDate)),icon(representative),el('strong','day-weather',C.name(representative)));
-      button.title='특수 날씨가 있으면 우선 표시 · 없으면 06시 예보';button.addEventListener('click',()=>{selectDay(index);openModal('forecast-dialog',button);});$('week-days').append(button);
+      button.title='특수 날씨 우선 · 없으면 당일 강수 우선 · 없으면 06시 예보';button.addEventListener('click',()=>{selectDay(index);openModal('forecast-dialog',button);});$('week-days').append(button);
     });
   }
   function visibleForecastIndices(){
@@ -145,30 +145,24 @@
     }
     if(grouped){
       const i=state.forecastPeriod;
-      $('group-title').textContent=['오전','오후','저녁','새벽'][i];
+      $('group-title').textContent=['새벽','오전','오후','저녁'][i];
       $('group-range').textContent=periodLabels[i].split(' · ')[1];
       $('group-prev').disabled=i===0;
       $('group-next').disabled=i===3;
       const dots=$('group-dots');dots.replaceChildren();
       for(let j=0;j<4;j++){
         const dot=el('button','group-dot'+(j===i?' active':''));dot.type='button';
-        dot.setAttribute('aria-label',`${['오전','오후','저녁','새벽'][j]} 시간대 보기`);
+        dot.setAttribute('aria-label',`${['새벽','오전','오후','저녁'][j]} 시간대 보기`);
         dot.setAttribute('aria-pressed',String(j===i));
         dot.addEventListener('click',()=>setForecastPeriod(j));
         dots.append(dot);
       }
     }
   }
-  // Calendar hours 00-05 belong to the previous game day; 06-11 to the new one.
-  // Keep the actual hourly forecast unchanged when the 06:00 game-date label rolls over.
-  function clockForecast(hour,now,gameDay){
-    const date=now.date,gameDate=now.gameDate;
-    const previous=state.data.days.find(d=>d.endDate===date&&d.startDate!==date);
-    const today=state.data.days.find(d=>d.startDate===date);
-    const active=state.data.days.find(d=>d.startDate===gameDate);
-    const source=hour<6?(previous||active):(today||active);
-    const row=source?.weather[(hour+18)%24];
-    return {row,source};
+  // All 24 hours belong to their calendar date; clock faces remain 00-11 and 12-23.
+  function clockForecast(hour,now){
+    const source=state.data.days.find(d=>d.startDate===now.date);
+    return {row:source?.weather[hour],source};
   }
   function renderClock(){
     const now=C.kst(),day=currentDay(),center=$('clock-center');
@@ -178,17 +172,9 @@
     const layout=window.ClockLayout,overlay=$('clock-orbit');overlay.replaceChildren();
     const makeSvg=(tag,attrs)=>{const node=document.createElementNS('http://www.w3.org/2000/svg',tag);Object.entries(attrs).forEach(([key,value])=>node.setAttribute(key,String(value)));return node;};
     const orbitAttrs={cx:layout.center,cy:layout.center,r:layout.orbitRadius,pathLength:360,transform:'rotate(-90 50 50)'};
-    // Game-date ring is inside the existing change-effect orbit; each half represents six hours.
+    // Calendar date changes at midnight; no 06:00 game-day split ring.
     const circle=(r,stroke,width,extra={})=>makeSvg('circle',{cx:50,cy:50,r,fill:'none',stroke,'stroke-width':width,...extra});
-    const midnightSplit=state.clockMode==='am'&&now.hour<6;
-    const colorOld='var(--clock-previous-day)',colorNew='var(--clock-current-day)';
-    const ringRadius=29.4;
-    const ring=circle(ringRadius,midnightSplit?colorOld:colorNew,2.7,{opacity:'.83'});
-    overlay.append(ring);
-    if(midnightSplit){
-      // Left half: hours 06-11; right half: hours 00-05.
-      overlay.append(makeSvg('path',{d:'M 50 20.6 A 29.4 29.4 0 0 0 50 79.4',fill:'none',stroke:colorNew,'stroke-width':2.7,opacity:'.95'}));
-    }
+    overlay.append(circle(29.4,'var(--clock-current-day)',2.7,{opacity:'.83'}));
     overlay.append(makeSvg('circle',{...orbitAttrs,class:'orbit-base'}));
     const defs=makeSvg('defs',{}),clip=makeSvg('clipPath',{id:'clock-change-sectors',clipPathUnits:'userSpaceOnUse'});defs.append(clip);overlay.append(defs);
     const highlighted=makeSvg('g',{'clip-path':'url(#clock-change-sectors)'});highlighted.append(makeSvg('circle',{...orbitAttrs,class:'orbit-shift'}));overlay.append(highlighted);
@@ -199,7 +185,7 @@
       const point=layout.point(hour),labelPoint=layout.point(hour,layout.labelRadius);
       const changed=window.WeatherVisual.actualChange(state.data.days,source.startDate,hour);
       const slot=el('div','clock-hour');slot.style.left=point.x+'%';slot.style.top=point.y+'%';slot.dataset.hour=String(hour);slot.setAttribute('role','img');
-      slot.setAttribute('aria-label',`${source.startDate} 게임 날짜 · ${hour<6?'다음 날 ':''}${row.time} ${C.name(row)}${changed?' · 실제 날씨 변경':''}`);
+      slot.setAttribute('aria-label',`${source.startDate} · ${row.time} ${C.name(row)}${changed?' · 실제 날씨 변경':''}`);
       const wrap=el('span','clock-icon-wrap'+(changed?' weather-shift':''));wrap.append(icon(row,true));slot.append(wrap);$('clock-hours').append(slot);
       const label=el('span','clock-time',hour===0?'00':String(hour%12||12));label.style.left=labelPoint.x+'%';label.style.top=labelPoint.y+'%';label.dataset.hour=String(hour);label.setAttribute('aria-hidden','true');$('clock-hours').append(label);
       if(changed){
@@ -215,7 +201,7 @@
       overlay.append(progress);
 
     }
-    const current=clockForecast(now.hour,now,day).row||day.weather[(now.hour+18)%24];
+    const current=clockForecast(now.hour,now,day).row||day.weather[now.hour];
     center.replaceChildren();center.append(icon(current),el('strong','',C.name(current)),el('strong','center-time',String(now.hour).padStart(2,'0')+':'+String(now.minute).padStart(2,'0')));
     positionClockLabels();
   }
@@ -287,12 +273,12 @@
   function swipe(node,callback){let x=0,y=0;node.addEventListener('touchstart',event=>{x=event.changedTouches[0].clientX;y=event.changedTouches[0].clientY;},{passive:true});node.addEventListener('touchend',event=>{const dx=event.changedTouches[0].clientX-x,dy=event.changedTouches[0].clientY-y;if(Math.abs(dx)>45&&Math.abs(dx)>Math.abs(dy)*1.4)callback(dx<0?1:-1);},{passive:true});}
   swipe(document.querySelector('.date-navigation'),direction=>selectDay(state.day+direction));
   $('calculator-toggle').addEventListener('click',()=>openModal('calculator-dialog',$('calculator-toggle')));
-  for(let hour=0;hour<24;hour++){['start','end'].forEach(type=>{const option=el('option','',String(hour).padStart(2,'0')+':00'+(hour<6?' (다음 날)':''));option.value=hour;$('calculator-'+type).append(option);});}$('calculator-start').value=19;$('calculator-end').value=21;
+  for(let hour=0;hour<24;hour++){['start','end'].forEach(type=>{const option=el('option','',String(hour).padStart(2,'0')+':00'+'');option.value=hour;$('calculator-'+type).append(option);});}$('calculator-start').value=19;$('calculator-end').value=21;
   ['calculator-date','calculator-start','calculator-end'].forEach(id=>$(id).addEventListener('change',()=>$('calculator-result').replaceChildren()));
   $('calculator-form').addEventListener('submit',event=>{event.preventDefault();const result=$('calculator-result');result.replaceChildren();try{if(!state.data)throw new Error('예보를 먼저 불러와 주세요.');const day=state.data.days[Number($('calculator-date').value)], calculation=C.calculate(day,Number($('calculator-start').value),Number($('calculator-end').value));result.append(el('h3','',day.dateLabel),el('div','result-summary',`변경 ${calculation.changes}회 · 변동률 ${calculation.rate}%`));const details=el('details'),summary=el('summary','','시간별 날씨 흐름 펼쳐보기');details.append(summary);calculation.rows.forEach((row,i)=>details.append(rowCard(row,i===0)));result.append(details);}catch(error){result.append(el('p','form-error',error.message));}});
   $('notice-close').addEventListener('click',()=>$('notice-dialog').close());$('notice-hide').addEventListener('click',()=>{saveSetting('noticeHiddenKey',noticeKey());$('notice-dialog').close();});$('notice-open').addEventListener('click',()=>state.notice?showNotice():loadNotice());
   $('notice-dialog').addEventListener('click',event=>{const box=$('notice-dialog').getBoundingClientRect();if(event.clientX<box.left||event.clientX>box.right||event.clientY<box.top||event.clientY>box.bottom)$('notice-dialog').close();});
-  // The 06:00 KST game-day rollover is a local display change, not a network update.
+  // Calendar date rolls over at 00:00 KST, without refetching.
   // The already downloaded eight-day forecast is sufficient for the new day.
   let lastGameDate=C.kst().gameDate;
   function refreshGameDay(){
@@ -315,8 +301,8 @@
     freshness();
   }
   function scheduleGameDayRollover(){
-    const now=C.kst(),six=Date.parse(now.date+'T06:00:00+09:00');
-    const next=six<=Date.now()?six+86400000:six;
+    const now=C.kst(),midnight=Date.parse(now.date+'T00:00:00+09:00');
+    const next=midnight+86400000;
     setTimeout(()=>{refreshGameDay();scheduleGameDayRollover();},Math.max(50,next-Date.now()+100));
   }
   scheduleGameDayRollover();
