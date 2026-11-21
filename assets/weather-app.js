@@ -172,9 +172,8 @@
     const layout=window.ClockLayout,overlay=$('clock-orbit');overlay.replaceChildren();
     const makeSvg=(tag,attrs)=>{const node=document.createElementNS('http://www.w3.org/2000/svg',tag);Object.entries(attrs).forEach(([key,value])=>node.setAttribute(key,String(value)));return node;};
     const orbitAttrs={cx:layout.center,cy:layout.center,r:layout.orbitRadius,pathLength:360,transform:'rotate(-90 50 50)'};
-    // Calendar date changes at midnight; no 06:00 game-day split ring.
+    // Calendar dates now change at midnight; the former thick date-separation ring is unnecessary.
     const circle=(r,stroke,width,extra={})=>makeSvg('circle',{cx:50,cy:50,r,fill:'none',stroke,'stroke-width':width,...extra});
-    overlay.append(circle(29.4,'var(--clock-current-day)',2.7,{opacity:'.83'}));
     overlay.append(makeSvg('circle',{...orbitAttrs,class:'orbit-base'}));
     const defs=makeSvg('defs',{}),clip=makeSvg('clipPath',{id:'clock-change-sectors',clipPathUnits:'userSpaceOnUse'});defs.append(clip);overlay.append(defs);
     const highlighted=makeSvg('g',{'clip-path':'url(#clock-change-sectors)'});highlighted.append(makeSvg('circle',{...orbitAttrs,class:'orbit-shift'}));overlay.append(highlighted);
