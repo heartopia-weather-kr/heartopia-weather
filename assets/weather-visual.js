@@ -9,7 +9,7 @@
   function actualChange(days,gameDate,hour) {
     const day=days.find(item=>item.startDate===gameDate);
     if(!day || !Number.isInteger(hour) || hour<0 || hour>23)return false;
-    const index=(hour+18)%24, row=day.weather[index];
+    const index=hour, row=day.weather[index];
     let previous=day.weather[index-1];
     if(index===0){
       const date=new Date(gameDate+'T00:00:00Z');date.setUTCDate(date.getUTCDate()-1);
@@ -25,13 +25,13 @@
     const heading=`📅 ${date.getUTCMonth()+1}월 ${date.getUTCDate()}일 (${weekday}) 두근두근타운 날씨`;
     const entries=[];
     day.weather.forEach((row,index)=>{
-      const hour=(index+6)%24, time=String(hour).padStart(2,'0')+':00';
+      const hour=index, time=String(hour).padStart(2,'0')+':00';
       if(!row || row.time!==time || typeof row.weather!=='string' || !row.weather.trim() || !root.WeatherCore.entry(row.weather))throw new Error('시간별 예보가 완전하지 않습니다.');
       const regular=hour%6===0;
       const changed=index>0 && normalize(row.weather)!==normalize(day.weather[index-1].weather);
       if(regular || changed){
         const label=root.WeatherCore.name(row);
-        entries.push(`${hour<6?'다음 날 ':''}${time} ${label}${regular?' [정기]':''}`);
+        entries.push(`${time} ${label}${regular?' [정기]':''}`);
       }
     });
     return heading+'\n\n'+entries.join('\n');
