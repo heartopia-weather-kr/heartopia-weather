@@ -8,9 +8,9 @@ on:
       - .github/workflows/update-weather.yml
   workflow_dispatch:
   schedule:
-    # Two off-peak attempts per hour reduce gaps when GitHub skips/delays scheduled runs.
+    # Monitoring trial: one scheduled attempt per hour (minute 17, UTC).
     # GitHub schedules are best-effort, not guaranteed.
-    - cron: "13,43 * * * *"
+    - cron: "17 * * * *"
 
 jobs:
   update-weather:
