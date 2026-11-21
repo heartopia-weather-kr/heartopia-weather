@@ -2,7 +2,14 @@ const assert=require('node:assert/strict');
 const fs=require('node:fs');
 require('../assets/weather-core.js');
 const C=globalThis.WeatherCore;
-const data=JSON.parse(fs.readFileSync('weather.json','utf8'));
+// Rebuild complete calendar days from the committed legacy 06:00 data for schema tests.
+const legacy=JSON.parse(fs.readFileSync('weather.json','utf8'));
+const data={...legacy,days:legacy.days.slice(1).map((day,i)=>{
+ const previous=legacy.days[i];
+ const weather=[...previous.weather.slice(18),...day.weather.slice(0,18)];
+ const changes=weather.filter(row=>row.changed).length;
+ return {...day,endDate:day.startDate,dateLabel:day.startDate,timeRange:'00:00 ~ 23:00',weather,changes,changeRate:Math.round(changes/24*1000)/10};
+})};
 C.validate(data);
 assert.equal(C.catalog.length,21);
 assert.equal(C.name({weather:'Heavy Rain'}),'강한 비');
