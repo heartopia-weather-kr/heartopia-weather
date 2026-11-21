@@ -8,15 +8,15 @@ assert.equal(C.catalog.length,21);
 assert.equal(C.name({weather:'Heavy Rain'}),'강한 비');
 assert.equal(C.name({weather:'Moon Rainbow'}),'달 무지개');
 assert.equal(C.special({weather:'Moon Rainbow',special:false}),true);
-assert.equal(C.kst(new Date('2026-11-07T20:59:00Z')).gameDate,'2026-11-07');
-assert.equal(C.kst(new Date('2026-11-07T21:00:00Z')).gameDate,'2026-11-08');
+assert.equal(C.kst(new Date('2026-11-07T14:59:00Z')).gameDate,'2026-11-07');
+assert.equal(C.kst(new Date('2026-11-07T15:00:00Z')).gameDate,'2026-11-08');
 assert.equal(C.kst(new Date('2026-11-07T15:00:00Z')).hour,0);
 assert.equal(C.entry('Aurora 3')[0],'Aurora 3');
 assert.equal(C.entry('Rainbow 2')[0],'Rainbow');
 assert.equal(C.entry('Unknown'),undefined);
 for(const day of data.days){
  for(let start=0;start<24;start++)for(let end=0;end<24;end++){
-  const a=(start+18)%24,b=(end+18)%24;
+  const a=start,b=end;
   if(b<=a)assert.throws(()=>C.calculate(day,start,end));
   else{const result=C.calculate(day,start,end);assert.equal(result.changes,day.weather.slice(a+1,b+1).filter(row=>row.changed).length);assert.equal(result.rate,(result.changes/(b-a)*100).toFixed(1));assert.equal(result.rows.length,b-a+1);}
  }
