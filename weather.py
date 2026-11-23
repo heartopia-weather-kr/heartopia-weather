@@ -1,447 +1,144 @@
-import asyncio
+"""Calendar-first Heartopia forecast from year-scoped internal tables.
+
+A file data/weather-YYYY.json is authoritative ONLY for its named year.
+Missing years, dates, hours or unknown IDs are rendered as '?' and never
+shift the calendar or borrow another year's forecast.
+"""
 import json
 import re
 from datetime import datetime, timedelta
+from pathlib import Path
 from zoneinfo import ZoneInfo
 
-from playwright.async_api import async_playwright
-
-
-# ============================================================
-# 기본 설정
-# ============================================================
-
-URL = "https://heartopia.th.gl/forecast"
-OUTPUT_FILE = "weather.json"
 KST = ZoneInfo("Asia/Seoul")
+ROOT = Path(__file__).resolve().parent
+OUTPUT_FILE = ROOT / "weather.json"
 
+NAMES = {
+    101: ("Sunny", "Clear"), 102: "Cloudy", 104: "Heatwave",
+    105: "Cloudy", 106: "Petal Rain",
+    119: "Aurora 1", 120: "Aurora 2", 121: "Aurora 3",
+    201: ("Sunshower", "Moon Rain"), 202: "Light Rain",
+    203: "Moderate Rain", 204: "Heavy Rain",
+    211: "Light Snow", 212: "Moderate Snow", 213: "Heavy Snow",
+    301: "Moon Rainbow", 302: "Moon Rainbow",
+    303: "Rainbow", 304: "Rainbow", 305: "Moon Rainbow",
+}
+for _index in range(107, 119):
+    NAMES[_index] = "Meteor Shower " + str((_index - 107) % 3 + 1)
 
-# ============================================================
-# 날씨 이름 / 아이콘
-# ============================================================
+KO = {
+    "Sunny": "맑음", "Clear": "쾌청", "Cloudy": "흐림",
+    "Heatwave": "폭염", "Petal Rain": "꽃잎 비",
+    "Sunshower": "여우비", "Moon Rain": "달빛 비",
+    "Light Rain": "약한 비", "Moderate Rain": "보통 비",
+    "Heavy Rain": "강한 비", "Light Snow": "약한 눈",
+    "Moderate Snow": "보통 눈", "Heavy Snow": "강한 눈",
+    "Rainbow": "무지개", "Moon Rainbow": "달 무지개",
+}
+ICONS = {
+    "Sunny": "☀️", "Clear": "🌤️", "Cloudy": "☁️",
+    "Heatwave": "🔥", "Petal Rain": "🌸",
+    "Sunshower": "🦊", "Moon Rain": "🌙",
+    "Light Rain": "🌦️", "Moderate Rain": "🌧️", "Heavy Rain": "🌧️",
+    "Light Snow": "❄️", "Moderate Snow": "❄️", "Heavy Snow": "❄️",
+    "Rainbow": "🌈", "Moon Rainbow": "🌈",
+}
 
-def korean_weather(weather):
-    if re.match(r"^Meteor Shower(?:\s+\d+)?$", weather, re.IGNORECASE):
-        return "유성우 " + (weather.split()[-1] if weather.split()[-1].isdigit() else "1")
-    if re.match(r"^Rainbow(?:\s+\d+)?$", weather, re.IGNORECASE):
-        return "무지개"
-    if re.match(r"^Aurora(?:\s+\d+)?$", weather, re.IGNORECASE):
-        return "오로라 " + (weather.split()[-1] if weather.split()[-1].isdigit() else "1")
+def weather_name(identifier, hour):
+    value = NAMES.get(identifier)
+    if isinstance(value, tuple):
+        return value[0] if 6 <= hour < 18 else value[1]
+    return value
 
-    names = {
-        "Sunny": "맑음",
-        "Clear": "쾌청",
-        "Cloudy": "흐림",
-        "Sunshower": "여우비",
-        "Light Rain": "약한 비",
-        "Moderate Rain": "보통 비",
-        "Heavy Rain": "강한 비",
-        "Moon Rainbow": "달 무지개",
-        "Moon Rain": "달빛 비",
-        "Light Snow": "약한 눈",
-        "Snow": "보통 눈",
-        "Moderate Snow": "보통 눈",
-        "Thunderstorm": "뇌우",
-        "Fortune Cloud": "행운 구름",
-        "Heavy Snow": "강한 눈",
-        "Heatwave": "폭염",
-        "Petal Rain": "꽃잎 비",
-    }
-    return names.get(weather, weather)
+def normalized(value):
+    if value is None:
+        return None
+    return "rainbow" if re.fullmatch(r"Rainbow(?:\\s+\\d+)?", value, re.I) else value.lower()
 
-
-def weather_icon(weather):
-    if re.match(r"^Meteor Shower(?:\s+\d+)?$", weather, re.IGNORECASE):
-        return "☄️"
-    if re.match(r"^Rainbow(?:\s+\d+)?$", weather, re.IGNORECASE):
-        return "🌈"
-    if re.match(r"^Aurora(?:\s+\d+)?$", weather, re.IGNORECASE):
-        return "🌌"
-
-    icons = {
-        "Sunny": "☀️",
-        "Clear": "🌤️",
-        "Cloudy": "☁️",
-        "Sunshower": "🦊",
-        "Light Rain": "🌦️",
-        "Moderate Rain": "🌧️",
-        "Heavy Rain": "🌧️",
-        "Moon Rainbow": "🌈",
-        "Moon Rain": "🌙",
-        "Snow": "❄️",
-        "Moderate Snow": "❄️",
-        "Thunderstorm": "⛈️",
-        "Fortune Cloud": "🌈",
-        "Light Snow": "❄️",
-        "Heavy Snow": "❄️",
-        "Heatwave": "🔥",
-        "Petal Rain": "🌸",
-    }
-    return icons.get(weather, "❓")
-
-
-# ============================================================
-# 특수 날씨 판정
-# 무지개만 숫자를 무시하고, 유성우/오로라는 숫자 차이도 구분
-# ============================================================
-
-def normalize_weather(weather):
-    weather = weather.strip()
-
-    # 무지개만 뒤의 숫자가 있더라도 같은 날씨로 처리
-    if re.match(
-        rf"^{re.escape('Rainbow')}(?:\s+\d+)?$",
-        weather,
-        re.IGNORECASE,
-    ):
-        return "rainbow"
-
-    # 유성우 / 오로라는 1, 2, 3 숫자 차이도
-    # 실제 날씨 변경으로 구분
-    return weather.lower()
-
-
-def is_weather_changed(hour, weather, previous_weather):
-    # 00 / 06 / 12 / 18시는 무조건 변경
-    if hour in [0, 6, 12, 18]:
-        return True
-
-# 날씨 이름과 숫자까지 비교하여 변경 여부 판단
-    return normalize_weather(weather) != normalize_weather(previous_weather)
-
-
-# ============================================================
-# 날짜 선택
-# ============================================================
-
-async def select_month(page, target_date):
-    month_buttons = {
-        1: "Jan", 2: "Feb", 3: "Mar", 4: "Apr",
-        5: "May", 6: "Jun", 7: "Jul", 8: "Aug",
-        9: "Sep", 10: "Oct", 11: "Nov", 12: "Dec",
-    }
-
-    month_name = month_buttons[target_date.month]
-
-    print(f"{target_date.strftime('%Y-%m-%d')} 날짜 선택 중...")
-
-    button = page.get_by_role(
-        "button",
-        name=month_name,
-        exact=True,
-    )
-    await button.click()
-    await page.wait_for_timeout(400)
-
-
-async def select_day(page, target_date):
-    day = target_date.day
-    buttons = page.locator("button")
-    count = await buttons.count()
-    candidates = []
-
-    for i in range(count):
-        button = buttons.nth(i)
-
+def load_year(year):
+    path = ROOT / "data" / f"weather-{year}.json"
+    if not path.exists():
+        return {}
+    source = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(source, list):
+        raise ValueError(f"Invalid year table: {path}")
+    indexed = {}
+    for record in source:
+        month, day = record["month"], record["day"]
+        key = f"{year:04d}-{month:02d}-{day:02d}"
         try:
-            text = (await button.inner_text()).strip()
-            match = re.match(r"^(\d+)", text)
-
-            if match and int(match.group(1)) == day:
-                candidates.append(button)
-        except Exception:
-            pass
-
-    if not candidates:
-        raise RuntimeError(
-            f"{target_date.strftime('%Y-%m-%d')} 날짜 버튼을 찾지 못했습니다."
-        )
-
-    await candidates[-1].click()
-    await page.wait_for_timeout(600)
-
-
-async def select_date(page, target_date):
-    await select_month(page, target_date)
-    await select_day(page, target_date)
-
-
-# ============================================================
-# 시간별 날씨 읽기
-# ============================================================
-
-async def read_hourly_forecast(page):
-    text = await page.locator("body").inner_text()
-
-    lines = [
-        line.strip()
-        for line in text.splitlines()
-        if line.strip()
-    ]
-
-    weather = {}
-    time_pattern = re.compile(r"^(\d{2}):00$")
-
-    for i, line in enumerate(lines):
-        match = time_pattern.match(line)
-
-        if not match:
-            continue
-
-        hour = int(match.group(1))
-
-        for j in range(i + 1, min(i + 6, len(lines))):
-            candidate = lines[j]
-
-            if time_pattern.match(candidate):
-                break
-
-            if candidate in [
-                "Dawn 00–06",
-                "Morning 06–12",
-                "Afternoon 12–18",
-                "Evening 18–24",
-            ]:
+            datetime(year, month, day)
+        except ValueError:
+            # Leap-day entry in a non-leap year is intentionally unused.
+            if month == 2 and day == 29:
                 continue
+            raise
+        if key in indexed:
+            raise ValueError(f"Duplicate weather date: {key}")
+        hours = record.get("weatherIds")
+        if not isinstance(hours, list) or len(hours) != 24:
+            raise ValueError(f"Invalid hourly table: {key}")
+        indexed[key] = hours
+    return indexed
 
-            if candidate in [
-                "☄️", "🌈", "🌌", "🌦️", "❄️",
-                "🔥", "🌸", "☀️", "☁️", "🌙", "🌧️",
-            ]:
-                continue
-
-            # 유성우 / 오로라는 바로 다음 줄의
-            # 1, 2, 3 variant까지 함께 저장
-            if candidate in ["Meteor Shower", "Aurora"]:
-                variant = None
-
-                if j + 1 < len(lines):
-                    next_line = lines[j + 1]
-
-                    if next_line in ["1", "2", "3"]:
-                        variant = next_line
-
-                if variant:
-                    weather[hour] = f"{candidate} {variant}"
-                else:
-                    weather[hour] = candidate
-            else:
-                weather[hour] = candidate
-
-            break
-
-    return weather
-
-# ============================================================
-# 웹사이트용 24시간 데이터 만들기
-# 00:00 ~ 23:00 (실제 달력 날짜)
-# ============================================================
-
-def build_weather_data(today, yesterday_weather, today_weather):
-    rows = []
-    changed_count = 0
-
-    hours = list(range(24))
-
-    for index, hour in enumerate(hours):
-        weather = today_weather[hour]
-
-        if index == 0:
-            previous_weather = yesterday_weather[23]
-        else:
-            previous_weather = today_weather[hour - 1]
-
-        changed = is_weather_changed(
-            hour,
-            weather,
-            previous_weather,
-        )
-
-        if changed:
-            changed_count += 1
-
-        rows.append({
-            "time": f"{hour:02d}:00",
-            "weather": weather,
-            "name": korean_weather(weather),
-            "icon": weather_icon(weather),
-            "changed": changed,
-            "mark": "⭕" if changed else "❌",
-            "special": (
-                weather.lower().startswith("meteor shower")
-                or weather.lower().startswith("aurora")
-                or normalize_weather(weather) in {"rainbow", "moon rainbow"}
-            ),
+def build(now=None):
+    now = now or datetime.now(KST)
+    base = now.date()
+    dates = [base + timedelta(days=offset) for offset in range(-1, 9)]
+    tables = {date.year: load_year(date.year) for date in dates}
+    def at(date, hour):
+        values = tables[date.year].get(date.isoformat())
+        return weather_name(values[hour], hour) if values else None
+    days = []
+    stamp = now.strftime("%Y-%m-%d %H:%M")
+    for day in dates[1:]:
+        rows = []
+        for hour in range(24):
+            current = at(day, hour)
+            previous = at(day - timedelta(days=1), 23) if hour == 0 else at(day, hour - 1)
+            changed = current is not None and previous is not None and normalized(current) != normalized(previous)
+            unknown = current is None
+            name = "?" if unknown else (KO.get(current) or
+                ("유성우 " + current.split()[-1] if current.startswith("Meteor Shower") else
+                 "오로라 " + current.split()[-1] if current.startswith("Aurora") else current))
+            icon = "❓" if unknown else (
+                "☄️" if current.startswith("Meteor Shower") else
+                "🌌" if current.startswith("Aurora") else ICONS.get(current, "❓"))
+            rows.append({
+                "time": f"{hour:02d}:00", "weather": current or "Unknown",
+                "name": name, "icon": icon, "changed": bool(changed),
+                "mark": "?" if unknown or previous is None else ("⭕" if changed else "❌"),
+                "special": bool(current and (current.startswith(("Meteor Shower", "Aurora")) or current in ("Rainbow", "Moon Rainbow"))),
+            })
+        changes = sum(row["changed"] for row in rows)
+        # Unknown comparisons must not silently become a 0% change rate.
+        complete = all(at(day, h) is not None and
+                       (at(day - timedelta(days=1), 23) if h == 0 else at(day, h - 1)) is not None
+                       for h in range(24))
+        rate = round(changes / 24 * 100, 1) if complete else None
+        status = ("❓ 확인 불가" if rate is None else
+                  "🟢 안정적" if rate <= 25 else
+                  "🟡 보통" if rate <= 50 else
+                  "🟠 변화 많음" if rate <= 75 else "🔴 매우 잦음")
+        periods = []
+        for i, key in enumerate(("dawn", "morning", "afternoon", "evening")):
+            subset = rows[i*6:i*6+6]
+            periods.append({"key": key, "label": f"{i*6:02d}:00 ~ {i*6+5:02d}:00",
+                            "changes": sum(r["changed"] for r in subset), "weather": subset})
+        days.append({
+            "startDate": day.isoformat(), "endDate": day.isoformat(),
+            "dateLabel": f"{day.month}월 {day.day}일", "timeRange": "00:00 ~ 23:00",
+            "updated": stamp, "updatedTime": now.strftime("%H:%M"),
+            "changes": changes, "changeRate": rate, "status": status,
+            "weather": rows, "periods": periods,
         })
+    return {"updated": stamp, "updatedTime": now.strftime("%H:%M"), "days": days}
 
-    change_rate = round((changed_count / 24) * 100, 1)
-
-    if change_rate <= 25:
-        status = "🟢 안정적"
-    elif change_rate <= 50:
-        status = "🟡 보통"
-    elif change_rate <= 75:
-        status = "🟠 변화 많음"
-    else:
-        status = "🔴 매우 잦음"
-
-    periods = [
-        {"key": "dawn", "label": "00:00 ~ 05:00", "start": 0, "end": 6},
-        {"key": "morning", "label": "06:00 ~ 11:00", "start": 6, "end": 12},
-        {"key": "afternoon", "label": "12:00 ~ 17:00", "start": 12, "end": 18},
-        {"key": "evening", "label": "18:00 ~ 23:00", "start": 18, "end": 24},
-    ]
-
-    period_data = []
-
-    for period in periods:
-        period_rows = rows[period["start"]:period["end"]]
-        period_changes = sum(1 for row in period_rows if row["changed"])
-
-        period_data.append({
-            "key": period["key"],
-            "label": period["label"],
-            "changes": period_changes,
-            "weather": period_rows,
-        })
-
-    return {
-        "startDate": today.strftime("%Y-%m-%d"),
-        "endDate": today.strftime("%Y-%m-%d"),
-        "dateLabel": f"{today.month}월 {today.day}일",
-        "timeRange": "00:00 ~ 23:00",
-        "updated": datetime.now(KST).strftime("%Y-%m-%d %H:%M"),
-        "updatedTime": datetime.now(KST).strftime("%H:%M"),
-        "changes": changed_count,
-        "changeRate": change_rate,
-        "status": status,
-        "weather": rows,
-        "periods": period_data,
-    }
-
-
-# ============================================================
-# weather.json 저장
-# ============================================================
-
-def save_weather_json(data):
-    with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
-        json.dump(
-            data,
-            f,
-            ensure_ascii=False,
-            indent=2,
-        )
-
-    print(f"✅ {OUTPUT_FILE} 저장 완료")
-    print(f"📅 총 {len(data['days'])}일치 날씨 저장")
-
-    for index, day in enumerate(data["days"], start=1):
-        print(
-            f"{index}일차 · {day['dateLabel']} · "
-            f"전체 변경 {day['changes']}회 · "
-            f"변동률 {day['changeRate']}% {day['status']}"
-        )
-
-
-# ============================================================
-# 실행
-# ============================================================
-
-async def main():
-    now = datetime.now(KST)
-
-    # 달력 날짜는 자정에 변경. 전날 23시를 읽어 자정 변화도 판별.
-    base_date = now
-    dates = [base_date - timedelta(days=1) + timedelta(days=i) for i in range(10)]
-
-    print()
-    print("=" * 50)
-    print("Heartopia 오늘 + 미래 8일 날씨 수집")
-    print("=" * 50)
-    print("시작 날짜:", dates[1].strftime("%Y-%m-%d"))
-    print("마지막 날짜:", dates[9].strftime("%Y-%m-%d"))
-    print()
-
-    async with async_playwright() as p:
-        # GitHub Actions에서도 실행되도록 브라우저 창을 띄우지 않음
-        browser = await p.chromium.launch(headless=True)
-
-        page = await browser.new_page(
-            locale="en-US",
-            timezone_id="Asia/Seoul",
-        )
-
-        try:
-            print("Heartopia 사이트 접속 중...")
-
-            await page.goto(
-                URL,
-                wait_until="networkidle",
-                timeout=60000,
-            )
-
-            # 실제 달력 날짜 10일치의 24시간 예보를 먼저 수집
-            weather_by_date = {}
-
-            for target_date in dates:
-                print(
-                    f"날씨 읽는 중: "
-                    f"{target_date.strftime('%Y-%m-%d')}"
-                )
-
-                await select_date(page, target_date)
-                hourly_weather = await read_hourly_forecast(page)
-
-                if len(hourly_weather) != 24:
-                    raise RuntimeError(
-                        f"{target_date.strftime('%Y-%m-%d')} "
-                        f"날씨를 24시간 모두 읽지 못했습니다. "
-                        f"현재 {len(hourly_weather)}개"
-                    )
-
-                weather_by_date[
-                    target_date.strftime("%Y-%m-%d")
-                ] = hourly_weather
-
-                print(
-                    f"✅ {target_date.strftime('%Y-%m-%d')} "
-                    f"날씨 읽기 완료"
-                )
-
-            # 전날 + 오늘~8일 뒤 10일 수집 → 달력 날짜 9일치
-            days = []
-
-            for i in range(9):
-                today = dates[i + 1]
-                yesterday = dates[i]
-                today_weather = weather_by_date[today.strftime("%Y-%m-%d")]
-                yesterday_weather = weather_by_date[yesterday.strftime("%Y-%m-%d")]
-                day_data = build_weather_data(today, yesterday_weather, today_weather)
-
-                days.append(day_data)
-
-            data = {
-                "updated": datetime.now(KST).strftime(
-                    "%Y-%m-%d %H:%M"
-                ),
-                "updatedTime": datetime.now(KST).strftime("%H:%M"),
-                "days": days,
-            }
-
-            save_weather_json(data)
-
-        finally:
-            await browser.close()
-
+def main():
+    data = build()
+    OUTPUT_FILE.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    print(f"Saved {len(data['days'])} calendar dates: {data['days'][0]['startDate']} ~ {data['days'][-1]['startDate']}")
 
 if __name__ == "__main__":
-    try:
-        asyncio.run(main())
-    except Exception as e:
-        print()
-        print("=" * 50)
-        print("❌ 오류 발생")
-        print(e)
-        print("=" * 50)
-        raise
+    main()
