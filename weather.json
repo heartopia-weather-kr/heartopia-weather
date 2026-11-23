@@ -1,16 +1,16 @@
 {
-  "updated": "2026-11-23 10:39",
-  "updatedTime": "10:39",
+  "updated": "2026-11-23 18:09",
+  "updatedTime": "18:09",
   "days": [
     {
       "startDate": "2026-11-23",
       "endDate": "2026-11-23",
       "dateLabel": "11월 23일",
       "timeRange": "00:00 ~ 23:00",
-      "updated": "2026-11-23 10:39",
-      "updatedTime": "10:39",
-      "changes": 16,
-      "changeRate": 66.7,
+      "updated": "2026-11-23 18:09",
+      "updatedTime": "18:09",
+      "changes": 15,
+      "changeRate": 62.5,
       "status": "🟠 변화 많음",
       "weather": [
         {
@@ -126,8 +126,8 @@
           "weather": "Cloudy",
           "name": "흐림",
           "icon": "☁️",
-          "changed": true,
-          "mark": "⭕",
+          "changed": false,
+          "mark": "❌",
           "special": false
         },
         {
@@ -356,15 +356,15 @@
         {
           "key": "afternoon",
           "label": "12:00 ~ 17:00",
-          "changes": 6,
+          "changes": 5,
           "weather": [
             {
               "time": "12:00",
               "weather": "Cloudy",
               "name": "흐림",
               "icon": "☁️",
-              "changed": true,
-              "mark": "⭕",
+              "changed": false,
+              "mark": "❌",
               "special": false
             },
             {
@@ -482,10 +482,10 @@
       "endDate": "2026-11-24",
       "dateLabel": "11월 24일",
       "timeRange": "00:00 ~ 23:00",
-      "updated": "2026-11-23 10:39",
-      "updatedTime": "10:39",
-      "changes": 10,
-      "changeRate": 41.7,
+      "updated": "2026-11-23 18:09",
+      "updatedTime": "18:09",
+      "changes": 9,
+      "changeRate": 37.5,
       "status": "🟡 보통",
       "weather": [
         {
@@ -493,8 +493,8 @@
           "weather": "Clear",
           "name": "쾌청",
           "icon": "🌤️",
-          "changed": true,
-          "mark": "⭕",
+          "changed": false,
+          "mark": "❌",
           "special": false
         },
         {
@@ -709,15 +709,15 @@
         {
           "key": "dawn",
           "label": "00:00 ~ 05:00",
-          "changes": 2,
+          "changes": 1,
           "weather": [
             {
               "time": "00:00",
               "weather": "Clear",
               "name": "쾌청",
               "icon": "🌤️",
-              "changed": true,
-              "mark": "⭕",
+              "changed": false,
+              "mark": "❌",
               "special": false
             },
             {
@@ -957,10 +957,10 @@
       "endDate": "2026-11-25",
       "dateLabel": "11월 25일",
       "timeRange": "00:00 ~ 23:00",
-      "updated": "2026-11-23 10:39",
-      "updatedTime": "10:39",
-      "changes": 11,
-      "changeRate": 45.8,
+      "updated": "2026-11-23 18:09",
+      "updatedTime": "18:09",
+      "changes": 10,
+      "changeRate": 41.7,
       "status": "🟡 보통",
       "weather": [
         {
@@ -1076,8 +1076,8 @@
           "weather": "Sunny",
           "name": "맑음",
           "icon": "☀️",
-          "changed": true,
-          "mark": "⭕",
+          "changed": false,
+          "mark": "❌",
           "special": false
         },
         {
@@ -1306,15 +1306,15 @@
         {
           "key": "afternoon",
           "label": "12:00 ~ 17:00",
-          "changes": 2,
+          "changes": 1,
           "weather": [
             {
               "time": "12:00",
               "weather": "Sunny",
               "name": "맑음",
               "icon": "☀️",
-              "changed": true,
-              "mark": "⭕",
+              "changed": false,
+              "mark": "❌",
               "special": false
             },
             {
@@ -1432,8 +1432,8 @@
       "endDate": "2026-11-26",
       "dateLabel": "11월 26일",
       "timeRange": "00:00 ~ 23:00",
-      "updated": "2026-11-23 10:39",
-      "updatedTime": "10:39",
+      "updated": "2026-11-23 18:09",
+      "updatedTime": "18:09",
       "changes": 13,
       "changeRate": 54.2,
       "status": "🟠 변화 많음",
@@ -1907,8 +1907,8 @@
       "endDate": "2026-11-27",
       "dateLabel": "11월 27일",
       "timeRange": "00:00 ~ 23:00",
-      "updated": "2026-11-23 10:39",
-      "updatedTime": "10:39",
+      "updated": "2026-11-23 18:09",
+      "updatedTime": "18:09",
       "changes": 15,
       "changeRate": 62.5,
       "status": "🟠 변화 많음",
@@ -2382,10 +2382,10 @@
       "endDate": "2026-11-28",
       "dateLabel": "11월 28일",
       "timeRange": "00:00 ~ 23:00",
-      "updated": "2026-11-23 10:39",
-      "updatedTime": "10:39",
-      "changes": 12,
-      "changeRate": 50.0,
+      "updated": "2026-11-23 18:09",
+      "updatedTime": "18:09",
+      "changes": 11,
+      "changeRate": 45.8,
       "status": "🟡 보통",
       "weather": [
         {
@@ -2501,8 +2501,8 @@
           "weather": "Sunny",
           "name": "맑음",
           "icon": "☀️",
-          "changed": true,
-          "mark": "⭕",
+          "changed": false,
+          "mark": "❌",
           "special": false
         },
         {
@@ -2731,15 +2731,15 @@
         {
           "key": "afternoon",
           "label": "12:00 ~ 17:00",
-          "changes": 1,
+          "changes": 0,
           "weather": [
             {
               "time": "12:00",
               "weather": "Sunny",
               "name": "맑음",
               "icon": "☀️",
-              "changed": true,
-              "mark": "⭕",
+              "changed": false,
+              "mark": "❌",
               "special": false
             },
             {
@@ -2857,10 +2857,10 @@
       "endDate": "2026-11-29",
       "dateLabel": "11월 29일",
       "timeRange": "00:00 ~ 23:00",
-      "updated": "2026-11-23 10:39",
-      "updatedTime": "10:39",
-      "changes": 16,
-      "changeRate": 66.7,
+      "updated": "2026-11-23 18:09",
+      "updatedTime": "18:09",
+      "changes": 15,
+      "changeRate": 62.5,
       "status": "🟠 변화 많음",
       "weather": [
         {
@@ -2868,8 +2868,8 @@
           "weather": "Clear",
           "name": "쾌청",
           "icon": "🌤️",
-          "changed": true,
-          "mark": "⭕",
+          "changed": false,
+          "mark": "❌",
           "special": false
         },
         {
@@ -3084,15 +3084,15 @@
         {
           "key": "dawn",
           "label": "00:00 ~ 05:00",
-          "changes": 3,
+          "changes": 2,
           "weather": [
             {
               "time": "00:00",
               "weather": "Clear",
               "name": "쾌청",
               "icon": "🌤️",
-              "changed": true,
-              "mark": "⭕",
+              "changed": false,
+              "mark": "❌",
               "special": false
             },
             {
@@ -3332,10 +3332,10 @@
       "endDate": "2026-11-30",
       "dateLabel": "11월 30일",
       "timeRange": "00:00 ~ 23:00",
-      "updated": "2026-11-23 10:39",
-      "updatedTime": "10:39",
-      "changes": 11,
-      "changeRate": 45.8,
+      "updated": "2026-11-23 18:09",
+      "updatedTime": "18:09",
+      "changes": 10,
+      "changeRate": 41.7,
       "status": "🟡 보통",
       "weather": [
         {
@@ -3451,8 +3451,8 @@
           "weather": "Sunny",
           "name": "맑음",
           "icon": "☀️",
-          "changed": true,
-          "mark": "⭕",
+          "changed": false,
+          "mark": "❌",
           "special": false
         },
         {
@@ -3681,15 +3681,15 @@
         {
           "key": "afternoon",
           "label": "12:00 ~ 17:00",
-          "changes": 1,
+          "changes": 0,
           "weather": [
             {
               "time": "12:00",
               "weather": "Sunny",
               "name": "맑음",
               "icon": "☀️",
-              "changed": true,
-              "mark": "⭕",
+              "changed": false,
+              "mark": "❌",
               "special": false
             },
             {
@@ -3807,10 +3807,10 @@
       "endDate": "2026-12-01",
       "dateLabel": "12월 1일",
       "timeRange": "00:00 ~ 23:00",
-      "updated": "2026-11-23 10:39",
-      "updatedTime": "10:39",
-      "changes": 12,
-      "changeRate": 50.0,
+      "updated": "2026-11-23 18:09",
+      "updatedTime": "18:09",
+      "changes": 10,
+      "changeRate": 41.7,
       "status": "🟡 보통",
       "weather": [
         {
@@ -3818,8 +3818,8 @@
           "weather": "Clear",
           "name": "쾌청",
           "icon": "🌤️",
-          "changed": true,
-          "mark": "⭕",
+          "changed": false,
+          "mark": "❌",
           "special": false
         },
         {
@@ -3926,8 +3926,8 @@
           "weather": "Sunny",
           "name": "맑음",
           "icon": "☀️",
-          "changed": true,
-          "mark": "⭕",
+          "changed": false,
+          "mark": "❌",
           "special": false
         },
         {
@@ -4034,15 +4034,15 @@
         {
           "key": "dawn",
           "label": "00:00 ~ 05:00",
-          "changes": 3,
+          "changes": 2,
           "weather": [
             {
               "time": "00:00",
               "weather": "Clear",
               "name": "쾌청",
               "icon": "🌤️",
-              "changed": true,
-              "mark": "⭕",
+              "changed": false,
+              "mark": "❌",
               "special": false
             },
             {
@@ -4156,15 +4156,15 @@
         {
           "key": "afternoon",
           "label": "12:00 ~ 17:00",
-          "changes": 3,
+          "changes": 2,
           "weather": [
             {
               "time": "12:00",
               "weather": "Sunny",
               "name": "맑음",
               "icon": "☀️",
-              "changed": true,
-              "mark": "⭕",
+              "changed": false,
+              "mark": "❌",
               "special": false
             },
             {
