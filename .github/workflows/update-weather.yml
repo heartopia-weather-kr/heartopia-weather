@@ -7,6 +7,15 @@ on:
       - weather.py
       - .github/workflows/update-weather.yml
   workflow_dispatch:
+  pull_request:
+    paths:
+      - weather.py
+      - data/weather-*.json
+      - assets/weather-core.js
+      - assets/weather-visual.js
+      - assets/weather-app.js
+      - tests/test_calendar_weather.py
+      - .github/workflows/update-weather.yml
   schedule:
     # Monitoring trial: one scheduled attempt per hour (minute 17, UTC).
     # GitHub schedules are best-effort, not guaranteed.
@@ -28,10 +37,8 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Install Playwright
-        run: |
-          pip install playwright
-          playwright install --with-deps chromium
+      - name: Test calendar and missing-data behavior
+        run: python -m unittest discover -s tests -p 'test_calendar_weather.py' -v
 
       - name: Get Heartopia weather
         run: python weather.py
@@ -53,6 +60,7 @@ jobs:
           PY
 
       - name: Save weather.json
+        if: github.event_name != 'pull_request'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
