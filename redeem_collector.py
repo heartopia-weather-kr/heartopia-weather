@@ -25,7 +25,7 @@ TRANSLATIONS = (
     ("Wishing star", "소원별"),
     ("Fertilizer", "비료"),
     ("Pumpkin Seeds", "호박 씨앗"),
-    ("Roaming Oak Timber", "떠돌이 참나무 목재"),
+    ("Roaming Oak Timber", "그 자리 참나무"),
     ("Quality Fertilizer", "고급 비료"),
     ("Quality Timber", "고급 목재"),
 )
