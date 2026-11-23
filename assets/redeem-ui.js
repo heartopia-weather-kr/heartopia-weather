@@ -119,7 +119,7 @@
     if (automatic.status === 'fulfilled') automaticCache = automatic.value;
     if (manual.status === 'fulfilled') manualCache = manual.value;
     for (const item of automaticCache) byCode.set(normalized(item.code), {...item,code:item.code.trim()});
-    for (const item of manualCache) byCode.set(normalized(item.code), {...item,code:item.code.trim(),type:'special'});
+    for (const item of manualCache) byCode.set(normalized(item.code), {...item,code:item.code.trim(),type:item.type === 'normal' ? 'normal' : 'special'});
     codes = [...byCode.values()];
     loaded = true;
     const partial = automatic.status === 'rejected' || manual.status === 'rejected';
