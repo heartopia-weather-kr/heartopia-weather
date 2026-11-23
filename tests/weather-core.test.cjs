@@ -11,7 +11,7 @@ const data={...legacy,days:legacy.days.slice(1).map((day,i)=>{
  return {...day,endDate:day.startDate,dateLabel:day.startDate,timeRange:'00:00 ~ 23:00',weather,changes,changeRate:Math.round(changes/24*1000)/10};
 })};
 C.validate(data);
-assert.equal(C.catalog.length,21);
+assert.equal(C.catalog.length,24);
 assert.equal(C.name({weather:'Heavy Rain'}),'강한 비');
 assert.equal(C.name({weather:'Moon Rainbow'}),'달 무지개');
 assert.equal(C.special({weather:'Moon Rainbow',special:false}),true);
@@ -43,4 +43,4 @@ for(const mutate of invalidCases){const candidate=structuredClone(data);mutate(c
 const fallback=structuredClone(data);delete fallback.days[0].weather[0].name;delete fallback.days[0].weather[0].special;fallback.days[0].weather[0].weather='Unknown';C.validate(fallback);
 assert.deepEqual(C.validate(data),data);
 console.log(`PASS: ${invalidCases.length} malformed payload cases rejected before state replacement`);
-console.log('PASS: 21 icons, mappings, KST boundary, special weather, schema, 4,032 calculator intervals');
+console.log('PASS: 24 catalog entries, mappings, KST boundary, special weather, schema, 4,032 calculator intervals');
