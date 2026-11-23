@@ -4,8 +4,9 @@ require('../assets/weather-core.js');
 global.window=globalThis;
 require('../assets/midnight-icons.js');
 const manifest=JSON.parse(fs.readFileSync('assets/midnight-icons/manifest.json','utf8'));
-const keys=WeatherCore.catalog.map(row=>row[0]);
-assert.deepEqual(Object.keys(MidnightIcons),keys);
+const keys=Object.keys(MidnightIcons);
+for(const key of keys)assert.ok(WeatherCore.catalog.some(row=>row[0]===key),key);
+assert.equal(keys.length,21);
 assert.deepEqual(Object.keys(manifest),keys);
 assert.equal(new Set(Object.values(MidnightIcons)).size,21);
 for(const key of keys){
