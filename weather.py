@@ -54,7 +54,7 @@ def weather_name(identifier, hour):
 def normalized(value):
     if value is None:
         return None
-    return "rainbow" if re.fullmatch(r"Rainbow(?:\\s+\\d+)?", value, re.I) else value.lower()
+    return "rainbow" if re.fullmatch(r"Rainbow(?:\s+\d+)?", value, re.I) else value.lower()
 
 def load_year(year):
     path = ROOT / "data" / f"weather-{year}.json"
