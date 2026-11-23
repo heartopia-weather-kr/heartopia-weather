@@ -57,14 +57,14 @@
     updateTodayDate();
     const day=currentDay(), container=$('current-weather');container.replaceChildren();
     if(!day){atmosphere.update(null);container.append(el('p','empty','현재 날짜의 예보가 없어요. 아래에서 저장된 날짜를 확인해 주세요.'));$('today-changes').textContent='—';return;}
-    $('today-changes').textContent=day.changes+'회';
+    $('today-changes').textContent=day.changeRate===null?'?':day.changes+'회';
     const index=C.kst().hour, now=day.weather[index];
     atmosphere.update(now.weather);
     const next=index<23?day.weather[index+1]:state.data.days.find(item=>item.startDate===C.kst(new Date(Date.now()+86400000)).gameDate)?.weather[0];
     function forecast(row,label){const box=el('div','hero-forecast');box.append(el('span','time-pill',label),icon(row),el('strong','',C.name(row)));return box;}
     container.append(forecast(now,now.time));
     const transition=el('div','hero-transition');transition.append(el('span','hero-arrow','→'));
-    const change=el('span','current-change'+(next?(next.changed?' is-changed':' is-unchanged'):''),next?(next.changed?'⭕ 변경':'❌ 유지'):'다음 예보 없음');change.id='current-change';transition.append(change);container.append(transition);
+    const change=el('span','current-change'+(next?(next.changed?' is-changed':' is-unchanged'):''),next?(now.weather==='Unknown'||next.weather==='Unknown'?'? 확인 불가':next.changed?'⭕ 변경':'❌ 유지'):'다음 예보 없음');change.id='current-change';transition.append(change);container.append(transition);
     if(next)container.append(forecast(next,next.time));
   }
   let copyResetTimer;
@@ -115,8 +115,8 @@
     const day=state.data.days[state.day];$('selected-date').textContent=dateLabel(day.startDate);const visible=visibleForecastIndices();$('prev-date').disabled=state.day===visible[0];$('next-date').disabled=state.day===visible[visible.length-1];
     // Preserve weather.py's <=25 / <=50 / <=75 / >75 thresholds.
     // Both upper levels share the requested green presentation.
-    const badge=$('day-summary');badge.className='summary-badge '+(day.changeRate<=25?'level-low':day.changeRate<=50?'level-normal':'level-high');
-    const count=el('span'),rate=el('span');count.append('● 변경 ',el('strong','',day.changes+'회'));rate.append('변동률 ',el('strong','',day.changeRate+'%'));
+    const badge=$('day-summary');badge.className='summary-badge '+(day.changeRate===null?'level-normal':day.changeRate<=25?'level-low':day.changeRate<=50?'level-normal':'level-high');
+    const count=el('span'),rate=el('span');count.append('● 변경 ',el('strong','',(day.changeRate===null?'?':day.changes+'회')));rate.append('변동률 ',el('strong','',day.changeRate===null?'?':day.changeRate+'%'));
     badge.replaceChildren(count,el('span','badge-divider','|'),rate,el('span','badge-divider','|'),el('span','badge-level',day.status.replace(/^[^가-힣]+/,'')));
     renderPeriods();
   }
@@ -141,7 +141,7 @@
     const indices=grouped?[state.forecastPeriod]:[0,1,2,3];
     for(const i of indices){
       const rows=day.weather.slice(i*6,i*6+6), section=el('section','period');
-      const header=el('div','period-heading');header.append(el('h3','',periodLabels[i]),el('span','period-count',`변경 ${rows.filter(row=>row.changed).length}회`));section.append(header);rows.forEach(row=>section.append(rowCard(row)));container.append(section);
+      const header=el('div','period-heading');header.append(el('h3','',periodLabels[i]),el('span','period-count',rows.some(row=>row.weather==='Unknown')?'변경 ?':`변경 ${rows.filter(row=>row.changed).length}회`));section.append(header);rows.forEach(row=>section.append(rowCard(row)));container.append(section);
     }
     if(grouped){
       const i=state.forecastPeriod;
