@@ -34,7 +34,7 @@
       if (!text(day.status) || !text(day.dateLabel)) throw new Error('예보 표시 정보가 올바르지 않습니다.');
       if (index && Date.parse(day.startDate) - Date.parse(data.days[index-1].startDate) !== 86400000) throw new Error('예보 날짜가 연속적이지 않습니다.');
       day.weather.forEach((row,i) => { if (!object(row) || row.time !== String(i).padStart(2,'0')+':00' || !text(row.weather) || typeof row.changed !== 'boolean' || ('name' in row && !text(row.name)) || ('special' in row && typeof row.special!=='boolean')) throw new Error('시간별 예보 형식이 올바르지 않습니다.'); });
-      if (!Number.isInteger(day.changes) || !Number.isFinite(day.changeRate) || day.changes !== day.weather.filter(row => row.changed).length || day.changeRate !== Math.round(day.changes/24*1000)/10) throw new Error('예보 요약이 일치하지 않습니다.');
+      if (!Number.isInteger(day.changes) || (day.changeRate!==null && !Number.isFinite(day.changeRate)) || day.changes !== day.weather.filter(row => row.changed).length || (day.changeRate!==null && day.changeRate !== Math.round(day.changes/24*1000)/10)) throw new Error('예보 요약이 일치하지 않습니다.');
     });
     return data;
   }
@@ -42,7 +42,9 @@
     if (![start,end].every(hour => Number.isInteger(hour) && hour>=0 && hour<24)) throw new Error('시간을 선택해 주세요.');
     const a=start, b=end;
     if (b<=a) throw new Error('종료 시간은 시작 시간보다 늦어야 합니다.');
-    const rows=day.weather.slice(a,b+1), changes=rows.slice(1).filter(row=>row.changed).length;
+    const rows=day.weather.slice(a,b+1);
+    if(rows.some(row=>row.weather==='Unknown')) throw new Error('선택 구간에 날씨 데이터가 없어 변경 횟수를 계산할 수 없습니다.');
+    const changes=rows.slice(1).filter(row=>row.changed).length;
     return {rows,changes,rate:(changes/(b-a)*100).toFixed(1)};
   }
   root.WeatherCore={catalog,entry,name,special,kst,validate,calculate};
