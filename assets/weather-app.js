@@ -41,7 +41,7 @@
     }).catch(()=>{/* Keep the source icon, without a rectangular fallback glow. */});
     return svg;
   }
-  function rowCard(row,first=false){const node=el('div','weather-row'+(C.special(row)?' special':''));const mark=el('span','change-mark '+(first?'mark-start':row.changed?'mark-changed':'mark-unchanged'),first?'시작':row.changed?'◯':'−');mark.setAttribute('aria-label',first?'시작 날씨':row.changed?'날씨 변경':'날씨 유지');node.append(mark,el('strong','row-time',row.time),icon(row),el('span','row-name',C.name(row)));if(C.special(row))node.append(el('span','special-star','✧'));return node;}
+  function rowCard(row,first=false){const node=el('div','weather-row'+(C.special(row)?' special':''));const mark=el('span','change-mark '+(first?'mark-start':row.changed?'mark-changed':row.mark==='?'?'':'mark-unchanged'),first?'시작':row.mark==='?'?'?':row.changed?'◯':'−');mark.setAttribute('aria-label',first?'시작 날씨':row.mark==='?'?'변경 여부 확인 불가':row.changed?'날씨 변경':'날씨 유지');node.append(mark,el('strong','row-time',row.time),icon(row),el('span','row-name',C.name(row)));if(C.special(row))node.append(el('span','special-star','✧'));return node;}
   function dateLabel(date){return new Intl.DateTimeFormat('ko-KR',{timeZone:'Asia/Seoul',month:'2-digit',day:'2-digit',weekday:'short'}).format(new Date(date+'T12:00:00+09:00'));}
   function currentDay(){return state.data?.days.find(day=>day.startDate===C.kst().gameDate);}
   function updateTodayDate(){
@@ -49,9 +49,9 @@
     $('today-date').dateTime=date;
     $('today-date').textContent=`${Number(date.slice(5,7))}월 ${Number(date.slice(8,10))}일 (${weekday})`;
   }
-  function freshness(){
+  function renderBasisDate(){
     if(!state.data)return;
-    $('status').textContent=`마지막 업데이트: ${state.data.updated} (KST)`;
+    $('status').textContent=`데이터 기준일: ${state.data.basisDate.replaceAll('-','.')}`;
   }
   function renderToday(){
     updateTodayDate();
@@ -64,7 +64,8 @@
     function forecast(row,label){const box=el('div','hero-forecast');box.append(el('span','time-pill',label),icon(row),el('strong','',C.name(row)));return box;}
     container.append(forecast(now,now.time));
     const transition=el('div','hero-transition');transition.append(el('span','hero-arrow','→'));
-    const change=el('span','current-change'+(next?(next.changed?' is-changed':' is-unchanged'):''),next?(now.weather==='Unknown'||next.weather==='Unknown'?'? 확인 불가':next.changed?'⭕ 변경':'❌ 유지'):'다음 예보 없음');change.id='current-change';transition.append(change);container.append(transition);
+    const known=next&&next.mark!=='?';
+    const change=el('span','current-change'+(known?(next.changed?' is-changed':' is-unchanged'):''),next?(known?(next.changed?'⭕ 변경':'❌ 유지'):'? 확인 불가'):'다음 예보 없음');change.id='current-change';transition.append(change);container.append(transition);
     if(next)container.append(forecast(next,next.time));
   }
   let copyResetTimer;
@@ -141,7 +142,7 @@
     const indices=grouped?[state.forecastPeriod]:[0,1,2,3];
     for(const i of indices){
       const rows=day.weather.slice(i*6,i*6+6), section=el('section','period');
-      const header=el('div','period-heading');header.append(el('h3','',periodLabels[i]),el('span','period-count',rows.some(row=>row.weather==='Unknown')?'변경 ?':`변경 ${rows.filter(row=>row.changed).length}회`));section.append(header);rows.forEach(row=>section.append(rowCard(row)));container.append(section);
+      const header=el('div','period-heading');header.append(el('h3','',periodLabels[i]),el('span','period-count',rows.some(row=>row.mark==='?')?'변경 ?':`변경 ${rows.filter(row=>row.changed).length}회`));section.append(header);rows.forEach(row=>section.append(rowCard(row)));container.append(section);
     }
     if(grouped){
       const i=state.forecastPeriod;
@@ -182,7 +183,7 @@
       const hour=start+i,{row,source}=clockForecast(hour,now,day);
       if(!row)continue;
       const point=layout.point(hour),labelPoint=layout.point(hour,layout.labelRadius);
-      const changed=window.WeatherVisual.actualChange(state.data.days,source.startDate,hour);
+      const changed=row.changed;
       const slot=el('div','clock-hour');slot.style.left=point.x+'%';slot.style.top=point.y+'%';slot.dataset.hour=String(hour);slot.setAttribute('role','img');
       slot.setAttribute('aria-label',`${source.startDate} · ${row.time} ${C.name(row)}${changed?' · 실제 날씨 변경':''}`);
       const wrap=el('span','clock-icon-wrap'+(changed?' weather-shift':''));wrap.append(icon(row,true));slot.append(wrap);$('clock-hours').append(slot);
@@ -233,13 +234,34 @@
     $('calculator-date').replaceChildren();state.data.days.forEach((day,i)=>{const option=el('option','',day.dateLabel);option.value=i;$('calculator-date').append(option);});
     const index=state.data.days.findIndex(day=>selected?day.dateLabel===selected:day.startDate===C.kst().gameDate);$('calculator-date').value=Math.max(0,index);$('calculator-run').disabled=false;
   }
+  let annualForecast;
+  let forecastText;
+  let lastGameDate;
+  function renderForecastWindow(gameDate,data=C.annualWindow(annualForecast,gameDate)){
+    const previous=state.data?.days[state.day]?.startDate;
+    const dateChanged=lastGameDate!==gameDate;
+    state.data=data;
+    const index=state.data.days.findIndex(day=>day.startDate===previous&&day.startDate>gameDate);
+    state.day=index>0?index:1;
+    lastGameDate=gameDate;
+    syncClockPeriod();
+    populateCalculator();renderToday();renderWeek();renderSelected();renderClock();renderBasisDate();
+    if(dateChanged)$('calculator-result').replaceChildren();
+  }
   async function loadWeather(){
     if(state.loading)return;state.loading=true;
     try{
-      const response=await fetch('weather.json?t='+Date.now(),{cache:'no-store'});if(!response.ok)throw new Error('예보 파일을 불러오지 못했습니다.');
-      const data=C.validate(await response.json()), previous=state.data?.days[state.day]?.startDate;
-      state.data=data;state.day=Math.max(0,data.days.findIndex(day=>day.startDate===previous&&day.startDate>C.kst().gameDate));if(state.day===0)state.day=Math.max(0,data.days.findIndex(day=>day.startDate>C.kst().gameDate));
-      populateCalculator();renderToday();renderWeek();renderSelected();renderClock();freshness();$('load-error').hidden=true;
+      const response=await fetch('annual-weather.json',{cache:'no-cache'});
+      if(!response.ok)throw new Error('예보 파일을 불러오지 못했습니다.');
+      const text=await response.text();
+      if(text!==forecastText){
+        const annual=C.validateAnnual(JSON.parse(text)),gameDate=C.kst().gameDate;
+        const data=C.annualWindow(annual,gameDate);
+        renderForecastWindow(gameDate,data);
+        annualForecast=annual;
+        forecastText=text;
+      }
+      $('load-error').hidden=true;
     }catch(error){
       $('load-error').hidden=false;$('load-error').textContent=error.message+(state.data?' 마지막으로 불러온 예보를 표시합니다.':' 예보는 자동으로 다시 불러옵니다.');
       if(!state.data){$('current-weather').replaceChildren(el('p','empty','날씨 정보를 불러오지 못했어요.'));$('week-days').replaceChildren(el('p','empty','7일 예보를 불러오지 못했어요.'));}
@@ -277,37 +299,25 @@
   $('calculator-form').addEventListener('submit',event=>{event.preventDefault();const result=$('calculator-result');result.replaceChildren();try{if(!state.data)throw new Error('예보를 먼저 불러와 주세요.');const day=state.data.days[Number($('calculator-date').value)], calculation=C.calculate(day,Number($('calculator-start').value),Number($('calculator-end').value));result.append(el('h3','',day.dateLabel),el('div','result-summary',`변경 ${calculation.changes}회 · 변동률 ${calculation.rate}%`));const details=el('details'),summary=el('summary','','시간별 날씨 흐름 펼쳐보기');details.append(summary);calculation.rows.forEach((row,i)=>details.append(rowCard(row,i===0)));result.append(details);}catch(error){result.append(el('p','form-error',error.message));}});
   $('notice-close').addEventListener('click',()=>$('notice-dialog').close());$('notice-hide').addEventListener('click',()=>{saveSetting('noticeHiddenKey',noticeKey());$('notice-dialog').close();});$('notice-open').addEventListener('click',()=>state.notice?showNotice():loadNotice());
   $('notice-dialog').addEventListener('click',event=>{const box=$('notice-dialog').getBoundingClientRect();if(event.clientX<box.left||event.clientX>box.right||event.clientY<box.top||event.clientY>box.bottom)$('notice-dialog').close();});
-  // Calendar date rolls over at 00:00 KST, without refetching.
-  // The already downloaded eight-day forecast is sufficient for the new day.
-  let lastGameDate=C.kst().gameDate;
-  function refreshGameDay(){
-    const gameDate=C.kst().gameDate;
-    if(gameDate===lastGameDate)return;
-    lastGameDate=gameDate;
+  function syncClockPeriod(){
+    const period=C.kst().hour<12?'am':'pm';
+    if(period!==state.clockPeriod){state.clockPeriod=period;state.clockMode=period;}
+  }
+  function refreshWeather(){
+    const date=C.kst().gameDate;
     if(!state.data){updateTodayDate();return;}
-    // The previous selected day may have become "today"; move to the first future day.
-    const selected=state.data.days[state.day];
-    if(!selected||selected.startDate<=gameDate){
-      const next=state.data.days.findIndex(day=>day.startDate>gameDate);
-      state.day=next>=0?next:state.data.days.length-1;
-    }
-    populateCalculator();
+    if(date!==lastGameDate){renderForecastWindow(date);return;}
+    syncClockPeriod();
     renderToday();
-    renderWeek();
-    if(state.data.days[state.day]?.startDate>gameDate)renderSelected();
-    else if($('forecast-dialog').open)$('forecast-dialog').close();
     renderClock();
-    freshness();
   }
-  function scheduleGameDayRollover(){
-    const now=C.kst(),midnight=Date.parse(now.date+'T00:00:00+09:00');
-    const next=midnight+86400000;
-    setTimeout(()=>{refreshGameDay();scheduleGameDayRollover();},Math.max(50,next-Date.now()+100));
+  function scheduleWeatherTick(){
+    // KST minute boundaries align with UTC, including midnight.
+    setTimeout(()=>{refreshWeather();scheduleWeatherTick();},60000-Date.now()%60000);
   }
-  scheduleGameDayRollover();
-  // Also detect clock changes or background-tab timer throttling on the regular tick.
-  setInterval(()=>{refreshGameDay();updateTodayDate();if(!state.data)return;freshness();renderToday();const period=C.kst().hour<12?'am':'pm';if(period!==state.clockPeriod){state.clockPeriod=period;state.clockMode=period;}renderClock();},60000);
-  document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshGameDay();});
+  scheduleWeatherTick();
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshWeather();});
+  window.addEventListener('pageshow',refreshWeather);
   setInterval(loadWeather,15*60000);
   updateTodayDate();loadWeather();loadNotice();
 })();

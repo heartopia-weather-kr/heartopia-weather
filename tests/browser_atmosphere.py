@@ -21,8 +21,8 @@ try:
         page=context.new_page();errors=[]
         page.on('pageerror',lambda error:errors.append(str(error)))
         page.clock.install(time=datetime.fromisoformat('2026-11-08T08:00:00+00:00'))
-        original=json.loads((ROOT/'weather.json').read_text(encoding='utf-8'));fixture=original
-        page.route('**/weather.json?*',lambda route:route.fulfill(json=fixture))
+        original=json.loads((ROOT/'annual-weather.json').read_text(encoding='utf-8'));fixture=original
+        page.route('**/annual-weather.json',lambda route:route.fulfill(json=fixture))
         page.goto(url);page.locator('.day-card').last.wait_for();page.locator('#notice-close').click()
         assert page.locator('.hero-atmosphere').get_attribute('data-effect')=='sunny' # next hour is Clear
         assert page.locator('.hero .icon-art').first.get_attribute('href')=='design-reference/icons-light.png'
@@ -34,7 +34,7 @@ try:
         page.clock.set_system_time(datetime.fromisoformat('2026-11-08T08:59:00+00:00'));page.clock.run_for(121000)
         assert page.locator('.hero-atmosphere').get_attribute('data-effect')=='clear'
         fixture=json.loads(json.dumps(original))
-        for row in fixture['days'][0]['weather']:row['weather']='Moon Rain'
+        for row in fixture['days']['2026-11-08']['weather']:row['weather']='Moon Rain'
         page.clock.run_for(15*60000+2000)
         page.wait_for_function("document.querySelector('.hero-atmosphere').dataset.effect==='moon-rain'")
         page.evaluate('window.rainEffect=document.querySelector(".atmosphere-plane:not(.is-leaving)")')
@@ -69,24 +69,24 @@ try:
         page.clock.set_system_time(datetime.fromisoformat('2026-11-08T20:59:00+00:00'));page.clock.run_for(121000)
         assert page.locator('.hero-atmosphere').get_attribute('data-effect')=='sunny'
         fixture=json.loads(json.dumps(original))
-        for row in fixture['days'][1]['weather']:row['weather']='Unregistered weather'
+        for row in fixture['days']['2026-11-09']['weather']:row['weather']='Unregistered weather'
         page.clock.run_for(15*60000+2000)
         page.wait_for_function("document.querySelector('.hero-atmosphere').dataset.effect==='none'")
         page.clock.run_for(2000)
         page.wait_for_function("document.querySelector('.hero-atmosphere').children.length===0")
-        page.clock.set_system_time(datetime.fromisoformat('2026-11-20T08:00:00+00:00'));page.clock.run_for(121000)
+        page.clock.set_system_time(datetime.fromisoformat('2027-01-01T08:00:00+00:00'));page.clock.run_for(121000)
         assert page.locator('.hero-atmosphere').get_attribute('data-effect')=='none'
         assert page.locator('.hero-atmosphere').count()==1
         preview=context.new_page();preview.on('pageerror',lambda error:errors.append(str(error)))
         preview.goto(url+'/tests/effects-preview.html')
-        assert preview.locator('.hero-atmosphere').count()==21
-        assert len(set(preview.locator('.hero-atmosphere').evaluate_all('(nodes)=>nodes.map(n=>n.dataset.effect)')))==21
+        assert preview.locator('.hero-atmosphere').count()==24
+        assert len(set(preview.locator('.hero-atmosphere[data-effect]:not([data-effect="none"])').evaluate_all('(nodes)=>nodes.map(n=>n.dataset.effect)')))==21
         assert preview.locator('.hero-atmosphere .atmosphere-particle').count()<=200
         storage=preview.evaluate('JSON.stringify({...localStorage})')
         for index,item in enumerate(preview.evaluate('WeatherCore.catalog.map(row=>[row[0],row[1]])')):
             preview.locator('.preview-grid .hero').nth(index).click()
             assert preview.locator('#preview-detail').is_visible()
-            expected=preview.evaluate('(key)=>WeatherAtmosphere.select(key).id',item[0])
+            expected=preview.evaluate('(key)=>WeatherAtmosphere.select(key)?.id ?? null',item[0])
             assert preview.locator('#preview-detail-card .hero-atmosphere').get_attribute('data-effect')==expected
             assert preview.locator('#preview-detail-weather .weather-icon').count()==2
             assert preview.locator('.preview-grid').get_attribute('data-suspended')=='true'

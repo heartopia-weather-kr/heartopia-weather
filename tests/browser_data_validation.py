@@ -16,7 +16,7 @@ class QuietHandler(SimpleHTTPRequestHandler):
 server = ThreadingHTTPServer(('127.0.0.1', 0), functools.partial(QuietHandler, directory=str(ROOT)))
 threading.Thread(target=server.serve_forever, daemon=True).start()
 url = f'http://127.0.0.1:{server.server_port}'
-original = json.loads((ROOT / 'weather.json').read_text(encoding='utf-8'))
+original = json.loads((ROOT / 'annual-weather.json').read_text(encoding='utf-8'))
 try:
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True, channel='msedge')
@@ -37,7 +37,7 @@ try:
         page = context.new_page()
         page.on('pageerror', lambda error: errors.append(str(error)))
         page.clock.install(time=datetime.fromisoformat('2026-11-08T08:00:00+00:00'))
-        page.route('**/weather.json?*', lambda route: route.fulfill(json=payload))
+        page.route('**/annual-weather.json', lambda route: route.fulfill(json=payload))
         page.goto(url)
         page.locator('.day-card').last.wait_for()
         page.locator('#notice-close').click()
@@ -46,14 +46,14 @@ try:
         selectors = ['#current-weather', '#week-days', '#periods', '#day-summary', '#clock-center', '#status', '#calculator-result']
         snapshot = [page.locator(selector).inner_text() for selector in selectors]
         mutations = [
-            lambda x: x['days'][0].pop('status'),
-            lambda x: x['days'][0].update(status=None),
-            lambda x: x['days'][0].update(status=5),
-            lambda x: x['days'][0].update(status={}),
-            lambda x: x['days'][0].pop('dateLabel'),
-            lambda x: x.update(updated=123),
-            lambda x: x['days'][0]['weather'][0].update(weather=[]),
-            lambda x: x['days'][0]['weather'][0].pop('changed'),
+            lambda x: x['days']['2026-11-08'].pop('status'),
+            lambda x: x['days']['2026-11-08'].update(status=None),
+            lambda x: x['days']['2026-11-08'].update(status=5),
+            lambda x: x['days']['2026-11-08'].update(status={}),
+            lambda x: x['days']['2026-11-08'].pop('dateLabel'),
+            lambda x: x.update(basisDate=123),
+            lambda x: x['days']['2026-11-08']['weather'][0].update(weather=[]),
+            lambda x: x['days']['2026-11-08']['weather'][0].pop('changed'),
         ]
         for mutate in mutations:
             snapshot = [page.locator(selector).inner_text() for selector in selectors]
@@ -67,10 +67,10 @@ try:
             page.clock.run_for(60000)
             assert page.locator('#calculator-run').is_enabled()
         payload = copy.deepcopy(original)
-        payload['updated'] = '2026-11-08 17:50'
+        payload['basisDate'] = '2026-11-24'
         page.evaluate('async () => await window.retryForecast()')
         assert page.locator('#load-error').is_hidden()
-        assert '17:50' in page.locator('#status').inner_text()
+        assert '2026.11.24' in page.locator('#status').inner_text()
         assert page.locator('#calculator-dialog').is_visible()
         page.locator('#calculator-run').click()
         assert page.locator('#calculator-result .result-summary').count() == 1
@@ -81,11 +81,11 @@ try:
 
         # First request invalid: no partial forecast, then recover via the same retry.
         payload = copy.deepcopy(original)
-        payload['days'][0].pop('status')
+        payload['days']['2026-11-08'].pop('status')
         failed = context.new_page()
         failed.on('pageerror', lambda error: errors.append(str(error)))
         failed.clock.install(time=datetime.fromisoformat('2026-11-08T08:00:00+00:00'))
-        failed.route('**/weather.json?*', lambda route: route.fulfill(json=payload))
+        failed.route('**/annual-weather.json', lambda route: route.fulfill(json=payload))
         failed.goto(url)
         failed.locator('#load-error').wait_for(state='visible')
         assert failed.locator('.day-card').count() == 0

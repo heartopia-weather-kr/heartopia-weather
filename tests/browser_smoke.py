@@ -57,9 +57,9 @@ try:
         assert not page.locator('#forecast-dialog').is_visible()
         assert page.locator('main .hourly').count() == 0
         assert page.locator('#warning').count() == 0
-        assert page.locator('#status').inner_text() == '마지막 업데이트: 2026-11-08 16:50 (KST)'
+        assert page.locator('#status').inner_text() == '데이터 기준일: 2026.11.23'
         assert page.locator('.icon-catalog').count() == 0
-        assert page.evaluate('WeatherCore.catalog.length') == 21
+        assert page.evaluate('WeatherCore.catalog.length') == 24
         assert page.locator('#today-date').count() == 1
         assert page.locator('#clock-now, .clock-caption').count() == 0
         assert page.locator('#week-title svg.line-icon').count() == 1
@@ -69,12 +69,13 @@ try:
         assert page.evaluate("async () => { const image = new Image(); image.src = 'assets/hero-landscape.png'; await image.decode(); return image.naturalWidth > 0; }")
         assert page.locator('.clock-hour').count() == 12
         assert page.locator('#clock-title button').count() == 0
-        assert page.locator('#today-changes').inner_text() == '8회'
+        assert page.locator('#today-changes').inner_text() == '6회'
         main_clock = page.locator('#clock-center').inner_text()
         main_today = page.locator('#current-weather').inner_text()
         calculator_date = page.locator('#calculator-date').input_value()
-        forecast = json.loads((ROOT/'weather.json').read_text(encoding='utf-8'))
-        for index, day in enumerate(forecast['days']):
+        annual = json.loads((ROOT/'annual-weather.json').read_text(encoding='utf-8'))
+        forecast = page.evaluate("payload=>WeatherCore.annualWindow(payload,'2026-11-08')", annual)
+        for index, day in enumerate(forecast['days'][1:8]):
             page.locator('.day-card').nth(index).click()
             assert page.locator('#forecast-dialog').is_visible()
             if index==0:
@@ -106,7 +107,7 @@ try:
             page.locator('#forecast-close').click()
         page.locator('.day-card').first.click()
         page.locator('#next-date').click()
-        assert '09' in page.locator('#selected-date').inner_text()
+        assert '10' in page.locator('#selected-date').inner_text()
         assert page.locator('#periods .period:visible').count() == 4
         page.keyboard.press('Escape')
         assert not page.locator('#forecast-dialog').is_visible()
@@ -122,8 +123,8 @@ try:
             page.wait_for_function("document.querySelectorAll('#clock-hours .weather-icon.alpha-ready').length===12")
             day=forecast['days'][day_index]
             for hour in range(start,start+12):
-                index=(hour+18)%24
-                previous=day['weather'][index-1] if index else forecast['days'][day_index-1]['weather'][23] if day_index else None
+                index=hour
+                previous=day['weather'][index-1] if index else annual['days']['2026-11-07' if day_index==0 else '2026-11-08']['weather'][23]
                 expected=previous is not None and normalize(day['weather'][index]['weather'])!=normalize(previous['weather'])
                 slot=page.locator(f'.clock-hour[data-hour="{hour}"]')
                 assert bool(slot.locator('.weather-shift').count()) == expected, (day_index,hour,expected)
@@ -136,7 +137,7 @@ try:
 
         page.locator('#clock-am').click()
         assert page.locator('#clock-am').get_attribute('aria-pressed') == 'true'
-        assert page.locator('.clock-time').all_text_contents() == ['12']+[str(i) for i in range(1,12)]
+        assert page.locator('.clock-time').all_text_contents() == ['00']+[str(i) for i in range(1,12)]
         assert page.locator('.clock-hour').evaluate_all('(nodes)=>nodes.map(n=>Number(n.dataset.hour))') == list(range(12))
         assert page.locator('.clock-hour button, button.clock-hour, .clock-hour[tabindex], .clock-hour[aria-pressed], .clock-hour.current, .clock-hour.active').count()==0
         before=page.locator('#clock-center').inner_text()
@@ -156,16 +157,16 @@ try:
         page.clock.run_for(121000)
         assert page.locator('#clock-am').get_attribute('aria-pressed') == 'true'
         assert page.locator('.center-time').inner_text().startswith('00:')
-        assert page.locator('#today-date').get_attribute('datetime') == '2026-11-08'
-        assert page.locator('#today-date').inner_text() == '11월 8일 (일)'
-        assert page.locator('#clock-center>strong').first.inner_text() == forecast['days'][0]['weather'][18]['name']
-        check_shifts(0,0)
+        assert page.locator('#today-date').get_attribute('datetime') == '2026-11-09'
+        assert page.locator('#today-date').inner_text() == '11월 9일 (월)'
+        assert page.locator('#clock-center>strong').first.inner_text() == forecast['days'][1]['weather'][0]['name']
+        check_shifts(1,0)
         page.clock.set_system_time(__import__('datetime').datetime.fromisoformat('2026-11-08T20:59:00+00:00'))
         page.clock.run_for(121000)
         assert page.locator('.center-time').inner_text().startswith('06:')
         assert page.locator('#today-date').get_attribute('datetime') == '2026-11-09'
         assert page.locator('#today-date').inner_text() == '11월 9일 (월)'
-        assert page.locator('#clock-center>strong').first.inner_text() == forecast['days'][1]['weather'][0]['name']
+        assert page.locator('#clock-center>strong').first.inner_text() == forecast['days'][1]['weather'][6]['name']
         check_shifts(1,0)
         page.clock.set_system_time(__import__('datetime').datetime.fromisoformat('2026-11-08T10:00:00+00:00'))
         page.clock.run_for(121000)
@@ -227,13 +228,13 @@ try:
         probe.evaluate('(node)=>node.remove()')
         for selector in ['#calculator-date','#calculator-start','#calculator-end']:
             assert page.locator(selector).evaluate('(node)=>getComputedStyle(node).userSelect')=='text'
-        page.locator('#calculator-start').select_option('23')
-        page.locator('#calculator-end').select_option('2')
+        page.locator('#calculator-start').select_option('19')
+        page.locator('#calculator-end').select_option('21')
         page.locator('#calculator-run').click()
         assert page.locator('.result-summary').count() == 1
         assert_no_drag('.result-summary')
         page.locator('#calculator-start').select_option('5')
-        page.locator('#calculator-end').select_option('6')
+        page.locator('#calculator-end').select_option('4')
         page.locator('#calculator-run').click()
         assert page.locator('.form-error').count() == 1
         assert page.locator('#calculator-dialog').is_visible()
@@ -305,17 +306,17 @@ try:
         page.locator('.day-card').last.wait_for()
         assert not page.locator('#notice-dialog').is_visible()
         # Stale forecasts remain browsable, but are never labeled today's forecast.
-        page.clock.set_system_time(__import__('datetime').datetime.fromisoformat('2026-11-20T08:00:00+00:00'))
+        page.clock.set_system_time(__import__('datetime').datetime.fromisoformat('2027-01-01T08:00:00+00:00'))
         page.clock.run_for(15*60000+500)
-        page.wait_for_function("document.querySelector('#current-weather').textContent.includes('현재 날짜의 예보가 없어요')")
-        assert page.locator('#status').inner_text() == '마지막 업데이트: 2026-11-08 16:50 (KST)'
+        page.wait_for_function("document.querySelector('#today-date').dateTime==='2027-01-01'")
+        assert page.locator('#status').inner_text() == '데이터 기준일: 2026.11.23'
         assert page.locator('#warning').count() == 0
-        assert '현재 날짜의 예보가 없어요' in page.locator('#current-weather').inner_text()
+        assert page.locator('.hero-forecast strong').all_text_contents() == ['?', '?']
         # A fresh visit with a failed request must contain no fake forecasts.
         failed = context.new_page()
         failed.clock.install(time=__import__('datetime').datetime.fromisoformat('2026-11-08T08:00:00+00:00'))
         failed.on('pageerror', lambda error: errors.append(str(error)))
-        failed.route('**/weather.json?*', lambda route: route.fulfill(status=503, body='unavailable'))
+        failed.route('**/annual-weather.json', lambda route: route.fulfill(status=503, body='unavailable'))
         failed.goto(url)
         failed.locator('#load-error').wait_for(state='visible')
         assert failed.locator('.day-card').count() == 0
@@ -323,14 +324,14 @@ try:
         assert failed.locator('#calculator-run').is_disabled()
         if failed.locator('#notice-dialog').is_visible():
             failed.locator('#notice-close').click()
-        failed.unroute('**/weather.json?*')
+        failed.unroute('**/annual-weather.json')
         failed.clock.run_for(15*60000+500)
         failed.locator('.day-card').last.wait_for()
         assert failed.locator('#calculator-run').is_enabled()
         # Dense, test-only alternating forecast: all twelve outer icons glow.
         # Fixture stays in memory; never write or change the real weather.json.
-        dense=json.loads(json.dumps(forecast))
-        for day in dense['days']:
+        dense=json.loads(json.dumps(annual))
+        for day in dense['days'].values():
             for i,row in enumerate(day['weather']):
                 row['weather']='Sunny' if i%2 else 'Cloudy'
                 row['changed']=True
@@ -339,7 +340,7 @@ try:
         dense_page=context.new_page()
         dense_page.on('pageerror',lambda error:errors.append(str(error)))
         dense_page.clock.install(time=__import__('datetime').datetime.fromisoformat('2026-11-08T08:00:00+00:00'))
-        dense_page.route('**/weather.json?*',lambda route:route.fulfill(json=dense))
+        dense_page.route('**/annual-weather.json',lambda route:route.fulfill(json=dense))
         dense_page.goto(url)
         dense_page.locator('.day-card').last.wait_for()
         if dense_page.locator('#notice-dialog').is_visible():
