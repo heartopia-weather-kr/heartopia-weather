@@ -1,14 +1,12 @@
 {
-  "updated": "2026-11-25 21:45",
-  "updatedTime": "21:45",
+  "updated": "2026-11-25 22:53",
+  "updatedTime": "22:53",
   "days": [
     {
       "startDate": "2026-11-25",
       "endDate": "2026-11-25",
       "dateLabel": "11월 25일",
       "timeRange": "00:00 ~ 23:00",
-      "updated": "2026-11-25 21:45",
-      "updatedTime": "21:45",
       "changes": 10,
       "changeRate": 41.7,
       "status": "🟡 보통",
@@ -475,15 +473,15 @@
             }
           ]
         }
-      ]
+      ],
+      "updated": "2026-11-25 22:53",
+      "updatedTime": "22:53"
     },
     {
       "startDate": "2026-11-26",
       "endDate": "2026-11-26",
       "dateLabel": "11월 26일",
       "timeRange": "00:00 ~ 23:00",
-      "updated": "2026-11-25 21:45",
-      "updatedTime": "21:45",
       "changes": 13,
       "changeRate": 54.2,
       "status": "🟠 변화 많음",
@@ -950,15 +948,15 @@
             }
           ]
         }
-      ]
+      ],
+      "updated": "2026-11-25 22:53",
+      "updatedTime": "22:53"
     },
     {
       "startDate": "2026-11-27",
       "endDate": "2026-11-27",
       "dateLabel": "11월 27일",
       "timeRange": "00:00 ~ 23:00",
-      "updated": "2026-11-25 21:45",
-      "updatedTime": "21:45",
       "changes": 15,
       "changeRate": 62.5,
       "status": "🟠 변화 많음",
@@ -1425,15 +1423,15 @@
             }
           ]
         }
-      ]
+      ],
+      "updated": "2026-11-25 22:53",
+      "updatedTime": "22:53"
     },
     {
       "startDate": "2026-11-28",
       "endDate": "2026-11-28",
       "dateLabel": "11월 28일",
       "timeRange": "00:00 ~ 23:00",
-      "updated": "2026-11-25 21:45",
-      "updatedTime": "21:45",
       "changes": 11,
       "changeRate": 45.8,
       "status": "🟡 보통",
@@ -1900,15 +1898,15 @@
             }
           ]
         }
-      ]
+      ],
+      "updated": "2026-11-25 22:53",
+      "updatedTime": "22:53"
     },
     {
       "startDate": "2026-11-29",
       "endDate": "2026-11-29",
       "dateLabel": "11월 29일",
       "timeRange": "00:00 ~ 23:00",
-      "updated": "2026-11-25 21:45",
-      "updatedTime": "21:45",
       "changes": 15,
       "changeRate": 62.5,
       "status": "🟠 변화 많음",
@@ -2375,15 +2373,15 @@
             }
           ]
         }
-      ]
+      ],
+      "updated": "2026-11-25 22:53",
+      "updatedTime": "22:53"
     },
     {
       "startDate": "2026-11-30",
       "endDate": "2026-11-30",
       "dateLabel": "11월 30일",
       "timeRange": "00:00 ~ 23:00",
-      "updated": "2026-11-25 21:45",
-      "updatedTime": "21:45",
       "changes": 10,
       "changeRate": 41.7,
       "status": "🟡 보통",
@@ -2850,15 +2848,15 @@
             }
           ]
         }
-      ]
+      ],
+      "updated": "2026-11-25 22:53",
+      "updatedTime": "22:53"
     },
     {
       "startDate": "2026-12-01",
       "endDate": "2026-12-01",
       "dateLabel": "12월 1일",
       "timeRange": "00:00 ~ 23:00",
-      "updated": "2026-11-25 21:45",
-      "updatedTime": "21:45",
       "changes": 10,
       "changeRate": 41.7,
       "status": "🟡 보통",
@@ -3325,15 +3323,15 @@
             }
           ]
         }
-      ]
+      ],
+      "updated": "2026-11-25 22:53",
+      "updatedTime": "22:53"
     },
     {
       "startDate": "2026-12-02",
       "endDate": "2026-12-02",
       "dateLabel": "12월 2일",
       "timeRange": "00:00 ~ 23:00",
-      "updated": "2026-11-25 21:45",
-      "updatedTime": "21:45",
       "changes": 14,
       "changeRate": 58.3,
       "status": "🟠 변화 많음",
@@ -3800,15 +3798,15 @@
             }
           ]
         }
-      ]
+      ],
+      "updated": "2026-11-25 22:53",
+      "updatedTime": "22:53"
     },
     {
       "startDate": "2026-12-03",
       "endDate": "2026-12-03",
       "dateLabel": "12월 3일",
       "timeRange": "00:00 ~ 23:00",
-      "updated": "2026-11-25 21:45",
-      "updatedTime": "21:45",
       "changes": 15,
       "changeRate": 62.5,
       "status": "🟠 변화 많음",
@@ -4275,7 +4273,9 @@
             }
           ]
         }
-      ]
+      ],
+      "updated": "2026-11-25 22:53",
+      "updatedTime": "22:53"
     }
   ]
 }
