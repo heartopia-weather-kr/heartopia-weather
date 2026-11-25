@@ -16,10 +16,6 @@ on:
       - assets/weather-app.js
       - tests/test_calendar_weather.py
       - .github/workflows/update-weather.yml
-  schedule:
-    # Monitoring trial: one scheduled attempt per hour (minute 17, UTC).
-    # GitHub schedules are best-effort, not guaranteed.
-    - cron: "17 * * * *"
 
 jobs:
   update-weather:
