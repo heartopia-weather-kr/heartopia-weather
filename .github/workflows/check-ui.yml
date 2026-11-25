@@ -18,3 +18,5 @@ jobs:
       - run: node --check assets/weather-core.js
       - run: node --test tests/*.test.cjs
       - run: python -m py_compile weather.py
+      - run: python build_annual_weather.py --check
+      - run: python -m unittest discover -s tests -p test_annual_weather.py

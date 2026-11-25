@@ -139,13 +139,13 @@ try:
         # Test all 21 keys through the shared production renderer, using an
         # in-memory fixture only; no changes to the real forecast file.
         import json
-        fixture=json.loads((ROOT/'weather.json').read_text(encoding='utf-8'))
+        fixture=json.loads((ROOT/'annual-weather.json').read_text(encoding='utf-8'))
         keys=list(json.loads((ROOT/'assets/midnight-icons/manifest.json').read_text()))
-        for day in fixture['days']:
+        for day in fixture['days'].values():
             for i,row in enumerate(day['weather']):
                 row['weather']=keys[i%21];row['changed']=True
             day['changes']=24;day['changeRate']=100
-        page.route('**/weather.json?*',lambda route:route.fulfill(json=fixture))
+        page.route('**/annual-weather.json',lambda route:route.fulfill(json=fixture))
         page.clock.run_for(15*60000+500)
         page.wait_for_function("document.querySelector('#today-changes').textContent==='24회'")
         page.locator('.day-card').first.click()

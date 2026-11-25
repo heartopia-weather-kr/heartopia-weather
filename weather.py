@@ -86,54 +86,63 @@ def build(now=None):
     now = now or datetime.now(KST)
     base = now.date()
     dates = [base + timedelta(days=offset) for offset in range(-1, 9)]
-    tables = {date.year: load_year(date.year) for date in dates}
-    def at(date, hour):
-        values = tables[date.year].get(date.isoformat())
-        return weather_name(values[hour], hour) if values else None
-    days = []
+    tables = {year: load_year(year) for year in {date.year for date in dates}}
     stamp = now.strftime("%Y-%m-%d %H:%M")
-    for day in dates[1:]:
-        rows = []
-        for hour in range(24):
-            current = at(day, hour)
-            previous = at(day - timedelta(days=1), 23) if hour == 0 else at(day, hour - 1)
-            changed = current is not None and previous is not None and normalized(current) != normalized(previous)
-            unknown = current is None
-            name = "?" if unknown else (KO.get(current) or
-                ("유성우 " + current.split()[-1] if current.startswith("Meteor Shower") else
-                 "오로라 " + current.split()[-1] if current.startswith("Aurora") else current))
-            icon = "❓" if unknown else (
-                "☄️" if current.startswith("Meteor Shower") else
-                "🌌" if current.startswith("Aurora") else ICONS.get(current, "❓"))
-            rows.append({
-                "time": f"{hour:02d}:00", "weather": current or "Unknown",
-                "name": name, "icon": icon, "changed": bool(changed),
-                "mark": "?" if unknown or previous is None else ("⭕" if changed else "❌"),
-                "special": bool(current and (current.startswith(("Meteor Shower", "Aurora")) or current in ("Rainbow", "Moon Rainbow"))),
-            })
-        changes = sum(row["changed"] for row in rows)
-        # Unknown comparisons must not silently become a 0% change rate.
-        complete = all(at(day, h) is not None and
-                       (at(day - timedelta(days=1), 23) if h == 0 else at(day, h - 1)) is not None
-                       for h in range(24))
-        rate = round(changes / 24 * 100, 1) if complete else None
-        status = ("❓ 확인 불가" if rate is None else
-                  "🟢 안정적" if rate <= 25 else
-                  "🟡 보통" if rate <= 50 else
-                  "🟠 변화 많음" if rate <= 75 else "🔴 매우 잦음")
-        periods = []
-        for i, key in enumerate(("dawn", "morning", "afternoon", "evening")):
-            subset = rows[i*6:i*6+6]
-            periods.append({"key": key, "label": f"{i*6:02d}:00 ~ {i*6+5:02d}:00",
-                            "changes": sum(r["changed"] for r in subset), "weather": subset})
-        days.append({
-            "startDate": day.isoformat(), "endDate": day.isoformat(),
-            "dateLabel": f"{day.month}월 {day.day}일", "timeRange": "00:00 ~ 23:00",
-            "updated": stamp, "updatedTime": now.strftime("%H:%M"),
-            "changes": changes, "changeRate": rate, "status": status,
-            "weather": rows, "periods": periods,
-        })
+    days = [build_day(day, tables) for day in dates[1:]]
+    for day in days:
+        day.update(updated=stamp, updatedTime=now.strftime("%H:%M"))
     return {"updated": stamp, "updatedTime": now.strftime("%H:%M"), "days": days}
+
+
+def build_day(day, tables, *, include_ids=False):
+    def identifier(date, hour):
+        values = tables.get(date.year, {}).get(date.isoformat())
+        return values[hour] if values else None
+
+    def at(date, hour):
+        return weather_name(identifier(date, hour), hour)
+
+    rows = []
+    for hour in range(24):
+        current = at(day, hour)
+        previous = at(day - timedelta(days=1), 23) if hour == 0 else at(day, hour - 1)
+        changed = current is not None and previous is not None and normalized(current) != normalized(previous)
+        unknown = current is None
+        name = "?" if unknown else (KO.get(current) or
+            ("유성우 " + current.split()[-1] if current.startswith("Meteor Shower") else
+             "오로라 " + current.split()[-1] if current.startswith("Aurora") else current))
+        icon = "❓" if unknown else (
+            "☄️" if current.startswith("Meteor Shower") else
+            "🌌" if current.startswith("Aurora") else ICONS.get(current, "❓"))
+        rows.append({
+            "time": f"{hour:02d}:00", "weather": current or "Unknown",
+            "name": name, "icon": icon, "changed": bool(changed),
+            "mark": "?" if unknown or previous is None else ("⭕" if changed else "❌"),
+            "special": bool(current and (current.startswith(("Meteor Shower", "Aurora")) or current in ("Rainbow", "Moon Rainbow"))),
+        })
+        if include_ids:
+            rows[-1]["id"] = identifier(day, hour)
+    changes = sum(row["changed"] for row in rows)
+    # Unknown comparisons must not silently become a 0% change rate.
+    complete = all(at(day, h) is not None and
+                   (at(day - timedelta(days=1), 23) if h == 0 else at(day, h - 1)) is not None
+                   for h in range(24))
+    rate = round(changes / 24 * 100, 1) if complete else None
+    status = ("❓ 확인 불가" if rate is None else
+              "🟢 안정적" if rate <= 25 else
+              "🟡 보통" if rate <= 50 else
+              "🟠 변화 많음" if rate <= 75 else "🔴 매우 잦음")
+    periods = []
+    for i, key in enumerate(("dawn", "morning", "afternoon", "evening")):
+        subset = rows[i*6:i*6+6]
+        periods.append({"key": key, "label": f"{i*6:02d}:00 ~ {i*6+5:02d}:00",
+                        "changes": sum(r["changed"] for r in subset), "weather": subset})
+    return {
+        "startDate": day.isoformat(), "endDate": day.isoformat(),
+        "dateLabel": f"{day.month}월 {day.day}일", "timeRange": "00:00 ~ 23:00",
+        "changes": changes, "changeRate": rate, "status": status,
+        "weather": rows, "periods": periods,
+    }
 
 def main():
     data = build()
