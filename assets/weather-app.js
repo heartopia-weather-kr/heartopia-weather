@@ -4,7 +4,7 @@
   const C=window.WeatherCore, $=id=>document.getElementById(id);
   const readSetting=(key,fallback)=>{try{return localStorage.getItem(key)||fallback;}catch{return fallback;}};
   const saveSetting=(key,value)=>{try{localStorage.setItem(key,value);}catch{/* Browsing without storage remains usable. */}};
-  const state={data:null,day:0,clockMode:C.kst().hour<12?'am':'pm',clockPeriod:C.kst().hour<12?'am':'pm',notice:null,loading:false,forecastMode:'full',forecastPeriod:0};
+  const state={data:null,day:0,clockMode:C.kst().hour<12?'am':'pm',clockPeriod:C.kst().hour<12?'am':'pm',notice:null,loading:false,forecastMode:'full',forecastPeriod:0,todayPreview:false};
   const atmosphere=window.WeatherAtmosphere.create(document.querySelector('.hero'));
   const periodLabels=['새벽 · 00:00 ~ 05:00','오전 · 06:00 ~ 11:00','오후 · 12:00 ~ 17:00','저녁 · 18:00 ~ 23:00'];
   function el(tag,className,text){const node=document.createElement(tag);if(className)node.className=className;if(text!==undefined)node.textContent=text;return node;}
@@ -111,9 +111,9 @@
     if(!state.data)return [];
     return state.data.days.map((day,index)=>day.startDate>C.kst().gameDate?index:-1).filter(index=>index>=0).slice(0,7);
   }
-  function selectDay(index){if(!visibleForecastIndices().includes(index))return;state.day=index;renderSelected();}
+  function selectDay(index){if(state.todayPreview&&$('forecast-dialog').open)return;if(!visibleForecastIndices().includes(index))return;state.todayPreview=false;state.day=index;renderSelected();}
   function renderSelected(){
-    const day=state.data.days[state.day];$('selected-date').textContent=dateLabel(day.startDate);const visible=visibleForecastIndices();$('prev-date').disabled=state.day===visible[0];$('next-date').disabled=state.day===visible[visible.length-1];
+    const day=state.data.days[state.day];$('selected-date').textContent=dateLabel(day.startDate);const visible=visibleForecastIndices();$('prev-date').disabled=state.todayPreview||state.day===visible[0];$('next-date').disabled=state.todayPreview||state.day===visible[visible.length-1];
     // Preserve weather.py's <=25 / <=50 / <=75 / >75 thresholds.
     // Both upper levels share the requested green presentation.
     const badge=$('day-summary');badge.className='summary-badge '+(day.changeRate===null?'level-normal':day.changeRate<=25?'level-low':day.changeRate<=50?'level-normal':'level-high');
@@ -242,7 +242,9 @@
     const dateChanged=lastGameDate!==gameDate;
     state.data=data;
     const index=state.data.days.findIndex(day=>day.startDate===previous&&day.startDate>gameDate);
-    state.day=index>0?index:1;
+    const todayIndex=state.data.days.findIndex(day=>day.startDate===gameDate);
+    if(state.todayPreview&&todayIndex<0){$('forecast-dialog').close();state.todayPreview=false;}
+    state.day=state.todayPreview?todayIndex:index>0?index:1;
     lastGameDate=gameDate;
     syncClockPeriod();
     populateCalculator();renderToday();renderWeek();renderSelected();renderClock();renderBasisDate();
@@ -271,6 +273,22 @@
   function showNotice(){if(!state.notice?.enabled)return;const notice=state.notice;$('notice-title').textContent=(notice.icon||'')+' '+(notice.title||'이용 안내');$('notice-message').replaceChildren();const lines=Array.isArray(notice.message)?notice.message:[notice.message||''];lines.forEach(line=>$('notice-message').append(el('p','',String(line))));if(!$('notice-dialog').open)$('notice-dialog').showModal();}
   async function loadNotice(){try{const response=await fetch('notice.json?t='+Date.now(),{cache:'no-store'});if(!response.ok)throw new Error('공지 로딩 실패');state.notice=await response.json();$('notice-open').hidden=!state.notice.enabled;if(readSetting('noticeHiddenKey','')!==noticeKey())showNotice();}catch{$('notice-open').textContent='공지 다시 불러오기';}}
   setupModal('forecast-dialog','forecast-close');
+  const todayTitle=$('today-title'),todayButton=el('button','','현재 날씨');
+  todayButton.type='button';
+  todayButton.style.cssText='appearance:none;background:none;border:0;padding:0;margin:0;font:inherit;color:inherit;line-height:inherit;cursor:pointer;user-select:none;-webkit-user-select:none;pointer-events:auto';
+  todayButton.draggable=false;
+  todayButton.setAttribute('aria-haspopup','dialog');
+  todayButton.setAttribute('aria-controls','forecast-dialog');
+  todayButton.setAttribute('aria-label','현재 날씨: 오늘 상세 예보 보기');
+  todayTitle.replaceChildren(todayButton);
+  todayButton.addEventListener('click',()=>{
+    if(!state.data||document.querySelector('dialog[open]'))return;
+    const index=state.data.days.findIndex(day=>day.startDate===C.kst().gameDate);
+    if(index<0)return;
+    state.todayPreview=true;state.day=index;renderSelected();
+    openModal('forecast-dialog',todayButton);
+  });
+  $('forecast-dialog').addEventListener('close',()=>{state.todayPreview=false;});
   $('view-full').addEventListener('click',()=>setForecastMode('full'));
   $('view-grouped').addEventListener('click',()=>setForecastMode('grouped'));
   $('group-prev').addEventListener('click',()=>setForecastPeriod(state.forecastPeriod-1));
